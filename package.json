@@ -1,0 +1,41 @@
+{
+    "name": "electron-shortcut-capture",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/main.js",
+    "scripts": {
+        "start": "electron .",
+        "dev": "webpack-dev-server --config build/renderer/webpack.config.js",
+        "dev:main": "webpack --config build/main/webpack.dev.config.js",
+        "build:main": "webpack --config build/main/webpack.dev.config.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "electron-debug": "^3.0.1",
+        "electron-dev-webpack-plugin": "^1.0.4",
+        "electron-devtools-installer": "^2.2.4",
+        "friendly-errors-webpack-plugin": "^1.7.0",
+        "html-webpack-plugin": "^3.2.0",
+        "kscreenshot": "^1.2.3",
+        "react": "^16.11.0",
+        "react-dom": "^16.11.0",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.7.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.7.2",
+        "@types/react": "^16.9.11",
+        "babel-loader": "^8.0.6",
+        "css-loader": "^3.2.0",
+        "electron": "6.0.10",
+        "file-loader": "^4.2.0",
+        "node-sass": "^4.12.0",
+        "sass-loader": "^8.0.0",
+        "style-loader": "^1.0.0",
+        "url-loader": "^2.2.0"
+    }
+}

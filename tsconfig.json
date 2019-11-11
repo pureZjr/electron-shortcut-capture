@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "removeComments": false,
+        "alwaysStrict": true,
+        "allowJs": true,
+        "noUnusedLocals": true,
+        "importHelpers": true,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "lib": ["es7", "dom"],
+        "skipLibCheck": true,
+        "typeRoots": ["node_modules/@types"]
+    },
+    "exclude": ["node_modules"],
+    "include": ["types"]
+}

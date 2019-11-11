@@ -17,6 +17,7 @@ export interface IDisplay {
     height: number
 }
 
+// 增加样式
 export function css(dom, obj) {
     for (let i in obj) {
         dom.style[i] = obj[i]
@@ -33,20 +34,17 @@ export function remove(dom) {
     }
 }
 
-export function domType(dom) {
-    return Object.prototype.toString.call(dom)
+// 是否有样式
+export function hasClass(dom: HTMLElement, cls: string) {
+    return dom.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
 }
-
-export function hasClass(obj, cls) {
-    return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
-}
-
+// 增加样式
 export function addClass(obj, cls) {
     if (!hasClass(obj, cls)) {
         obj.className += ' ' + cls
     }
 }
-
+// 去掉样式
 export function removeClass(obj, cls) {
     if (hasClass(obj, cls)) {
         let reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
@@ -113,14 +111,36 @@ export const getDisplay = () => {
     }
 }
 
+interface IDrawBackgroundProps {
+    x: number
+    y: number
+    width: number
+    height: number
+    thumbnail: Electron.NativeImage
+    currCtx: CanvasRenderingContext2D
+}
+
 // 画背景
-export const drawBackground = ({ x, y, width, height, thumbnail, currCtx }) => {
-    // 确保dom更新后再更新canvas
-    currCtx.clearRect(0, 0, width, height)
+export const drawBackground = ({ x, y, width, height, thumbnail, currCtx }: IDrawBackgroundProps) => {
     const $img = new Image()
     const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
     $img.src = URL.createObjectURL(blob)
     $img.addEventListener('load', () => {
         currCtx.drawImage($img, 0, 0, width, height, x, y, width, height)
     })
+}
+
+// 线条粗细
+export function initLineWidth(initLine) {
+    if (isNaN(initLine)) {
+        return 10
+    } else {
+        if (initLine > 10) {
+            return 10
+        } else if (initLine < 1) {
+            return 1
+        } else {
+            return initLine
+        }
+    }
 }

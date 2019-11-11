@@ -8,7 +8,7 @@ app.on('ready', () => {
         console.log('Unable to install `vue-devtools`: \n', err)
     })
     const sc = new ShortcutCapture()
-    globalShortcut.register('shift+q', () => {
+    globalShortcut.register('shift+w', () => {
         sc.shortcutCapture()
     })
     sc.on('capture', ({ dataURL, bounds }) => console.log('capture', bounds))

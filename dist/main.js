@@ -114,10 +114,10 @@ function map_obj(obj, fn) {
 /*!****************************************!*\
   !*** ./node_modules/7zip/package.json ***!
   \****************************************/
-/*! exports provided: name, version, description, keywords, repository, bin, main, scripts, license, default */
+/*! exports provided: _args, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, bin, bugs, description, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"7zip\",\"version\":\"0.0.6\",\"description\":\"7zip Windows Package via Node.js\",\"keywords\":[\"7z\",\"7zip\",\"7-zip\",\"windows\",\"install\"],\"repository\":\"git@github.com:fritx/win-7zip.git\",\"bin\":{\"7z\":\"7zip-lite/7z.exe\"},\"main\":\"index.js\",\"scripts\":{\"test\":\"mocha\"},\"license\":\"GNU LGPL\"}");
+module.exports = JSON.parse("{\"_args\":[[\"7zip@0.0.6\",\"/Users/pure/Desktop/project/electron-shortcut-capture\"]],\"_from\":\"7zip@0.0.6\",\"_id\":\"7zip@0.0.6\",\"_inBundle\":false,\"_integrity\":\"sha1-nK+xca+CMpSQNTtIFvAzR6oVCjA=\",\"_location\":\"/7zip\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"7zip@0.0.6\",\"name\":\"7zip\",\"escapedName\":\"7zip\",\"rawSpec\":\"0.0.6\",\"saveSpec\":null,\"fetchSpec\":\"0.0.6\"},\"_requiredBy\":[\"/electron-devtools-installer\"],\"_resolved\":\"https://registry.npmjs.org/7zip/-/7zip-0.0.6.tgz\",\"_spec\":\"0.0.6\",\"_where\":\"/Users/pure/Desktop/project/electron-shortcut-capture\",\"bin\":{\"7z\":\"7zip-lite/7z.exe\"},\"bugs\":{\"url\":\"https://github.com/fritx/win-7zip/issues\"},\"description\":\"7zip Windows Package via Node.js\",\"homepage\":\"https://github.com/fritx/win-7zip#readme\",\"keywords\":[\"7z\",\"7zip\",\"7-zip\",\"windows\",\"install\"],\"license\":\"GNU LGPL\",\"main\":\"index.js\",\"name\":\"7zip\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/fritx/win-7zip.git\"},\"scripts\":{\"test\":\"mocha\"},\"version\":\"0.0.6\"}");
 
 /***/ }),
 
@@ -7863,7 +7863,7 @@ electron__WEBPACK_IMPORTED_MODULE_1__["app"].on('ready', function () {
         console.log('Unable to install `vue-devtools`: \n', err);
     });
     var sc = new _shortcut_capture__WEBPACK_IMPORTED_MODULE_2__["default"]();
-    electron__WEBPACK_IMPORTED_MODULE_1__["globalShortcut"].register('shift+q', function () {
+    electron__WEBPACK_IMPORTED_MODULE_1__["globalShortcut"].register('shift+w', function () {
         sc.shortcutCapture();
     });
     sc.on('capture', function (_a) {
@@ -7930,20 +7930,30 @@ var ShortcutCapture = /** @class */ (function (_super) {
             show: false,
             autoHideMenuBar: true,
             transparent: process.platform === 'darwin' || process.platform === 'win32',
+            // 窗口不可以可以改变尺寸
             resizable: false,
+            // 窗口不可以拖动
             movable: false,
             focusable: process.platform === 'win32',
+            // 全屏窗口
             fullscreen: true,
-            // 设为true mac全屏窗口没有桌面滚动效果
+            // 在 macOS 上使用 pre-Lion 全屏
             simpleFullscreen: true,
             backgroundColor: '#30000000',
+            // 隐藏标题栏, 内容充满整个窗口
             titleBarStyle: 'hidden',
+            // 窗口永远在别的窗口的上面
             alwaysOnTop:  false || process.platform === 'darwin',
+            // 窗口允许大于屏幕
             enableLargerThanScreen: true,
+            // 是否在任务栏中显示窗口
             skipTaskbar: "development" === 'production',
+            // 窗口不可以最小化
             minimizable: false,
+            // 窗口不可以最大化
             maximizable: false,
             webPreferences: {
+                //集成Node
                 nodeIntegration: true
             }
         });
@@ -8028,7 +8038,7 @@ var ShortcutCapture = /** @class */ (function (_super) {
     /**
      * html文件路径地址
      */
-    ShortcutCapture.URL = 'http://localhost:8080';
+    ShortcutCapture.URL = 'http://localhost:8081';
     return ShortcutCapture;
 }(events__WEBPACK_IMPORTED_MODULE_1___default.a));
 /* harmony default export */ __webpack_exports__["default"] = (ShortcutCapture);

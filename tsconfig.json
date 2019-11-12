@@ -16,8 +16,8 @@
         "experimentalDecorators": true,
         "lib": ["es7", "dom"],
         "skipLibCheck": true,
-        "typeRoots": ["node_modules/@types"]
+        "typeRoots": ["node_modules/@types", "typings"]
     },
     "exclude": ["node_modules"],
-    "include": ["types"]
+    "include": ["typings/*", "src/**/*"]
 }

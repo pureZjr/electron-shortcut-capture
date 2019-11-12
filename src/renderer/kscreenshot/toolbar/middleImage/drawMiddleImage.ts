@@ -1,3 +1,6 @@
+/**
+ * 画选中的图片
+ */
 export default function drawMiddleImage(me) {
     me.rectangleCanvas.width = me.width * me.scale
     me.rectangleCanvas.height = me.height * me.scale

@@ -2,6 +2,9 @@ $baseColor: #488ff9;
 body {
     cursor: url("./assets/imgs/cursor.ico"), auto;
     user-select: none;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
     #kss {
         position: fixed;
         top: 0;
@@ -176,7 +179,7 @@ body {
                         #kssShowLineWidth {
                             height: 20px;
                             display: inline-block;
-                            vertical-align: middle
+                            vertical-align: middle;
                         }
                     }
                 }

@@ -1,22 +1,16 @@
-import debug from 'electron-debug'
-import { app, globalShortcut } from 'electron'
-import ShortcutCapture from './shortcut-capture'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import debug from "electron-debug";
+import { app } from "electron";
+import ShortcutCapture from "./shortcut-capture";
 
-app.on('ready', () => {
-    installExtension(VUEJS_DEVTOOLS).catch(err => {
-        console.log('Unable to install `vue-devtools`: \n', err)
-    })
-    const sc = new ShortcutCapture()
-    globalShortcut.register('shift+w', () => {
-        sc.shortcutCapture()
-    })
-    sc.on('capture', ({ dataURL, bounds }) => console.log('capture', bounds))
-    debug({ showDevTools: true, devToolsMode: 'undocked' })
-})
+app.on("ready", () => {
+  // 调试
+  debug({ showDevTools: true, devToolsMode: "bottom" });
+  new ShortcutCapture();
+  // sc.on("capture", ({ dataURL, bounds }) => console.log("capture", bounds));
+});
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});

@@ -1,14 +1,22 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from "electron";
 
-export const show = bounds => {
-    ipcRenderer.send('ShortcutCapture::SHOW', bounds)
-}
+/**
+ * 调用开启截图
+ */
+export const show = () => {
+  ipcRenderer.send("ShortcutCapture::SHOW");
+};
 
+/**
+ * 调用关闭截图
+ */
 export const hide = () => {
-    ipcRenderer.send('ShortcutCapture::HIDE', {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-    })
-}
+  ipcRenderer.send("ShortcutCapture::HIDE");
+};
+
+/**
+ * 绑定截图快捷键
+ */
+export const bindKey = (key: string) => {
+  ipcRenderer.send("key", key);
+};

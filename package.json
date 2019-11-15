@@ -6,8 +6,8 @@
     "scripts": {
         "start": "electron .",
         "dev": "webpack-dev-server --config build/renderer/webpack.config.js",
-        "dev:main": "webpack --config build/main/webpack.dev.config.js",
-        "build:main": "webpack --config build/main/webpack.dev.config.js"
+        "pack:renderer": "webpack --config build/main/webpack.dev.config.js",
+        "dev:main": "webpack --config build/main/webpack.dev.config.js"
     },
     "author": "",
     "license": "ISC",

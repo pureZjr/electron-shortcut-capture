@@ -1,6 +1,26 @@
 import { remove, removeClass } from "../util";
 
-export default function endAndClear(me) {
+interface IEndAndClearProps {
+  kss: HTMLCanvasElement;
+  kssScreenShotWrapper: HTMLDivElement;
+  style;
+  rectangleCanvas;
+  kssTextLayer;
+  drawingStatus;
+  toolbar;
+  currentToolType;
+  snapshootList;
+  isScreenshot;
+  isEdit;
+  toolmousedown;
+  toolmousemove;
+  toolmouseup;
+  endScreenShot;
+  preventContextMenu;
+  cancelDrawingStatus;
+}
+
+export default function endAndClear(me: IEndAndClearProps) {
   removeClass(document.body, "kssBody");
 
   // 移除canvas

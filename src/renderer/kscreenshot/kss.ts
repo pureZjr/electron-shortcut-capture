@@ -12,28 +12,15 @@ import createDragDom from "./createDragDom";
 import createToolbar from "./toolbar/toolbar";
 import drawMiddleImage from "./toolbar/middleImage/drawMiddleImage";
 import clearMiddleImage from "./toolbar/middleImage/clearMiddleImage";
-import endAndClear from "./toolbar/endAndClear";
 import backRightClient from "./backRightClient";
 import toolbarPosition from "./toolbar/toolbarPosition";
 import { bindKey } from "./events";
 import "./kss.scss";
 
-interface IToolShow {
-  complete: boolean; // 控制确认按键显示
-  quit: boolean; // 控制退出按键显示
-  back: boolean; // 控制后退按键显示
-  arrow: boolean; // 控制箭头按键显示
-  drawLine: boolean; // 控制线条按键显示（可以输入数字，初始化线条粗细，[1-10]
-  rect: boolean; // 控制矩形按键显示
-  ellipse: boolean; // 控制椭圆按键显示
-  text: boolean; // 控制文字按键显示
-  color: boolean; // 控制颜色版按键显示
-}
-
 interface IProps {
   // 截图触发按键（例：shift+w）
   key?: string;
-  toolShow?: IToolShow;
+  toolShow?: Kscreenshot.IToolShow;
   // 是否下载截图后的图片
   needDownload?: boolean;
   // 是否立即开启截图
@@ -61,11 +48,16 @@ class Kss {
     this.init();
   }
 
-  private kss = null;
-  private style = null;
-  private kssScreenShotWrapper = null;
-  private kssTextLayer = null;
-  private rectangleCanvas = null;
+  private kss = document.getElementById("bgScreen") as HTMLCanvasElement;
+  private kssScreenShotWrapper = document.getElementById(
+    "kssScreenShotWrapper"
+  ) as HTMLDivElement;
+  private kssTextLayer = document.getElementById(
+    "kssTextLayer"
+  ) as HTMLDivElement;
+  private rectangleCanvas = document.getElementById(
+    "kssRectangleCanvas"
+  ) as HTMLCanvasElement;
   private toolbar = null;
   private scale = window.devicePixelRatio || 1;
   private scrollTop = 0;
@@ -86,6 +78,7 @@ class Kss {
   private currentToolType = null;
   private imgBase64 = null;
   private isEdit = false;
+  // 框图起始点
   private startX = null;
   private startY = null;
   private width = null;
@@ -140,15 +133,6 @@ class Kss {
     this.startX = e.clientX;
     this.startY = e.clientY;
     //移除并添加
-    remove(document.getElementById("kssScreenShotWrapper"));
-    const kssScreenShotWrapper = document.createElement("div");
-    kssScreenShotWrapper.id = "kssScreenShotWrapper";
-    this.kssScreenShotWrapper = kssScreenShotWrapper;
-    const kssTextLayer = document.createElement("div");
-    kssTextLayer.id = "kssTextLayer";
-    this.kssTextLayer = kssTextLayer;
-    kssScreenShotWrapper.appendChild(kssTextLayer);
-    document.body.appendChild(kssScreenShotWrapper);
     document.addEventListener("mousemove", this.drawing);
     document.addEventListener("mouseup", this.endDraw);
   };
@@ -197,14 +181,7 @@ class Kss {
       this.startY = Math.min(this.startY, clientY);
     }
     document.removeEventListener("mousemove", this.drawing);
-
-    const canvas = document.createElement("canvas");
-    canvas.id = "kssRectangleCanvas";
-
-    this.kssScreenShotWrapper.appendChild(canvas);
-    this.rectangleCanvas = canvas;
-
-    canvas.addEventListener("mousedown", (event: MouseEvent) => {
+    this.rectangleCanvas.addEventListener("mousedown", (event: MouseEvent) => {
       if (this.isEdit || event.button === 2) {
         return;
       }
@@ -295,7 +272,6 @@ class Kss {
       if (this.drawingStatus === null) {
         document.removeEventListener("mouseup", this.cancelDrawingStatus);
         document.removeEventListener("contextmenu", this.preventContextMenu);
-        endAndClear(this);
         this.cancelCB();
         return;
       }
@@ -330,17 +306,13 @@ class Kss {
     };
     displays().map(async display => {
       this.isScreenshot = true;
-      const canvas = document.createElement("canvas");
-      this.kss = canvas;
       this.scrollTop = document.documentElement.scrollTop;
-      document.body.appendChild(canvas);
       const { height, width } = display.size;
-      canvas.id = `kss_${display.id}`;
-      canvas.height = height;
-      canvas.width = width;
-      canvas.addEventListener("mousedown", this.startDrawDown);
+      this.kss.height = height;
+      this.kss.width = width;
+      this.kss.addEventListener("mousedown", this.startDrawDown);
       const source = await getSource(display);
-      const currCtx = canvas.getContext("2d");
+      const currCtx = this.kss.getContext("2d");
       drawBackground({ ...source, currCtx });
     });
   };
@@ -357,7 +329,6 @@ class Kss {
    */
   end = () => {
     ipcRenderer.on("close", () => {
-      endAndClear(this);
       this.cancelCB();
     });
   };

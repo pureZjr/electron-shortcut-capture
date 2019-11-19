@@ -12,6 +12,8 @@ const ScreenShot: React.FC = () => {
 		CanvasRenderingContext2D
 	>(null)
 
+	React.useEffect(() => {}, [])
+
 	const bounds = React.useMemo(() => {
 		return {
 			x: 0,
@@ -29,14 +31,21 @@ const ScreenShot: React.FC = () => {
 		return bounds.height
 	}, [bounds])
 
-	const onResize = () => {}
+	const onResize = rect => {
+		console.log('onResize')
+		drawRectangle(rect)
+	}
 
-	const onShift = () => {}
+	const onShift = rect => {
+		console.log('onShift')
+		drawRectangle(rect)
+	}
 
 	/**
 	 * 画矩形
 	 */
 	const onDraw = rect => {
+		console.log(rect)
 		drawRectangle(rect)
 	}
 

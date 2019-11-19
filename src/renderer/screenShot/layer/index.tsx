@@ -10,6 +10,10 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 	const [isMoving, setIsMoving] = React.useState(false)
 	const [point, setPoint] = React.useState({ x: 0, y: 0 })
 
+	React.useEffect(() => {
+		document.body.addEventListener('mouseup', mouseup)
+	}, [])
+
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setPoint({ x: e.clientX, y: e.clientY })
 		setIsMoving(true)
@@ -37,7 +41,6 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 			className="layer"
 			onMouseDown={mousedown}
 			onMouseMove={mousemove}
-			onMouseUp={mouseup}
 		></div>
 	)
 }

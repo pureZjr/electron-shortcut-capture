@@ -28,6 +28,7 @@ const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
 	}, [])
 
 	React.useEffect(() => {
+		// 画框中的图
 		const { x1, y1 } = rect
 		if (!!rectangleCtx) {
 			rectangleCtx.drawImage(

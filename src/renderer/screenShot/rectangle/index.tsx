@@ -48,6 +48,11 @@ class Rectangle extends Component<IProps, IState> {
 		e: React.MouseEvent<HTMLDivElement | HTMLCanvasElement, MouseEvent>,
 		dragType: string
 	) => {
+		const { x1, y1, x2, y2 } = this.props.rect
+		const width = x2 - x1
+		const height = y2 - y1
+		this.state.canvasRef.getContext('2d').clearRect(0, 0, width, height)
+		console.log('mousedown')
 		this.setState({
 			dragType,
 			dragpoint: { x: e.clientX, y: e.clientY },

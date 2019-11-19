@@ -9,9 +9,12 @@ interface IProps {
 const Layer: React.FC<IProps> = ({ onDraw }) => {
 	const [isMoving, setIsMoving] = React.useState(false)
 	const [point, setPoint] = React.useState({ x: 0, y: 0 })
+	const [bgColor, setBgColor] = React.useState('rgba(0, 0, 0, 0.3)')
 
 	React.useEffect(() => {
-		document.body.addEventListener('mouseup', mouseup)
+		window.addEventListener('mouseup', mouseup)
+		window.addEventListener('mouseover', focusDisplay)
+		window.addEventListener('mouseout', blurDisplay)
 	}, [])
 
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -36,8 +39,19 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 		}
 	}
 
+	const focusDisplay = () => {
+		setBgColor('rgba(255, 255, 255, 0.1)')
+	}
+
+	const blurDisplay = () => {
+		setBgColor('rgba(0, 0, 0, 0.3)')
+	}
+
 	return (
 		<div
+			style={{
+				backgroundColor: bgColor
+			}}
 			className="layer"
 			onMouseDown={mousedown}
 			onMouseMove={mousemove}

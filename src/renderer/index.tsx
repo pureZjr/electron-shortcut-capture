@@ -1,9 +1,9 @@
-import kscreenshot from "./kscreenshot/kss";
+import ReactDom from "react-dom";
+import React from "react";
 
-new kscreenshot({
-  key: "shift+alt+w",
-  copyPath: dataUrl => {},
-  cancelCB: () => {
-    console.log("cancelCB");
-  }
-});
+import ScreenShot from "./screenShot";
+
+const render = () => {
+  ReactDom.render(<ScreenShot />, document.querySelector("#app"));
+};
+render();

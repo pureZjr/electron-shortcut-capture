@@ -115,4 +115,16 @@ $pointer-border-radius: 2px;
             left: 0;
         }
     }
+    .size {
+        position: absolute;
+        left: -30px;
+        top: -40px;
+        padding: 6px;
+        background: #000;
+        color: #fff;
+        font-size: 12px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+    }
 }

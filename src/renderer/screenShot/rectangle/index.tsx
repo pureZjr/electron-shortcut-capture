@@ -178,6 +178,7 @@ class Rectangle extends Component<IProps, IState> {
 		const { style } = this.state
 		return (
 			<div className="rectangle" style={style}>
+				<div className="size">{`${style.width} * ${style.height}`}</div>
 				<canvas
 					ref={this.setCanvasRef}
 					width={style.width}

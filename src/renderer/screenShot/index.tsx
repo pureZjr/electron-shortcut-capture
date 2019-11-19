@@ -32,12 +32,10 @@ const ScreenShot: React.FC = () => {
 	}, [bounds])
 
 	const onResize = rect => {
-		console.log('onResize')
 		drawRectangle(rect)
 	}
 
 	const onShift = rect => {
-		console.log('onShift')
 		drawRectangle(rect)
 	}
 
@@ -45,7 +43,6 @@ const ScreenShot: React.FC = () => {
 	 * 画矩形
 	 */
 	const onDraw = rect => {
-		console.log(rect)
 		drawRectangle(rect)
 	}
 

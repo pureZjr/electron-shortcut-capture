@@ -14,6 +14,7 @@ interface IState {
 	dragpoint: any
 	oRect: any
 	canvasRef: any
+	style: React.CSSProperties
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -23,7 +24,8 @@ class Rectangle extends Component<IProps, IState> {
 			dragType: null,
 			dragpoint: null,
 			oRect: null,
-			canvasRef: null
+			canvasRef: null,
+			style: {}
 		}
 	}
 
@@ -135,13 +137,9 @@ class Rectangle extends Component<IProps, IState> {
 		}
 	}
 
-	componentDidMount() {
-		window.addEventListener('mousemove', this.mousemove)
-		window.addEventListener('mouseup', this.mouseup)
-	}
-
-	render() {
-		const { x1, x2, y1, y2 } = this.props.rect
+	componentWillUpdate(nextProps) {
+		const { rect } = nextProps
+		const { x1, x2, y1, y2 } = rect
 		const x = x1 < x2 ? x1 : x2
 		const y = y1 < y2 ? y1 : y2
 		const width = Math.abs(x2 - x1)
@@ -154,12 +152,31 @@ class Rectangle extends Component<IProps, IState> {
 			top: `${y}px`,
 			visibility: width && height ? 'visible' : 'hidden'
 		}
+		if (JSON.stringify(this.state.style) !== JSON.stringify(style)) {
+			this.setState({
+				style
+			})
+		}
+	}
+
+	componentDidMount() {
+		window.addEventListener('mousemove', this.mousemove)
+		window.addEventListener('mouseup', this.mouseup)
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('mousemove', this.mousemove)
+		window.removeEventListener('mouseup', this.mouseup)
+	}
+
+	render() {
+		const { style } = this.state
 		return (
 			<div className="rectangle" style={style}>
 				<canvas
 					ref={this.setCanvasRef}
-					width={width}
-					height={height}
+					width={style.width}
+					height={style.height}
 					onMouseDown={e => this.mousedown(e, 'm')}
 				></canvas>
 				<div className="rectangle-border rectangle-border-n"></div>

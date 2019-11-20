@@ -11,7 +11,9 @@ interface IProps {
 	onShift: ({ x1, y1, x2, y2 }) => void
 	onResize: ({ x1, y1, x2, y2 }) => void
 	bounds: { x: number; y: number; width: number; height: number }
+	capturingDisplayId: number
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
+	setCapturingDisplayId: (displayId: number) => void
 }
 
 interface IState {
@@ -22,8 +24,6 @@ interface IState {
 	style: React.CSSProperties
 	// 截取全屏
 	isShortcutFullScreen: boolean
-	// 正在操作截图的显示器id
-	capturingDisplayId: number
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -35,8 +35,7 @@ class Rectangle extends Component<IProps, IState> {
 			oRect: null,
 			canvasRef: null,
 			style: {},
-			isShortcutFullScreen: false,
-			capturingDisplayId: null
+			isShortcutFullScreen: false
 		}
 	}
 
@@ -91,7 +90,7 @@ class Rectangle extends Component<IProps, IState> {
 				})
 			}
 		}
-		if (!this.state.capturingDisplayId) {
+		if (!this.props.capturingDisplayId) {
 			const displayId = getCurrentDisplay().id
 			setCapturingDisplay(displayId)
 		}
@@ -178,16 +177,14 @@ class Rectangle extends Component<IProps, IState> {
 	 */
 	listenCapturingDisplayId = () => {
 		ipcRenderer.on('receiveCapturingDisplayId', (_, displayId: number) => {
-			if (!this.state.capturingDisplayId) {
-				this.setState({
-					capturingDisplayId: displayId
-				})
+			if (!this.props.capturingDisplayId) {
+				this.props.setCapturingDisplayId(displayId)
 			}
 		})
 	}
 
 	shortcutDisabled = () => {
-		const { capturingDisplayId } = this.state
+		const { capturingDisplayId } = this.props
 		// 判断capturingDisplayId是否等于currDisplayId，不是的话返回
 		if (
 			!!capturingDisplayId &&
@@ -199,9 +196,23 @@ class Rectangle extends Component<IProps, IState> {
 		}
 	}
 
+	// focusDisplay = () => {
+	// 	this.setState({
+	// 		bgColor: 'rgba(255, 255, 255, 0.1)'
+	// 	})
+	// }
+
+	// blurDisplay = () => {
+	// 	this.setState({
+	// 		bgColor: 'rgba(0, 0, 0, 0.3)'
+	// 	})
+	// }
+
 	componentDidMount() {
 		window.addEventListener('mousemove', this.mousemove)
 		window.addEventListener('mouseup', this.mouseup)
+		// window.addEventListener('mouseover', this.focusDisplay)
+		// window.addEventListener('mouseout', this.blurDisplay)
 		this.listenCapturingDisplayId()
 	}
 

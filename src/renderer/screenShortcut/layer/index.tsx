@@ -1,20 +1,19 @@
 import React from 'react'
 
+import { getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
+	capturingDisplayId: number
 	onDraw: ({ x1: x, y1: y, x2, y2 }) => void
 }
 
-const Layer: React.FC<IProps> = ({ onDraw }) => {
+const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {
 	const [isMoving, setIsMoving] = React.useState(false)
 	const [point, setPoint] = React.useState({ x: 0, y: 0 })
-	const [bgColor, setBgColor] = React.useState('rgba(0, 0, 0, 0.3)')
 
 	React.useEffect(() => {
 		window.addEventListener('mouseup', mouseup)
-		window.addEventListener('mouseover', focusDisplay)
-		window.addEventListener('mouseout', blurDisplay)
 	}, [])
 
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -39,20 +38,20 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 		}
 	}
 
-	const focusDisplay = () => {
-		setBgColor('rgba(255, 255, 255, 0.1)')
-	}
-
-	const blurDisplay = () => {
-		setBgColor('rgba(0, 0, 0, 0.3)')
+	const bgColor = () => {
+		if (!capturingDisplayId) {
+			return {}
+		} else if (capturingDisplayId !== getCurrentDisplay().id) {
+			return { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
+		} else {
+			return { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+		}
 	}
 
 	return (
 		<div
-			style={{
-				backgroundColor: bgColor
-			}}
-			className="layer"
+			className={`layer ${!!capturingDisplayId ? 'no-hover' : ''}`}
+			style={bgColor()}
 			onMouseDown={mousedown}
 			onMouseMove={mousemove}
 		></div>

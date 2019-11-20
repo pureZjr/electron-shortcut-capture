@@ -2223,7 +2223,6 @@ var Events = /** @class */ (function () {
     Events.prototype.listenCapturingDisplayId = function () {
         var _this = this;
         electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('setCapturingDisplayId', function (_, displayId) {
-            console.log('main:listenCapturingDisplayId', displayId);
             _this.captureWins.map(function (v) {
                 v.webContents.send('receiveCapturingDisplayId', displayId);
             });

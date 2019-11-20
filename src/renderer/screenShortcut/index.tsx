@@ -12,6 +12,10 @@ const ScreenShot: React.FC = () => {
 	const [rectangleCtx, setRectangleCtx] = React.useState<
 		CanvasRenderingContext2D
 	>(null)
+	// 正在操作截图的显示器id
+	const [capturingDisplayId, setCapturingDisplayId] = React.useState<number>(
+		null
+	)
 
 	React.useEffect(() => {
 		window.addEventListener('contextmenu', () => {
@@ -104,8 +108,10 @@ const ScreenShot: React.FC = () => {
 				rect={rect}
 				setRectangleCtx={setRectangleCtx}
 				bounds={bounds}
+				capturingDisplayId={capturingDisplayId}
+				setCapturingDisplayId={setCapturingDisplayId}
 			/>
-			<Layer onDraw={onDraw} />
+			<Layer onDraw={onDraw} capturingDisplayId={capturingDisplayId} />
 		</Fragment>
 	)
 }

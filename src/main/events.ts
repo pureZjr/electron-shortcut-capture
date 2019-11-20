@@ -119,7 +119,6 @@ class Events {
 	 */
 	listenCapturingDisplayId() {
 		ipcMain.on('setCapturingDisplayId', (_, displayId: number) => {
-			console.log('main:listenCapturingDisplayId', displayId)
 			this.captureWins.map(v => {
 				v.webContents.send('receiveCapturingDisplayId', displayId)
 			})

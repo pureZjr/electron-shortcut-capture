@@ -17,6 +17,7 @@ class Events {
 		this.show()
 		this.bindDownload()
 		this.bindClipboard()
+		this.listenCapturingDisplayId()
 	}
 
 	// 显示器数组
@@ -110,6 +111,18 @@ class Events {
 		ipcMain.on('clipboard', (_, dataURL) => {
 			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
 			this.hide()
+		})
+	}
+
+	/**
+	 * 监听接收的操作截图的显示器id
+	 */
+	listenCapturingDisplayId() {
+		ipcMain.on('setCapturingDisplayId', (_, displayId: number) => {
+			console.log('main:listenCapturingDisplayId', displayId)
+			this.captureWins.map(v => {
+				v.webContents.send('receiveCapturingDisplayId', displayId)
+			})
 		})
 	}
 }

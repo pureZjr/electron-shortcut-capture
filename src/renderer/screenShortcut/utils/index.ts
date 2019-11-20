@@ -1,4 +1,4 @@
-import { desktopCapturer } from 'electron'
+import { desktopCapturer, remote } from 'electron'
 
 export interface ISource {
 	x: number
@@ -42,4 +42,15 @@ export const getSource: (display: Electron.Display) => Promise<ISource> = (
 			}
 		)
 	})
+}
+
+/**
+ * 获取当前显示器
+ */
+export const getCurrentDisplay: () => Electron.Display = () => {
+	const { x, y } = remote.getCurrentWindow().getBounds()
+	const display = remote.screen
+		.getAllDisplays()
+		.filter(d => d.bounds.x === x && d.bounds.y === y)[0]
+	return display
 }

@@ -103,6 +103,7 @@ const ScreenShot: React.FC = () => {
 				onShift={onShift}
 				rect={rect}
 				setRectangleCtx={setRectangleCtx}
+				bounds={bounds}
 			/>
 			<Layer onDraw={onDraw} />
 		</Fragment>

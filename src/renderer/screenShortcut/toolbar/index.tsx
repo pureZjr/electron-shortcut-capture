@@ -8,9 +8,10 @@ import './index.scss'
 
 interface IProps {
 	canvasRef: HTMLCanvasElement
+	style: React.CSSProperties
 }
 
-const ToolBar: React.FC<IProps> = ({ canvasRef }) => {
+const ToolBar: React.FC<IProps> = ({ canvasRef, style }) => {
 	const tools = [
 		{
 			icon: completePng,
@@ -33,7 +34,7 @@ const ToolBar: React.FC<IProps> = ({ canvasRef }) => {
 	]
 
 	return (
-		<div className="container">
+		<div className="toolbar" style={style}>
 			{tools.map(v => {
 				return (
 					<div className="item" onClick={v.click}>

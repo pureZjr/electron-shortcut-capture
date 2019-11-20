@@ -23,3 +23,10 @@ export const clipboard = (canvas: HTMLCanvasElement) => {
 	const dataURL = canvas.toDataURL('image/png')
 	ipcRenderer.send('clipboard', dataURL)
 }
+
+/**
+ * 当前正在截图的显示器
+ */
+export const setCapturingDisplay = (displayId: number) => {
+	ipcRenderer.send('setCapturingDisplayId', displayId)
+}

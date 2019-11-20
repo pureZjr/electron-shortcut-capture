@@ -1,7 +1,6 @@
 import React from 'react'
-import { remote } from 'electron'
 
-import { getSource } from '../utils'
+import { getSource, getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
@@ -17,14 +16,11 @@ const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null)
 
 	React.useEffect(() => {
-		const { x, y } = remote.getCurrentWindow().getBounds()
-		const display = remote.screen
-			.getAllDisplays()
-			.filter(d => d.bounds.x === x && d.bounds.y === y)[0]
-		setWidth(display.size.width)
-		setHeight(display.size.height)
-		setDisplay(display)
-		drawBackground(display)
+		const currDisplay = getCurrentDisplay()
+		setWidth(currDisplay.size.width)
+		setHeight(currDisplay.size.height)
+		setDisplay(currDisplay)
+		drawBackground(currDisplay)
 	}, [])
 
 	React.useEffect(() => {

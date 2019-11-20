@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
+import { ipcRenderer } from 'electron'
 
 import Toolbar from '../toolbar'
+import { getCurrentDisplay } from '../utils'
+import { setCapturingDisplay } from '../events'
 import './index.scss'
 
 interface IProps {
 	rect: { x1: number; y1: number; x2: number; y2: number }
 	onShift: ({ x1, y1, x2, y2 }) => void
 	onResize: ({ x1, y1, x2, y2 }) => void
+	bounds: { x: number; y: number; width: number; height: number }
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
 }
 
@@ -16,6 +20,10 @@ interface IState {
 	oRect: any
 	canvasRef: HTMLCanvasElement
 	style: React.CSSProperties
+	// 截取全屏
+	isShortcutFullScreen: boolean
+	// 正在操作截图的显示器id
+	capturingDisplayId: number
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -26,11 +34,13 @@ class Rectangle extends Component<IProps, IState> {
 			dragpoint: null,
 			oRect: null,
 			canvasRef: null,
-			style: {}
+			style: {},
+			isShortcutFullScreen: false,
+			capturingDisplayId: null
 		}
 	}
 
-	setCanvasRef = ref => {
+	setCanvasRef = (ref: HTMLCanvasElement) => {
 		if (!!ref) {
 			this.setState({ canvasRef: ref })
 			this.props.setRectangleCtx(ref.getContext('2d'))
@@ -49,6 +59,9 @@ class Rectangle extends Component<IProps, IState> {
 		e: React.MouseEvent<HTMLDivElement | HTMLCanvasElement, MouseEvent>,
 		dragType: string
 	) => {
+		if (this.shortcutDisabled()) {
+			return false
+		}
 		const { x1, y1, x2, y2 } = this.props.rect
 		const width = x2 - x1
 		const height = y2 - y1
@@ -61,13 +74,26 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	mouseup = () => {
-		if (!this.state.dragType) {
-			const { x1, y1, x2, y2 } = this.props.rect
-			this.props.onResize({ x1, y1, x2, y2 })
-		} else {
+		const { x1, y1, x2, y2 } = this.props.rect
+		if (!x1 && !y1 && !x2 && !y2) {
+			// 点击显示器，没有框图，全屏选择
+			const { width, height } = this.props.bounds
 			this.setState({
-				dragType: null
+				isShortcutFullScreen: true
 			})
+			this.props.onResize({ x1: 0, y1: 0, x2: width, y2: height })
+		} else {
+			if (!this.state.dragType) {
+				this.props.onResize({ x1, y1, x2, y2 })
+			} else {
+				this.setState({
+					dragType: null
+				})
+			}
+		}
+		if (!this.state.capturingDisplayId) {
+			const displayId = getCurrentDisplay().id
+			setCapturingDisplay(displayId)
 		}
 	}
 
@@ -147,6 +173,38 @@ class Rectangle extends Component<IProps, IState> {
 		}
 	}
 
+	/**
+	 * 监听接收的操作截图的显示器id
+	 */
+	listenCapturingDisplayId = () => {
+		ipcRenderer.on('receiveCapturingDisplayId', (_, displayId: number) => {
+			if (!this.state.capturingDisplayId) {
+				this.setState({
+					capturingDisplayId: displayId
+				})
+			}
+		})
+	}
+
+	shortcutDisabled = () => {
+		const { capturingDisplayId } = this.state
+		// 判断capturingDisplayId是否等于currDisplayId，不是的话返回
+		if (
+			!!capturingDisplayId &&
+			capturingDisplayId !== getCurrentDisplay().id
+		) {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	componentDidMount() {
+		window.addEventListener('mousemove', this.mousemove)
+		window.addEventListener('mouseup', this.mouseup)
+		this.listenCapturingDisplayId()
+	}
+
 	componentWillUpdate(nextProps) {
 		const { rect } = nextProps
 		const { x1, x2, y1, y2 } = rect
@@ -169,22 +227,25 @@ class Rectangle extends Component<IProps, IState> {
 		}
 	}
 
-	componentDidMount() {
-		window.addEventListener('mousemove', this.mousemove)
-		window.addEventListener('mouseup', this.mouseup)
-	}
-
 	componentWillUnmount() {
 		window.removeEventListener('mousemove', this.mousemove)
 		window.removeEventListener('mouseup', this.mouseup)
 	}
 
 	render() {
-		const { style, canvasRef } = this.state
+		const { style, canvasRef, isShortcutFullScreen } = this.state
+		if (this.shortcutDisabled()) {
+			return null
+		}
 		return (
 			<div className="rectangle" style={style}>
 				<div className="size">{`${style.width} * ${style.height}`}</div>
-				<Toolbar canvasRef={canvasRef} />
+				<Toolbar
+					canvasRef={canvasRef}
+					style={{
+						bottom: `${isShortcutFullScreen ? '5px' : '-35px'}`
+					}}
+				/>
 				<canvas
 					ref={this.setCanvasRef}
 					width={style.width}

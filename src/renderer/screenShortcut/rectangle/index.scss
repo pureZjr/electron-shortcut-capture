@@ -3,11 +3,13 @@ $pointer-size: 6px;
 $pointer-bg: #fff;
 $pointer-border: 1px solid #fff;
 $pointer-border-radius: 2px;
+
 .rectangle {
 	box-shadow: 0 0 7px rgba(0, 0, 0, 0.2);
 	display: block;
 	position: absolute;
 	z-index: 100;
+
 	canvas {
 		bottom: 0;
 		cursor: move;
@@ -18,26 +20,31 @@ $pointer-border-radius: 2px;
 		top: 0;
 		width: 100%;
 	}
+
 	&-border {
 		position: absolute;
+
 		&-n {
 			border-top: $border;
 			left: 0;
 			right: 0;
 			top: 0;
 		}
+
 		&-e {
 			border-right: $border;
 			bottom: 0;
 			right: 0;
 			top: 0;
 		}
+
 		&-s {
 			border-bottom: $border;
 			bottom: 0;
 			left: 0;
 			right: 0;
 		}
+
 		&-w {
 			border-left: $border;
 			bottom: 0;
@@ -45,6 +52,7 @@ $pointer-border-radius: 2px;
 			top: 0;
 		}
 	}
+
 	&-pointer {
 		background-color: $pointer-bg;
 		border: $pointer-border;
@@ -62,23 +70,29 @@ $pointer-border-radius: 2px;
 			position: absolute;
 			transform: translate3d(-50%, -50%, 0);
 		}
+
 		&-n,
 		&-s {
 			cursor: n-resize;
 		}
+
 		&-e,
 		&-w {
 			cursor: e-resize;
 		}
+
 		&-ne {
 			cursor: ne-resize;
 		}
+
 		&-se {
 			cursor: nw-resize;
 		}
+
 		&-sw {
 			cursor: ne-resize;
 		}
+
 		&-nw {
 			cursor: nw-resize;
 		}
@@ -86,26 +100,32 @@ $pointer-border-radius: 2px;
 			left: 50%;
 			top: 0;
 		}
+
 		&-ne {
 			left: 100%;
 			top: 0;
 		}
+
 		&-e {
 			left: 100%;
 			top: 50%;
 		}
+
 		&-se {
 			left: 100%;
 			top: 100%;
 		}
+
 		&-s {
 			left: 50%;
 			top: 100%;
 		}
+
 		&-sw {
 			left: 0;
 			top: 100%;
 		}
+
 		&-w {
 			left: 0;
 			top: 50%;
@@ -115,6 +135,7 @@ $pointer-border-radius: 2px;
 			top: 0;
 		}
 	}
+
 	.size {
 		align-items: center;
 		background: #000;

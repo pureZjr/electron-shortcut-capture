@@ -2126,6 +2126,7 @@ var Events = /** @class */ (function () {
         this.show();
         this.bindDownload();
         this.bindClipboard();
+        this.listenCapturingDisplayId();
     }
     /**
      * 绑定窗口显示事件
@@ -2216,6 +2217,18 @@ var Events = /** @class */ (function () {
             _this.hide();
         });
     };
+    /**
+     * 监听接收的操作截图的显示器id
+     */
+    Events.prototype.listenCapturingDisplayId = function () {
+        var _this = this;
+        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('setCapturingDisplayId', function (_, displayId) {
+            console.log('main:listenCapturingDisplayId', displayId);
+            _this.captureWins.map(function (v) {
+                v.webContents.send('receiveCapturingDisplayId', displayId);
+            });
+        });
+    };
     return Events;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Events);
@@ -2240,14 +2253,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-electron__WEBPACK_IMPORTED_MODULE_1__["app"].on("ready", function () {
+electron__WEBPACK_IMPORTED_MODULE_1__["app"].on('ready', function () {
     // 调试
-    electron_debug__WEBPACK_IMPORTED_MODULE_0___default()({ showDevTools: true, devToolsMode: "bottom" });
+    electron_debug__WEBPACK_IMPORTED_MODULE_0___default()({ showDevTools: true, devToolsMode: 'right' });
     new _shortcut_capture__WEBPACK_IMPORTED_MODULE_2__["default"]();
     // sc.on("capture", ({ dataURL, bounds }) => console.log("capture", bounds));
 });
-electron__WEBPACK_IMPORTED_MODULE_1__["app"].on("window-all-closed", function () {
-    if (process.platform !== "darwin") {
+electron__WEBPACK_IMPORTED_MODULE_1__["app"].on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
         electron__WEBPACK_IMPORTED_MODULE_1__["app"].quit();
     }
 });

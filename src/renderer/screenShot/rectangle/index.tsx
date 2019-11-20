@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import Toolbar from '../toolbar'
 import './index.scss'
 
 interface IProps {
@@ -179,6 +180,7 @@ class Rectangle extends Component<IProps, IState> {
 		return (
 			<div className="rectangle" style={style}>
 				<div className="size">{`${style.width} * ${style.height}`}</div>
+				<Toolbar />
 				<canvas
 					ref={this.setCanvasRef}
 					width={style.width}

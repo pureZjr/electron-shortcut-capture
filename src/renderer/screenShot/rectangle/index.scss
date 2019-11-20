@@ -4,127 +4,127 @@ $pointer-bg: #fff;
 $pointer-border: 1px solid #fff;
 $pointer-border-radius: 2px;
 .rectangle {
-    display: block;
-    position: absolute;
-    z-index: 100;
-    box-shadow: 0 0 7px rgba(0, 0, 0, 0.2);
-    canvas {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        cursor: move;
-    }
-    &-border {
-        position: absolute;
-        &-n {
-            top: 0;
-            right: 0;
-            left: 0;
-            border-top: $border;
-        }
-        &-e {
-            top: 0;
-            right: 0;
-            bottom: 0;
-            border-right: $border;
-        }
-        &-s {
-            right: 0;
-            bottom: 0;
-            left: 0;
-            border-bottom: $border;
-        }
-        &-w {
-            top: 0;
-            bottom: 0;
-            left: 0;
-            border-left: $border;
-        }
-    }
-    &-pointer {
-        width: $pointer-size;
-        height: $pointer-size;
-        background-color: $pointer-bg;
-        border: $pointer-border;
-        border-radius: $pointer-border-radius;
-        &-n,
-        &-ne,
-        &-e,
-        &-se,
-        &-s,
-        &-sw,
-        &-w,
-        &-nw {
-            position: absolute;
-            transform: translate3d(-50%, -50%, 0);
-        }
-        &-n,
-        &-s {
-            cursor: n-resize;
-        }
-        &-e,
-        &-w {
-            cursor: e-resize;
-        }
-        &-ne {
-            cursor: ne-resize;
-        }
-        &-se {
-            cursor: nw-resize;
-        }
-        &-sw {
-            cursor: ne-resize;
-        }
-        &-nw {
-            cursor: nw-resize;
-        }
-        &-n {
-            top: 0;
-            left: 50%;
-        }
-        &-ne {
-            top: 0;
-            left: 100%;
-        }
-        &-e {
-            top: 50%;
-            left: 100%;
-        }
-        &-se {
-            top: 100%;
-            left: 100%;
-        }
-        &-s {
-            top: 100%;
-            left: 50%;
-        }
-        &-sw {
-            top: 100%;
-            left: 0;
-        }
-        &-w {
-            top: 50%;
-            left: 0;
-        }
-        &-nw {
-            top: 0;
-            left: 0;
-        }
-    }
-    .size {
-        position: absolute;
-        left: -30px;
-        top: -40px;
-        padding: 6px;
-        background: #000;
-        color: #fff;
-        font-size: 12px;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-    }
+	box-shadow: 0 0 7px rgba(0, 0, 0, 0.2);
+	display: block;
+	position: absolute;
+	z-index: 100;
+	canvas {
+		bottom: 0;
+		cursor: move;
+		height: 100%;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 100%;
+	}
+	&-border {
+		position: absolute;
+		&-n {
+			border-top: $border;
+			left: 0;
+			right: 0;
+			top: 0;
+		}
+		&-e {
+			border-right: $border;
+			bottom: 0;
+			right: 0;
+			top: 0;
+		}
+		&-s {
+			border-bottom: $border;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		&-w {
+			border-left: $border;
+			bottom: 0;
+			left: 0;
+			top: 0;
+		}
+	}
+	&-pointer {
+		background-color: $pointer-bg;
+		border: $pointer-border;
+		border-radius: $pointer-border-radius;
+		height: $pointer-size;
+		width: $pointer-size;
+		&-n,
+		&-ne,
+		&-e,
+		&-se,
+		&-s,
+		&-sw,
+		&-w,
+		&-nw {
+			position: absolute;
+			transform: translate3d(-50%, -50%, 0);
+		}
+		&-n,
+		&-s {
+			cursor: n-resize;
+		}
+		&-e,
+		&-w {
+			cursor: e-resize;
+		}
+		&-ne {
+			cursor: ne-resize;
+		}
+		&-se {
+			cursor: nw-resize;
+		}
+		&-sw {
+			cursor: ne-resize;
+		}
+		&-nw {
+			cursor: nw-resize;
+		}
+		&-n {
+			left: 50%;
+			top: 0;
+		}
+		&-ne {
+			left: 100%;
+			top: 0;
+		}
+		&-e {
+			left: 100%;
+			top: 50%;
+		}
+		&-se {
+			left: 100%;
+			top: 100%;
+		}
+		&-s {
+			left: 50%;
+			top: 100%;
+		}
+		&-sw {
+			left: 0;
+			top: 100%;
+		}
+		&-w {
+			left: 0;
+			top: 50%;
+		}
+		&-nw {
+			left: 0;
+			top: 0;
+		}
+	}
+	.size {
+		align-items: center;
+		background: #000;
+		border-radius: 4px;
+		color: #fff;
+		display: flex;
+		font-size: 12px;
+		left: -30px;
+		padding: 6px;
+		position: absolute;
+		top: -40px;
+	}
 }

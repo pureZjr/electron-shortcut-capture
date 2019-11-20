@@ -1,189 +1,189 @@
 $baseColor: #488ff9;
 body {
-    cursor: url("./assets/imgs/cursor.ico"), auto;
-    user-select: none;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    #kss {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 10000;
-    }
-    #kssScreenShotWrapper {
-        position: fixed;
-        background: transparent;
-        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
-        z-index: 10001;
-        #kssTextLayer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 98;
-            cursor: crosshair;
-            .kssTextarea {
-                background: transparent;
-                resize: none;
-                min-width: 60px;
-                min-height: 36px;
-                box-sizing: border-box;
-                border-color: transparent;
-                overflow: hidden;
-                font-family: 宋体;
-                &:hover {
-                    cursor: text;
-                    outline: #488ff9 solid 1px;
-                }
-            }
-        }
-        #kssRectangleCanvas {
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-            cursor: move;
-            position: absolute;
-            z-index: 99;
-        }
-        .kssDot,
-        .kssLine {
-            position: absolute;
-            background: $baseColor;
-            z-index: 100;
-        }
-        #kssCurrentImgDom {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: none;
-        }
-        #kssToolbar {
-            position: absolute;
-            right: 0;
-            background: #f1f1f1;
-            font-size: 14px;
-            border: 1px solid #dedede;
-            border-radius: 4px;
-            box-sizing: border-box;
-            z-index: 100;
-            .kssToolbarItemBT {
-                display: inline-block;
-                width: 30px;
-                height: 28px;
-                text-align: center;
-                float: right;
-                cursor: pointer;
-                &:hover {
-                    background: #dedede;
-                }
-                .kssToolbarItemImg {
-                    width: 20px;
-                    height: 20px;
-                    margin-top: 5px;
-                }
-            }
-            .kssToolbarActiveItemBT {
-                background: #dedede;
-            }
-            #kssToolbarMiddleArea {
-                #kssColorBoard {
-                    position: absolute;
-                    width: 180px;
-                    height: 40px;
-                    right: 0;
-                    background: #fff;
-                    border: 1px solid #bbb;
-                    border-radius: 4px;
-                    display: none;
-                    outline: none;
-                    cursor: default;
-                    z-index: 100;
-                    #kssCurrentColor {
-                        display: inline-block;
-                        width: 30px;
-                        height: 30px;
-                        margin: 5px 8px 0 8px;
-                        box-sizing: border-box;
-                        border: 1px solid #333;
-                    }
-                    #kssColorItemWrapper {
-                        display: inline-block;
-                        vertical-align: top;
-                        width: 130px;
-                        margin-top: 5px;
-                        font-size: 0;
-                        .kssColorItem {
-                            display: inline-block;
-                            width: 14px;
-                            height: 14px;
-                            margin-right: 2px;
-                            box-sizing: border-box;
-                            border: 1px solid #333;
-                            cursor: pointer;
-                        }
-                    }
-                }
-                #kssSetLineWidth {
-                    position: absolute;
-                    width: 155px;
-                    height: 40px;
-                    right: 0;
-                    background: #fff;
-                    border: 1px solid #bbb;
-                    border-radius: 4px;
-                    display: none;
-                    outline: none;
-                    cursor: default;
-                    z-index: 100;
-                    #kssNumInputWrapper {
-                        margin: 7px 0 0 8px;
-                        position: relative;
-                        display: inline-block;
-                        #kssNumInput {
-                            width: 40px;
-                            height: 24px;
-                            border: 1px solid #bbb;
-                            border-radius: 4px;
-                            padding: 0 15px 0 8px;
-                        }
-                        #kssArrowNumWrapper {
-                            position: absolute;
-                            right: 0;
-                            top: 1px;
-                            border-radius: 0 4px 4px 0;
-                            font-size: 0;
-                            line-height: 12px;
-                            #kssUpNum,
-                            #kssDownNum {
-                                height: 12px;
-                                font-size: 12px;
-                                cursor: pointer;
-                                &:hover {
-                                    background: #dedede;
-                                }
-                            }
-                        }
-                    }
-                    #kssShowLineWidthWrapper {
-                        display: inline-block;
-                        height: 40px;
-                        line-height: 40px;
-                        vertical-align: top;
-                        width: 80px;
-                        text-align: center;
-                        #kssShowLineWidth {
-                            height: 20px;
-                            display: inline-block;
-                            vertical-align: middle;
-                        }
-                    }
-                }
-            }
-        }
-    }
+	cursor: url('./assets/imgs/cursor.ico'), auto;
+	margin: 0;
+	overflow: hidden;
+	padding: 0;
+	user-select: none;
+	#kss {
+		left: 0;
+		position: fixed;
+		top: 0;
+		z-index: 10000;
+	}
+	#kssScreenShotWrapper {
+		background: transparent;
+		box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+		position: fixed;
+		z-index: 10001;
+		#kssTextLayer {
+			cursor: crosshair;
+			height: 100%;
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			z-index: 98;
+			.kssTextarea {
+				background: transparent;
+				border-color: transparent;
+				box-sizing: border-box;
+				font-family: 宋体;
+				min-height: 36px;
+				min-width: 60px;
+				overflow: hidden;
+				resize: none;
+				&:hover {
+					cursor: text;
+					outline: #488ff9 solid 1px;
+				}
+			}
+		}
+		#kssRectangleCanvas {
+			cursor: move;
+			height: 100%;
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			z-index: 99;
+		}
+		.kssDot,
+		.kssLine {
+			background: $baseColor;
+			position: absolute;
+			z-index: 100;
+		}
+		#kssCurrentImgDom {
+			display: none;
+			height: 100%;
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
+		#kssToolbar {
+			background: #f1f1f1;
+			border: 1px solid #dedede;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 14px;
+			position: absolute;
+			right: 0;
+			z-index: 100;
+			.kssToolbarItemBT {
+				cursor: pointer;
+				display: inline-block;
+				float: right;
+				height: 28px;
+				text-align: center;
+				width: 30px;
+				&:hover {
+					background: #dedede;
+				}
+				.kssToolbarItemImg {
+					height: 20px;
+					margin-top: 5px;
+					width: 20px;
+				}
+			}
+			.kssToolbarActiveItemBT {
+				background: #dedede;
+			}
+			#kssToolbarMiddleArea {
+				#kssColorBoard {
+					background: #fff;
+					border: 1px solid #bbb;
+					border-radius: 4px;
+					cursor: default;
+					display: none;
+					height: 40px;
+					outline: none;
+					position: absolute;
+					right: 0;
+					width: 180px;
+					z-index: 100;
+					#kssCurrentColor {
+						border: 1px solid #333;
+						box-sizing: border-box;
+						display: inline-block;
+						height: 30px;
+						margin: 5px 8px 0 8px;
+						width: 30px;
+					}
+					#kssColorItemWrapper {
+						display: inline-block;
+						font-size: 0;
+						margin-top: 5px;
+						vertical-align: top;
+						width: 130px;
+						.kssColorItem {
+							border: 1px solid #333;
+							box-sizing: border-box;
+							cursor: pointer;
+							display: inline-block;
+							height: 14px;
+							margin-right: 2px;
+							width: 14px;
+						}
+					}
+				}
+				#kssSetLineWidth {
+					background: #fff;
+					border: 1px solid #bbb;
+					border-radius: 4px;
+					cursor: default;
+					display: none;
+					height: 40px;
+					outline: none;
+					position: absolute;
+					right: 0;
+					width: 155px;
+					z-index: 100;
+					#kssNumInputWrapper {
+						display: inline-block;
+						margin: 7px 0 0 8px;
+						position: relative;
+						#kssNumInput {
+							border: 1px solid #bbb;
+							border-radius: 4px;
+							height: 24px;
+							padding: 0 15px 0 8px;
+							width: 40px;
+						}
+						#kssArrowNumWrapper {
+							border-radius: 0 4px 4px 0;
+							font-size: 0;
+							line-height: 12px;
+							position: absolute;
+							right: 0;
+							top: 1px;
+							#kssUpNum,
+							#kssDownNum {
+								cursor: pointer;
+								font-size: 12px;
+								height: 12px;
+								&:hover {
+									background: #dedede;
+								}
+							}
+						}
+					}
+					#kssShowLineWidthWrapper {
+						display: inline-block;
+						height: 40px;
+						line-height: 40px;
+						text-align: center;
+						vertical-align: top;
+						width: 80px;
+						#kssShowLineWidth {
+							display: inline-block;
+							height: 20px;
+							vertical-align: middle;
+						}
+					}
+				}
+			}
+		}
+	}
 }

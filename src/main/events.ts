@@ -1,15 +1,22 @@
-import { ipcMain, BrowserWindow, globalShortcut, dialog } from 'electron'
+import {
+	ipcMain,
+	BrowserWindow,
+	globalShortcut,
+	dialog,
+	clipboard,
+	nativeImage
+} from 'electron'
 import fs from 'fs'
 
 class Events {
 	constructor(props) {
-		console.log('init')
 		this.captureWins = props.captureWins
 		this.bindOnShow()
 		this.bindOnHide()
 		this.bindEsc()
 		this.show()
 		this.bindDownload()
+		this.bindClipboard()
 	}
 
 	// 显示器数组
@@ -92,6 +99,16 @@ class Events {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
+			this.hide()
+		})
+	}
+
+	/**
+	 * 绑定剪贴板事件
+	 */
+	bindClipboard() {
+		ipcMain.on('clipboard', (_, dataURL) => {
+			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
 			this.hide()
 		})
 	}

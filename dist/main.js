@@ -2119,13 +2119,13 @@ var Events = /** @class */ (function () {
         this.captureWins = [];
         // 正在截屏
         this.isCapturing = false;
-        console.log('init');
         this.captureWins = props.captureWins;
         this.bindOnShow();
         this.bindOnHide();
         this.bindEsc();
         this.show();
         this.bindDownload();
+        this.bindClipboard();
     }
     /**
      * 绑定窗口显示事件
@@ -2203,6 +2203,16 @@ var Events = /** @class */ (function () {
             catch (err) {
                 console.log('下载失败：' + err);
             }
+            _this.hide();
+        });
+    };
+    /**
+     * 绑定剪贴板事件
+     */
+    Events.prototype.bindClipboard = function () {
+        var _this = this;
+        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('clipboard', function (_, dataURL) {
+            electron__WEBPACK_IMPORTED_MODULE_0__["clipboard"].writeImage(electron__WEBPACK_IMPORTED_MODULE_0__["nativeImage"].createFromDataURL(dataURL));
             _this.hide();
         });
     };

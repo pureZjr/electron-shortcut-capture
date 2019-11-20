@@ -3,8 +3,7 @@ import React from 'react'
 import completePng from '../assets/imgs/complete.png'
 import cancelPng from '../assets/imgs/cancel.png'
 import downloadPng from '../assets/imgs/download.png'
-import { hide } from '../events'
-import { download } from '../events'
+import { hide, download, clipboard } from '../events'
 import './index.scss'
 
 interface IProps {
@@ -13,7 +12,12 @@ interface IProps {
 
 const ToolBar: React.FC<IProps> = ({ canvasRef }) => {
 	const tools = [
-		{ icon: completePng, click: () => {} },
+		{
+			icon: completePng,
+			click: () => {
+				clipboard(canvasRef)
+			}
+		},
 		{
 			icon: cancelPng,
 			click: () => {

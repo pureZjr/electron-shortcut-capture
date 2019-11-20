@@ -10,9 +10,16 @@ export const hide = () => {
 /**
  * 下载图片
  */
-
 export const download = (canvas: HTMLCanvasElement) => {
 	const dataURL = canvas.toDataURL('image/png')
 	const currWin = remote.getCurrentWindow
 	ipcRenderer.send('download', { currWin, dataURL })
+}
+
+/**
+ * 剪贴板
+ */
+export const clipboard = (canvas: HTMLCanvasElement) => {
+	const dataURL = canvas.toDataURL('image/png')
+	ipcRenderer.send('clipboard', dataURL)
 }

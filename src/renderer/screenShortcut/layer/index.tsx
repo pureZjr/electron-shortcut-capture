@@ -13,8 +13,8 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 
 	React.useEffect(() => {
 		window.addEventListener('mouseup', mouseup)
-		// window.addEventListener('mouseover', focusDisplay)
-		// window.addEventListener('mouseout', blurDisplay)
+		window.addEventListener('mouseover', focusDisplay)
+		window.addEventListener('mouseout', blurDisplay)
 	}, [])
 
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

@@ -11,10 +11,10 @@ interface IProps {
 }
 
 interface IState {
-	dragType: any
-	dragpoint: any
+	dragType: string
+	dragpoint: { x: number; y: number }
 	oRect: any
-	canvasRef: any
+	canvasRef: HTMLCanvasElement
 	style: React.CSSProperties
 }
 
@@ -53,7 +53,6 @@ class Rectangle extends Component<IProps, IState> {
 		const width = x2 - x1
 		const height = y2 - y1
 		this.state.canvasRef.getContext('2d').clearRect(0, 0, width, height)
-		console.log('mousedown')
 		this.setState({
 			dragType,
 			dragpoint: { x: e.clientX, y: e.clientY },
@@ -62,12 +61,17 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	mouseup = () => {
-		this.setState({
-			dragType: null
-		})
+		if (!this.state.dragType) {
+			const { x1, y1, x2, y2 } = this.props.rect
+			this.props.onResize({ x1, y1, x2, y2 })
+		} else {
+			this.setState({
+				dragType: null
+			})
+		}
 	}
 
-	shift = e => {
+	shift = (e: MouseEvent) => {
 		const { dragpoint, oRect } = this.state
 		const x = e.clientX - dragpoint.x
 		const y = e.clientY - dragpoint.y
@@ -79,7 +83,7 @@ class Rectangle extends Component<IProps, IState> {
 		this.props.onShift({ x1, y1, x2, y2 })
 	}
 
-	resize = e => {
+	resize = (e: MouseEvent) => {
 		const { dragpoint, oRect, dragType } = this.state
 		const x = e.clientX - dragpoint.x
 		const y = e.clientY - dragpoint.y
@@ -122,7 +126,7 @@ class Rectangle extends Component<IProps, IState> {
 	/**
 	 * 拖动选框/调整选框大小
 	 */
-	switchDragType = e => {
+	switchDragType = (e: MouseEvent) => {
 		const { dragType } = this.state
 		switch (dragType) {
 			case 'm':
@@ -176,11 +180,11 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	render() {
-		const { style } = this.state
+		const { style, canvasRef } = this.state
 		return (
 			<div className="rectangle" style={style}>
 				<div className="size">{`${style.width} * ${style.height}`}</div>
-				<Toolbar />
+				<Toolbar canvasRef={canvasRef} />
 				<canvas
 					ref={this.setCanvasRef}
 					width={style.width}

@@ -2109,6 +2109,9 @@ var browserWindowProps = function (display) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! electron */ "electron");
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
+
 
 var Events = /** @class */ (function () {
     function Events(props) {
@@ -2116,24 +2119,24 @@ var Events = /** @class */ (function () {
         this.captureWins = [];
         // 正在截屏
         this.isCapturing = false;
-        console.log("init");
+        console.log('init');
         this.captureWins = props.captureWins;
         this.bindOnShow();
         this.bindOnHide();
         this.bindEsc();
         this.show();
+        this.bindDownload();
     }
     /**
      * 绑定窗口显示事件
      */
     Events.prototype.bindOnShow = function () {
         var _this = this;
-        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on("ShortcutCapture::SHOW", function () {
+        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('ShortcutCapture::SHOW', function () {
             _this.show();
         });
     };
     Events.prototype.show = function () {
-        console.log("show", this.isCapturing);
         if (this.isCapturing) {
             return;
         }
@@ -2151,7 +2154,7 @@ var Events = /** @class */ (function () {
      */
     Events.prototype.bindOnHide = function () {
         var _this = this;
-        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on("ShortcutCapture::HIDE", function () {
+        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('ShortcutCapture::HIDE', function () {
             _this.hide();
         });
     };
@@ -2171,7 +2174,7 @@ var Events = /** @class */ (function () {
      */
     Events.prototype.bindEsc = function () {
         var _this = this;
-        electron__WEBPACK_IMPORTED_MODULE_0__["globalShortcut"].register("esc", function () {
+        electron__WEBPACK_IMPORTED_MODULE_0__["globalShortcut"].register('esc', function () {
             _this.hide();
         });
     };
@@ -2179,7 +2182,29 @@ var Events = /** @class */ (function () {
      * 解绑esc退出截图
      */
     Events.prototype.unBindEsc = function () {
-        electron__WEBPACK_IMPORTED_MODULE_0__["globalShortcut"].unregister("esc");
+        electron__WEBPACK_IMPORTED_MODULE_0__["globalShortcut"].unregister('esc');
+    };
+    /**
+     * 监听下载事件
+     */
+    Events.prototype.bindDownload = function () {
+        var _this = this;
+        electron__WEBPACK_IMPORTED_MODULE_0__["ipcMain"].on('download', function (_, _a) {
+            var currWin = _a.currWin, dataURL = _a.dataURL;
+            var base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '');
+            var dataBuffer = new Buffer(base64Data, 'base64');
+            var filename = new Date().getTime() + '.png';
+            var path = electron__WEBPACK_IMPORTED_MODULE_0__["dialog"].showSaveDialogSync(currWin, {
+                defaultPath: filename
+            });
+            try {
+                fs__WEBPACK_IMPORTED_MODULE_1___default.a.writeFileSync(path, dataBuffer);
+            }
+            catch (err) {
+                console.log('下载失败：' + err);
+            }
+            _this.hide();
+        });
     };
     return Events;
 }());
@@ -2287,6 +2312,17 @@ var ShortcutCapture = /** @class */ (function () {
 /***/ (function(module, exports) {
 
 module.exports = require("electron");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
 
 /***/ }),
 

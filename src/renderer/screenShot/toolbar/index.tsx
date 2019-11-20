@@ -3,13 +3,29 @@ import React from 'react'
 import completePng from '../assets/imgs/complete.png'
 import cancelPng from '../assets/imgs/cancel.png'
 import downloadPng from '../assets/imgs/download.png'
+import { hide } from '../events'
+import { download } from '../events'
 import './index.scss'
 
-const ToolBar: React.FC = () => {
+interface IProps {
+	canvasRef: HTMLCanvasElement
+}
+
+const ToolBar: React.FC<IProps> = ({ canvasRef }) => {
 	const tools = [
 		{ icon: completePng, click: () => {} },
-		{ icon: cancelPng, click: () => {} },
-		{ icon: downloadPng, click: () => {} }
+		{
+			icon: cancelPng,
+			click: () => {
+				hide()
+			}
+		},
+		{
+			icon: downloadPng,
+			click: () => {
+				download(canvasRef)
+			}
+		}
 	]
 
 	return (

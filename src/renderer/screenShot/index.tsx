@@ -4,6 +4,7 @@ import { get } from 'lodash'
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
+import { hide } from './events'
 
 const ScreenShot: React.FC = () => {
 	const [rect, setRect] = React.useState({ x1: 0, y1: 0, x2: 0, y2: 0 })
@@ -12,7 +13,11 @@ const ScreenShot: React.FC = () => {
 		CanvasRenderingContext2D
 	>(null)
 
-	React.useEffect(() => {}, [])
+	React.useEffect(() => {
+		window.addEventListener('contextmenu', () => {
+			hide()
+		})
+	}, [])
 
 	const bounds = React.useMemo(() => {
 		return {

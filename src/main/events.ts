@@ -8,6 +8,8 @@ import {
 } from 'electron'
 import fs from 'fs'
 
+import { URL } from './config'
+
 class Events {
 	constructor(props) {
 		this.captureWins = props.captureWins
@@ -40,7 +42,7 @@ class Events {
 		} else {
 			this.isCapturing = true
 			this.captureWins.map((v, idx) => {
-				v.loadURL(`http://localhost:8081`)
+				v.loadURL(URL)
 				v.setVisibleOnAllWorkspaces(true)
 				v.setAlwaysOnTop(true, 'screen-saver')
 			})

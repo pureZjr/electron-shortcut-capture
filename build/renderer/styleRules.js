@@ -1,7 +1,9 @@
-const path = require('path')
+const { resolveUnderRootDir } = require('../utils')
 
-module.exports = [{
-    test: /\.scss$/,
-    include: [path.join(__dirname, '../../src/renderer')],
-    use: ['style-loader', 'css-loader', 'sass-loader']
-}]
+module.exports = [
+	{
+		test: /\.scss$/,
+		include: [resolveUnderRootDir('src/renderer')],
+		use: ['style-loader', 'css-loader', 'sass-loader']
+	}
+]

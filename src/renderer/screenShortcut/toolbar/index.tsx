@@ -38,7 +38,7 @@ const ToolBar: React.FC<IProps> = ({ canvasRef, style }) => {
 			{tools.map((v, idx) => {
 				return (
 					<div className="item" key={idx} onClick={v.click}>
-						<img src={v.icon} width={30} height={30} />
+						<img src={v.icon} width={18} height={18} />
 					</div>
 				)
 			})}

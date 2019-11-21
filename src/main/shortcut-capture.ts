@@ -31,6 +31,7 @@ export default class ShortcutCapture {
 	 * 绑定快捷键开启截图
 	 */
 	bindShortcutCapture() {
+		this.initWin()
 		if (!this.hasRegisterShortcutCapture) {
 			globalShortcut.register('shift+alt+w', () => {
 				this.hasRegisterShortcutCapture = true

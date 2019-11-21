@@ -4,11 +4,12 @@ import './index.scss'
 
 interface IProps {
 	capturingDisplayId: number
-	onDraw: ({ x1: x, y1: y, x2, y2 }) => void
+	onDraw: (args: ScreenShortcut.IRect) => void
 }
 
 const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {
 	const [isMoving, setIsMoving] = React.useState(false)
+	// 框图起始点
 	const [point, setPoint] = React.useState({ x: 0, y: 0 })
 
 	React.useEffect(() => {
@@ -27,7 +28,6 @@ const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {
 	const mouseup = () => {
 		setIsMoving(false)
 	}
-
 	const draw = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		const { x, y } = point
 		const x2 = e.clientX
@@ -36,7 +36,6 @@ const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {
 			onDraw({ x1: x, y1: y, x2, y2 })
 		}
 	}
-
 	const bgColor = () => {
 		if (!capturingDisplayId) {
 			return {}

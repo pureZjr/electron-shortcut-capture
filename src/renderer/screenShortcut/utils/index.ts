@@ -17,7 +17,7 @@ export const getSource: (display: Electron.Display) => Promise<ISource> = (
 	return new Promise((resolve, reject) => {
 		desktopCapturer.getSources(
 			{
-				types: ['screen', 'window'],
+				types: ['screen'],
 				thumbnailSize: {
 					width: display.size.width,
 					height: display.size.height

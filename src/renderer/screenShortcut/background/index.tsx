@@ -4,7 +4,7 @@ import { getSource, getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
-	rect: { x1: number; y1: number; x2: number; y2: number }
+	rect: ScreenShortcut.IRect
 	rectangleCtx: CanvasRenderingContext2D
 	setDisplay: (display: Electron.Display) => void
 }

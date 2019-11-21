@@ -17,13 +17,14 @@ export const getSource: (display: Electron.Display) => Promise<ISource> = (
 	return new Promise((resolve, reject) => {
 		desktopCapturer.getSources(
 			{
-				types: ['screen'],
+				types: ['screen', 'window'],
 				thumbnailSize: {
 					width: display.size.width,
 					height: display.size.height
 				}
 			},
 			(error, sources) => {
+				console.log(sources)
 				if (error) return reject(error)
 				const currSourceItem = sources.filter(
 					v => Number(display.id) === Number(v.display_id)

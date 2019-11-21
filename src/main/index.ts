@@ -3,8 +3,11 @@ import { app } from 'electron'
 import ShortcutCapture from './shortcut-capture'
 
 app.on('ready', () => {
-	// 调试
-	debug({ showDevTools: true, devToolsMode: 'right' })
+	// debug({ devToolsMode: 'right', showDevTools: true })
+	// 调试F12
+	// globalShortcut.register('f12', () => {
+	// 	debug({ devToolsMode: 'right', showDevTools: true })
+	// })
 	new ShortcutCapture()
 	// sc.on("capture", ({ dataURL, bounds }) => console.log("capture", bounds));
 })

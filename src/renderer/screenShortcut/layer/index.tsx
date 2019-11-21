@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
@@ -41,10 +40,8 @@ const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {
 	const bgColor = () => {
 		if (!capturingDisplayId) {
 			return {}
-		} else if (capturingDisplayId !== getCurrentDisplay().id) {
-			return { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
 		} else {
-			return { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+			return { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
 		}
 	}
 

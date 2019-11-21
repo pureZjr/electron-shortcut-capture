@@ -42,7 +42,7 @@ class Events {
 			this.captureWins.map((v, idx) => {
 				v.loadURL(`http://localhost:8081`)
 				v.setVisibleOnAllWorkspaces(true)
-				v.show()
+				v.setAlwaysOnTop(true, 'screen-saver')
 			})
 		}
 	}

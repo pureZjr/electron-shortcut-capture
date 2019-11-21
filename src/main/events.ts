@@ -7,8 +7,7 @@ import {
 	nativeImage
 } from 'electron'
 import fs from 'fs'
-
-import { URL } from './config'
+import path from 'path'
 
 class Events {
 	constructor(props) {
@@ -27,6 +26,11 @@ class Events {
 	// 正在截屏
 	private isCapturing = false
 
+	private URL =
+		process.env.NODE_ENV === 'development'
+			? 'http://localhost:8888'
+			: `file://${path.join(__dirname, '../../dist/renderer/index.html')}`
+
 	/**
 	 * 绑定窗口显示事件
 	 */
@@ -42,7 +46,7 @@ class Events {
 		} else {
 			this.isCapturing = true
 			this.captureWins.map((v, idx) => {
-				v.loadURL(URL)
+				v.loadURL(this.URL)
 				v.setVisibleOnAllWorkspaces(true)
 				v.setAlwaysOnTop(true, 'screen-saver')
 			})

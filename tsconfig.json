@@ -6,7 +6,6 @@
 		"baseUrl": ".",
 		"jsx": "react",
 		"allowSyntheticDefaultImports": true,
-		"sourceMap": true,
 		"removeComments": false,
 		"alwaysStrict": true,
 		"allowJs": true,

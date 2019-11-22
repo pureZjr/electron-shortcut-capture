@@ -2184,6 +2184,11 @@ var ShortcutCapture = /** @class */ (function () {
         });
         this.captureWins = [];
     };
+    ShortcutCapture.prototype.hide = function () {
+        this.captureWins.map(function (v, idx) {
+            v.hide();
+        });
+    };
     /**
      * 监听下载事件
      */
@@ -2191,10 +2196,11 @@ var ShortcutCapture = /** @class */ (function () {
         var _this = this;
         electron_1.ipcMain.on(constant_1.events.download, function (_, _a) {
             var currWin = _a.currWin, dataURL = _a.dataURL;
+            _this.hide();
             var base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '');
             var dataBuffer = Buffer.from(base64Data, 'base64');
             var filename = new Date().getTime() + '.png';
-            var path = electron_1.dialog.showSaveDialogSync(currWin, {
+            var path = electron_1.dialog.showSaveDialogSync({
                 defaultPath: filename
             });
             try {

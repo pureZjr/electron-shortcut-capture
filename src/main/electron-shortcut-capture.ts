@@ -73,15 +73,22 @@ export default class ShortcutCapture {
 		this.captureWins = []
 	}
 
+	hide() {
+		this.captureWins.map((v, idx) => {
+			v.hide()
+		})
+	}
+
 	/**
 	 * 监听下载事件
 	 */
 	private bindDownload() {
 		ipcMain.on(events.download, (_, { currWin, dataURL }) => {
+			this.hide()
 			const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '')
 			const dataBuffer = Buffer.from(base64Data, 'base64')
 			const filename = new Date().getTime() + '.png'
-			const path = dialog.showSaveDialogSync(currWin, {
+			const path = dialog.showSaveDialogSync({
 				defaultPath: filename
 			})
 			try {

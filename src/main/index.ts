@@ -1,11 +1,10 @@
 // import debug from 'electron-debug'
 import { app } from 'electron'
-import ShortcutCapture from './shortcut-capture'
+import ElectronShortcutCapture from './electron-shortcut-capture'
 
 app.on('ready', () => {
 	// debug({ devToolsMode: 'right', showDevTools: true })
-	new ShortcutCapture()
-	// sc.on("capture", ({ dataURL, bounds }) => console.log("capture", bounds));
+	new ElectronShortcutCapture().show()
 })
 
 app.on('window-all-closed', () => {

@@ -1,10 +1,12 @@
 import { ipcRenderer, remote } from 'electron'
 
+import { events } from '../../constant'
+
 /**
  * 取消截图
  */
 export const hide = () => {
-	ipcRenderer.send('ShortcutCapture::HIDE')
+	ipcRenderer.send(events.close)
 }
 
 /**
@@ -13,7 +15,7 @@ export const hide = () => {
 export const download = (canvas: HTMLCanvasElement) => {
 	const dataURL = canvas.toDataURL('image/png')
 	const currWin = remote.getCurrentWindow
-	ipcRenderer.send('download', { currWin, dataURL })
+	ipcRenderer.send(events.download, { currWin, dataURL })
 }
 
 /**
@@ -21,12 +23,12 @@ export const download = (canvas: HTMLCanvasElement) => {
  */
 export const clipboard = (canvas: HTMLCanvasElement) => {
 	const dataURL = canvas.toDataURL('image/png')
-	ipcRenderer.send('clipboard', dataURL)
+	ipcRenderer.send(events.clipboard, dataURL)
 }
 
 /**
  * 当前正在截图的显示器
  */
 export const setCapturingDisplay = (displayId: number) => {
-	ipcRenderer.send('setCapturingDisplayId', displayId)
+	ipcRenderer.send(events.setCapturingDisplayId, displayId)
 }

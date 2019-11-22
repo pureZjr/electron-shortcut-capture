@@ -11,6 +11,10 @@
 		"build": "npm run build:renderer && npm run build:main",
 		"release": "npm run build && npm publish"
 	},
+	"files": [
+		"dist/**",
+		"typings/ElectronShortcutCapture.d.ts"
+	],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {

@@ -2134,8 +2134,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var electron_1 = __webpack_require__(/*! electron */ "electron");
 var browserWindowProps_1 = __webpack_require__(/*! ./browserWindowProps */ "./src/main/browserWindowProps.ts");
 var constant_1 = __webpack_require__(/*! ../constant */ "./src/constant/index.ts");
-var ShortcutCapture = /** @class */ (function () {
-    function ShortcutCapture() {
+var electronShortcutCapture = /** @class */ (function () {
+    function electronShortcutCapture() {
         // 显示器数组
         this.captureWins = [];
         this.bindClose();
@@ -2146,7 +2146,7 @@ var ShortcutCapture = /** @class */ (function () {
     /**
      * 初始化窗口
      */
-    ShortcutCapture.prototype.initWin = function () {
+    electronShortcutCapture.prototype.initWin = function () {
         // 获取设备所有显示器
         var displays = electron_1.screen.getAllDisplays();
         this.captureWins = displays.map(function (display) {
@@ -2156,7 +2156,7 @@ var ShortcutCapture = /** @class */ (function () {
             return captureWin;
         });
         this.captureWins.map(function (v, idx) {
-            v.loadURL(ShortcutCapture.URL);
+            v.loadURL(electronShortcutCapture.URL);
             v.setVisibleOnAllWorkspaces(true);
             v.setAlwaysOnTop(true, 'screen-saver');
         });
@@ -2164,19 +2164,19 @@ var ShortcutCapture = /** @class */ (function () {
     /**
      * 打开截图
      */
-    ShortcutCapture.prototype.show = function () {
+    electronShortcutCapture.prototype.show = function () {
         this.initWin();
     };
     /**
      * 绑定窗口隐藏事件
      */
-    ShortcutCapture.prototype.bindClose = function () {
+    electronShortcutCapture.prototype.bindClose = function () {
         var _this = this;
         electron_1.ipcMain.on(constant_1.events.close, function () {
             _this.close();
         });
     };
-    ShortcutCapture.prototype.close = function () {
+    electronShortcutCapture.prototype.close = function () {
         this.captureWins.map(function (v, idx) {
             v.setVisibleOnAllWorkspaces(false);
             v.close();
@@ -2184,7 +2184,7 @@ var ShortcutCapture = /** @class */ (function () {
         });
         this.captureWins = [];
     };
-    ShortcutCapture.prototype.hide = function () {
+    electronShortcutCapture.prototype.hide = function () {
         this.captureWins.map(function (v, idx) {
             v.hide();
         });
@@ -2192,7 +2192,7 @@ var ShortcutCapture = /** @class */ (function () {
     /**
      * 监听下载事件
      */
-    ShortcutCapture.prototype.bindDownload = function () {
+    electronShortcutCapture.prototype.bindDownload = function () {
         var _this = this;
         electron_1.ipcMain.on(constant_1.events.download, function (_, _a) {
             var currWin = _a.currWin, dataURL = _a.dataURL;
@@ -2215,7 +2215,7 @@ var ShortcutCapture = /** @class */ (function () {
     /**
      * 绑定剪贴板事件
      */
-    ShortcutCapture.prototype.bindClipboard = function () {
+    electronShortcutCapture.prototype.bindClipboard = function () {
         var _this = this;
         electron_1.ipcMain.on(constant_1.events.clipboard, function (_, dataURL) {
             electron_1.clipboard.writeImage(electron_1.nativeImage.createFromDataURL(dataURL));
@@ -2225,7 +2225,7 @@ var ShortcutCapture = /** @class */ (function () {
     /**
      * 监听接收的操作截图的显示器id
      */
-    ShortcutCapture.prototype.listenCapturingDisplayId = function () {
+    electronShortcutCapture.prototype.listenCapturingDisplayId = function () {
         var _this = this;
         electron_1.ipcMain.on(constant_1.events.setCapturingDisplayId, function (_, displayId) {
             _this.captureWins.map(function (v) {
@@ -2233,12 +2233,12 @@ var ShortcutCapture = /** @class */ (function () {
             });
         });
     };
-    ShortcutCapture.URL =  true
+    electronShortcutCapture.URL =  true
         ? 'http://localhost:8888'
         : undefined;
-    return ShortcutCapture;
+    return electronShortcutCapture;
 }());
-exports.default = ShortcutCapture;
+exports.default = electronShortcutCapture;
 
 
 /***/ }),

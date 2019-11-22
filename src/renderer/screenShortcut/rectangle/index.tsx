@@ -7,9 +7,9 @@ import { setCapturingDisplay } from '../events'
 import './index.scss'
 
 interface IProps {
-	rect: ScreenShortcut.IRect
-	onShift: (args: ScreenShortcut.IRect) => void
-	onResize: (args: ScreenShortcut.IRect) => void
+	rect: ElectronShortcutCapture.IRect
+	onShift: (args: ElectronShortcutCapture.IRect) => void
+	onResize: (args: ElectronShortcutCapture.IRect) => void
 	bounds: { x: number; y: number; width: number; height: number }
 	capturingDisplayId: number
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void

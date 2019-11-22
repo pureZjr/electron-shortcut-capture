@@ -7,7 +7,7 @@ import Layer from './layer'
 import { hide } from './events'
 
 const ScreenShot: React.FC = () => {
-	const [rect, setRect] = React.useState<ScreenShortcut.IRect>({
+	const [rect, setRect] = React.useState<ElectronShortcutCapture.IRect>({
 		x1: 0,
 		y1: 0,
 		x2: 0,
@@ -45,25 +45,25 @@ const ScreenShot: React.FC = () => {
 		return bounds.height
 	}, [bounds])
 
-	const onResize = (rect: ScreenShortcut.IRect) => {
+	const onResize = (rect: ElectronShortcutCapture.IRect) => {
 		drawRectangle(rect)
 	}
 
-	const onShift = (rect: ScreenShortcut.IRect) => {
+	const onShift = (rect: ElectronShortcutCapture.IRect) => {
 		drawRectangle(rect)
 	}
 
 	/**
 	 * 画矩形
 	 */
-	const onDraw = (rect: ScreenShortcut.IRect) => {
+	const onDraw = (rect: ElectronShortcutCapture.IRect) => {
 		drawRectangle(rect)
 	}
 
 	/**
 	 * 修正矩形坐标
 	 */
-	const getRect = ({ x1, y1, x2, y2 }: ScreenShortcut.IRect) => {
+	const getRect = ({ x1, y1, x2, y2 }: ElectronShortcutCapture.IRect) => {
 		const x = x1
 		const y = y1
 		if (x1 > x2) {
@@ -96,7 +96,7 @@ const ScreenShot: React.FC = () => {
 		return { x1, y1, x2, y2 }
 	}
 
-	const drawRectangle = (rect: ScreenShortcut.IRect) => {
+	const drawRectangle = (rect: ElectronShortcutCapture.IRect) => {
 		setRect(getRect(rect))
 	}
 

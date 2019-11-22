@@ -10,7 +10,7 @@ import {
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
 
-export default class ShortcutCapture {
+export default class electronShortcutCapture {
 	constructor() {
 		this.bindClose()
 		this.bindClipboard()
@@ -42,7 +42,7 @@ export default class ShortcutCapture {
 		})
 
 		this.captureWins.map((v, idx) => {
-			v.loadURL(ShortcutCapture.URL)
+			v.loadURL(electronShortcutCapture.URL)
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')
 		})

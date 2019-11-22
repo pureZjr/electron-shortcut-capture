@@ -4,7 +4,7 @@ import './index.scss'
 
 interface IProps {
 	capturingDisplayId: number
-	onDraw: (args: ScreenShortcut.IRect) => void
+	onDraw: (args: ElectronShortcutCapture.IRect) => void
 }
 
 const Layer: React.FC<IProps> = ({ onDraw, capturingDisplayId }) => {

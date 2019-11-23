@@ -240,7 +240,7 @@ class Rectangle extends Component<IProps, IState> {
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{
-						bottom: `${isShortcutFullScreen ? '5px' : '-45px'}`
+						bottom: `${isShortcutFullScreen ? '5px' : '-55px'}`
 					}}
 				/>
 				<canvas

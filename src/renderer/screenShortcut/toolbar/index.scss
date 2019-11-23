@@ -1,12 +1,13 @@
 .toolbar {
 	align-items: center;
-	background: #000;
+	background: #4c453c;
 	border-radius: 2px;
 	display: flex;
 	flex-direction: row-reverse;
 	padding: 6px;
 	position: absolute;
 	right: 0;
+	z-index: 101;
 
 	.item {
 		align-items: center;

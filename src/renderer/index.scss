@@ -20,3 +20,8 @@ body,
 	right: 0;
 	top: 0;
 }
+
+svg:not(.no-fill),
+svg:not(.no-fill) path {
+	fill: currentcolor;
+}

@@ -1,9 +1,9 @@
 import React from 'react'
 
-import completePng from '../assets/imgs/complete.png'
-import cancelPng from '../assets/imgs/cancel.png'
-import downloadPng from '../assets/imgs/download.png'
-import { hide, download, clipboard } from '../events'
+import IconComplete from '../assets/svg/sure.svg'
+import IconCancel from '../assets/svg/cancel.svg'
+import IconDownload from '../assets/svg/download.svg'
+import { close, download, clipboard } from '../events'
 import './index.scss'
 
 interface IProps {
@@ -14,19 +14,19 @@ interface IProps {
 const ToolBar: React.FC<IProps> = ({ canvasRef, style }) => {
 	const tools = [
 		{
-			icon: completePng,
+			icon: <IconComplete width={18} height={18} color="#4a6a39" />,
 			click: () => {
 				clipboard(canvasRef)
 			}
 		},
 		{
-			icon: cancelPng,
+			icon: <IconCancel width={18} height={18} color="#a13940" />,
 			click: () => {
-				hide()
+				close()
 			}
 		},
 		{
-			icon: downloadPng,
+			icon: <IconDownload width={18} height={18} color="#c5b3a5" />,
 			click: () => {
 				download(canvasRef)
 			}
@@ -38,7 +38,7 @@ const ToolBar: React.FC<IProps> = ({ canvasRef, style }) => {
 			{tools.map((v, idx) => {
 				return (
 					<div className="item" key={idx} onClick={v.click}>
-						<img src={v.icon} width={18} height={18} />
+						{v.icon}
 					</div>
 				)
 			})}

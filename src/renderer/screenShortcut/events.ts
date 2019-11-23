@@ -5,7 +5,7 @@ import { events } from '../../constant'
 /**
  * 取消截图
  */
-export const hide = () => {
+export const close = () => {
 	ipcRenderer.send(events.close)
 }
 

@@ -44,7 +44,6 @@ export default class electronShortcutCapture {
 			// 获取设备所有显示器
 			displays = screen.getAllDisplays()
 		}
-		console.log(displays.length)
 		this.captureWins = displays.map(display => {
 			const captureWin = new BrowserWindow(browserWindowProps(display))
 			// 清除simpleFullscreen状态

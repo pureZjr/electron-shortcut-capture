@@ -4,7 +4,7 @@ import { get } from 'lodash'
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
-import { hide } from './events'
+import { close } from './events'
 
 const ScreenShot: React.FC = () => {
 	const [rect, setRect] = React.useState<ElectronShortcutCapture.IRect>({
@@ -24,7 +24,7 @@ const ScreenShot: React.FC = () => {
 
 	React.useEffect(() => {
 		window.addEventListener('contextmenu', () => {
-			hide()
+			close()
 		})
 	}, [])
 
@@ -116,7 +116,7 @@ const ScreenShot: React.FC = () => {
 				capturingDisplayId={capturingDisplayId}
 				setCapturingDisplayId={setCapturingDisplayId}
 			/>
-			<Layer onDraw={onDraw} capturingDisplayId={capturingDisplayId} />
+			<Layer onDraw={onDraw} />
 		</Fragment>
 	)
 }

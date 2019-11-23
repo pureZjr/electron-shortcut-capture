@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron'
 import Toolbar from '../toolbar'
 import { getCurrentDisplay } from '../utils'
 import { setCapturingDisplay } from '../events'
+import { events } from '../../../constant'
 import './index.scss'
 
 interface IProps {
@@ -176,11 +177,14 @@ class Rectangle extends Component<IProps, IState> {
 	 * 监听接收的操作截图的显示器id
 	 */
 	listenCapturingDisplayId = () => {
-		ipcRenderer.on('receiveCapturingDisplayId', (_, displayId: number) => {
-			if (!this.props.capturingDisplayId) {
-				this.props.setCapturingDisplayId(displayId)
+		ipcRenderer.on(
+			events.receiveCapturingDisplayId,
+			(_, displayId: number) => {
+				if (!this.props.capturingDisplayId) {
+					this.props.setCapturingDisplayId(displayId)
+				}
 			}
-		})
+		)
 	}
 
 	shortcutDisabled = () => {

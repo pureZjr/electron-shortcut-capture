@@ -11,12 +11,12 @@ import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
 
 export default class electronShortcutCapture {
-	constructor(props: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
+	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.bindClose()
 		this.bindClipboard()
 		this.bindDownload()
 		this.listenCapturingDisplayId()
-		this.multiScreen = !!props.multiScreen
+		this.multiScreen = !!props ? !!props.multiScreen : false
 	}
 	// 显示器数组
 	private captureWins: BrowserWindow[] = []
@@ -46,8 +46,6 @@ export default class electronShortcutCapture {
 		}
 		this.captureWins = displays.map(display => {
 			const captureWin = new BrowserWindow(browserWindowProps(display))
-			// 清除simpleFullscreen状态
-			captureWin.on('close', () => captureWin.setSimpleFullScreen(false))
 			return captureWin
 		})
 
@@ -55,6 +53,8 @@ export default class electronShortcutCapture {
 			v.loadURL(electronShortcutCapture.URL)
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')
+			console.log(this.multiScreen)
+			v.webContents.send('multiScreen', this.multiScreen)
 		})
 	}
 

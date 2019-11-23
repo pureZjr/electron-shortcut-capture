@@ -23,6 +23,9 @@ import ElectronShortcutCapture from 'electron-shortcut-capture'
 const electronShortcutCapture = new ElectronShortcutCapture({
 	multiScreen: false
 })
+
+electronShortcutCapture.show()
+
 ...
 ```
 

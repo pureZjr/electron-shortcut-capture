@@ -11,6 +11,12 @@
 		"build": "npm run build:renderer && npm run build:main",
 		"release": "npm run build && npm publish"
 	},
+	"keywords": [
+		"electron-shortcut-capture",
+		"electron",
+		"shortcut-capture",
+		"截图"
+	],
 	"files": [
 		"dist/**"
 	],

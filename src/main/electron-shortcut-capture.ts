@@ -91,7 +91,7 @@ export default class electronShortcutCapture {
 	 * 监听下载事件
 	 */
 	private bindDownload() {
-		ipcMain.on(events.download, (_, { currWin, dataURL }) => {
+		ipcMain.on(events.download, (_, { dataURL }) => {
 			this.hide()
 			const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '')
 			const dataBuffer = Buffer.from(base64Data, 'base64')

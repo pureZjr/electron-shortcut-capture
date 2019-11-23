@@ -1,4 +1,4 @@
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
 
 import { events } from '../../constant'
 
@@ -14,8 +14,7 @@ export const close = () => {
  */
 export const download = (canvas: HTMLCanvasElement) => {
 	const dataURL = canvas.toDataURL('image/png')
-	const currWin = remote.getCurrentWindow
-	ipcRenderer.send(events.download, { currWin, dataURL })
+	ipcRenderer.send(events.download, { dataURL })
 }
 
 /**

@@ -2147,7 +2147,6 @@ var electronShortcutCapture = /** @class */ (function () {
      * 初始化窗口
      */
     electronShortcutCapture.prototype.initWin = function () {
-        var _this = this;
         var displays = [];
         if (!this.multiScreen) {
             var mousePoint = electron_1.screen.getCursorScreenPoint();
@@ -2166,8 +2165,6 @@ var electronShortcutCapture = /** @class */ (function () {
             v.loadURL(electronShortcutCapture.URL);
             v.setVisibleOnAllWorkspaces(true);
             v.setAlwaysOnTop(true, 'screen-saver');
-            console.log(_this.multiScreen);
-            v.webContents.send('multiScreen', _this.multiScreen);
         });
     };
     /**

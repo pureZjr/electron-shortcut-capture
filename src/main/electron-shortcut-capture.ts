@@ -53,8 +53,6 @@ export default class electronShortcutCapture {
 			v.loadURL(electronShortcutCapture.URL)
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')
-			console.log(this.multiScreen)
-			v.webContents.send('multiScreen', this.multiScreen)
 		})
 	}
 

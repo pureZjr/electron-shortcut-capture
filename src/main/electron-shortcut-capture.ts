@@ -53,6 +53,12 @@ export default class electronShortcutCapture {
 			v.loadURL(electronShortcutCapture.URL)
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')
+			this.getScreenSources({
+				win: v,
+				displayId: displays[idx].id,
+				width: displays[idx].size.width,
+				height: displays[idx].size.height
+			})
 		})
 	}
 
@@ -127,5 +133,37 @@ export default class electronShortcutCapture {
 				v.webContents.send(events.receiveCapturingDisplayId, displayId)
 			})
 		})
+	}
+
+	/**
+	 * 主线程调用desktopCapturer获取显示器背景
+	 */
+	private getScreenSources = (args: {
+		win: BrowserWindow
+		displayId: number
+		width: number
+		height: number
+	}) => {
+		const desktopCapture = (process as any)
+			.electronBinding('desktop_capturer')
+			.createDesktopCapturer()
+		desktopCapture.emit = (event, _, sources) => {
+			for (let i = 0; i < sources.length; i++) {
+				if (Number(sources[i].display_id) === Number(args.displayId)) {
+					args.win.webContents.send(
+						events.screenSourcesToPng,
+						sources[i].thumbnail.toPNG()
+					)
+					break
+				}
+			}
+		}
+
+		desktopCapture.startHandling(
+			false,
+			true,
+			{ width: args.width, height: args.height },
+			true
+		)
 	}
 }

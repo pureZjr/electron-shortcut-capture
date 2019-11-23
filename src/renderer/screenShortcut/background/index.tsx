@@ -44,9 +44,9 @@ const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
 	const drawBackground = async (display: Electron.Display) => {
 		const source = await getSource(display)
 		const currCtx = canvasRef.current.getContext('2d')
-		const { width, height, x, y, thumbnail } = source
+		const { width, height, x, y, toPngSource } = source
 		const $img = new Image()
-		const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
+		const blob = new Blob([toPngSource], { type: 'image/png' })
 		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
 			currCtx.drawImage($img, 0, 0, width, height, x, y, width, height)

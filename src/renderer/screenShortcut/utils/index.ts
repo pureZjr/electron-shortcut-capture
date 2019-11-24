@@ -2,31 +2,22 @@ import { remote, ipcRenderer } from 'electron'
 
 import { events } from '../../../constant/index'
 
-export interface ISource {
-	x: number
-	y: number
-	width: number
-	height: number
-	toPngSource: any
-}
-
 /**
  * 获取显示器资源
  */
-export const getSource: (display: Electron.Display) => Promise<ISource> = (
-	display: Electron.Display
+export const getSource = (
+	cb: (source: ElectronShortcutCapture.ISource) => void
 ) => {
-	return new Promise((resolve, reject) => {
-		ipcRenderer.on(events.screenSourcesToPng, (_, toPngSource) => {
-			resolve({
-				x: 0,
-				y: 0,
-				width: display.size.width,
-				height: display.size.height,
+	ipcRenderer.once(
+		events.screenSourcesToPng,
+		(_, { toPngSource, width, height }) => {
+			cb({
+				width,
+				height,
 				toPngSource
 			})
-		})
-	})
+		}
+	)
 }
 
 /**

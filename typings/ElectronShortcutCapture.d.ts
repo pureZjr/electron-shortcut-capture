@@ -17,4 +17,10 @@ declare namespace ElectronShortcutCapture {
 		 */
 		multiScreen: boolean
 	}
+
+	interface ISource {
+		width: number
+		height: number
+		toPngSource: any
+	}
 }

@@ -1,15 +1,21 @@
 import React from 'react'
 
-import { getSource, getCurrentDisplay } from '../utils'
+import { getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
 	rect: ElectronShortcutCapture.IRect
 	rectangleCtx: CanvasRenderingContext2D
+	source: ElectronShortcutCapture.ISource
 	setDisplay: (display: Electron.Display) => void
 }
 
-const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
+const Background: React.FC<IProps> = ({
+	rect,
+	rectangleCtx,
+	setDisplay,
+	source
+}) => {
 	const [width, setWidth] = React.useState(0)
 	const [height, setHeight] = React.useState(0)
 
@@ -20,8 +26,13 @@ const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
 		setWidth(currDisplay.size.width)
 		setHeight(currDisplay.size.height)
 		setDisplay(currDisplay)
-		drawBackground(currDisplay)
 	}, [])
+
+	React.useEffect(() => {
+		if (!!source) {
+			drawBackground()
+		}
+	}, [source])
 
 	React.useEffect(() => {
 		// 画框中的图
@@ -41,15 +52,15 @@ const Background: React.FC<IProps> = ({ rect, rectangleCtx, setDisplay }) => {
 		}
 	}, [rect])
 
-	const drawBackground = async (display: Electron.Display) => {
-		const source = await getSource(display)
+	const drawBackground = () => {
+		console.log(source)
 		const currCtx = canvasRef.current.getContext('2d')
-		const { width, height, x, y, toPngSource } = source
+		const { width, height, toPngSource } = source
 		const $img = new Image()
 		const blob = new Blob([toPngSource], { type: 'image/png' })
 		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
-			currCtx.drawImage($img, 0, 0, width, height, x, y, width, height)
+			currCtx.drawImage($img, 0, 0, width, height, 0, 0, width, height)
 		})
 	}
 

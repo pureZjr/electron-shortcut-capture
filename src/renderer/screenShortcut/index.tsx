@@ -5,6 +5,7 @@ import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
 import { close } from './events'
+import { getSource } from './utils'
 
 const ScreenShot: React.FC = () => {
 	const [rect, setRect] = React.useState<ElectronShortcutCapture.IRect>({
@@ -21,8 +22,12 @@ const ScreenShot: React.FC = () => {
 	const [capturingDisplayId, setCapturingDisplayId] = React.useState<number>(
 		null
 	)
+	const [source, setSource] = React.useState<ElectronShortcutCapture.ISource>(
+		null
+	)
 
 	React.useEffect(() => {
+		getSource(setSource)
 		window.addEventListener('contextmenu', () => {
 			close()
 		})
@@ -106,6 +111,7 @@ const ScreenShot: React.FC = () => {
 				setDisplay={setDisplay}
 				rectangleCtx={rectangleCtx}
 				rect={rect}
+				source={source}
 			/>
 			<Rectangle
 				onResize={onResize}

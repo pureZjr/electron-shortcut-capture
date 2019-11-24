@@ -107,6 +107,9 @@ export default class electronShortcutCapture {
 			const path = dialog.showSaveDialogSync({
 				defaultPath: filename
 			})
+			if (!path) {
+				return console.log('取消下载')
+			}
 			try {
 				require('fs').writeFileSync(path, dataBuffer)
 			} catch (err) {

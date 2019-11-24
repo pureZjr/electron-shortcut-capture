@@ -73,7 +73,7 @@ export default class electronShortcutCapture {
 	 * 绑定窗口隐藏事件
 	 */
 	private bindClose() {
-		ipcMain.on(events.close, () => {
+		ipcMain.once(events.close, () => {
 			this.close()
 		})
 	}
@@ -97,7 +97,7 @@ export default class electronShortcutCapture {
 	 * 监听下载事件
 	 */
 	private bindDownload() {
-		ipcMain.on(events.download, (_, { dataURL }) => {
+		ipcMain.once(events.download, (_, { dataURL }) => {
 			this.hide()
 			const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '')
 			const dataBuffer = Buffer.from(base64Data, 'base64')
@@ -118,7 +118,7 @@ export default class electronShortcutCapture {
 	 * 绑定剪贴板事件
 	 */
 	private bindClipboard() {
-		ipcMain.on(events.clipboard, (_, dataURL) => {
+		ipcMain.once(events.clipboard, (_, dataURL) => {
 			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
 			this.close()
 		})
@@ -128,7 +128,7 @@ export default class electronShortcutCapture {
 	 * 监听接收的操作截图的显示器id
 	 */
 	private listenCapturingDisplayId() {
-		ipcMain.on(events.setCapturingDisplayId, (_, displayId: number) => {
+		ipcMain.once(events.setCapturingDisplayId, (_, displayId: number) => {
 			this.captureWins.map(v => {
 				v.webContents.send(events.receiveCapturingDisplayId, displayId)
 			})

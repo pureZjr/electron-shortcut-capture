@@ -81,6 +81,10 @@ export default class electronShortcutCapture {
 	}
 
 	close() {
+		ipcMain.removeAllListeners(events.download)
+		ipcMain.removeAllListeners(events.close)
+		ipcMain.removeAllListeners(events.clipboard)
+		ipcMain.removeAllListeners(events.setCapturingDisplayId)
 		this.captureWins.map((v, idx) => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.close()

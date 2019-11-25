@@ -66,7 +66,7 @@ export default class electronShortcutCapture {
 	 */
 	show() {
 		this.handleCaptureWins = this.captureWins
-		const currentFocusDisplay = this.getCurrentFocusDisplay()
+		let currentFocusDisplay = this.getCurrentFocusDisplay()
 		if (!this.multiScreen) {
 			this.handleCaptureWins = this.captureWins.filter((_, idx) => {
 				return this.displays[idx].id === currentFocusDisplay.id
@@ -74,6 +74,9 @@ export default class electronShortcutCapture {
 		}
 
 		this.handleCaptureWins.forEach((v, idx) => {
+			currentFocusDisplay = !this.multiScreen
+				? currentFocusDisplay
+				: this.displays[idx]
 			this.getScreenSources({
 				win: v,
 				displayId: currentFocusDisplay.id,

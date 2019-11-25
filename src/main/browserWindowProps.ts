@@ -12,7 +12,7 @@ const browserWindowProps = (
 		type: 'desktop',
 		useContentSize: true,
 		frame: false,
-		show: true,
+		show: false,
 		transparent:
 			process.platform === 'darwin' || process.platform === 'win32',
 		// 窗口不可以可以改变尺寸

@@ -3,7 +3,7 @@ import { ipcRenderer } from 'electron'
 import { events } from '../../constant'
 
 /**
- * 取消截图
+ * 关闭截图
  */
 export const close = () => {
 	ipcRenderer.send(events.close)
@@ -30,4 +30,13 @@ export const clipboard = (canvas: HTMLCanvasElement) => {
  */
 export const setCapturingDisplay = (displayId: number) => {
 	ipcRenderer.send(events.setCapturingDisplayId, displayId)
+}
+
+/**
+ * 监听关闭截图
+ */
+export const listenClose = () => {
+	ipcRenderer.on(events.close, () => {
+		window.location.reload()
+	})
 }

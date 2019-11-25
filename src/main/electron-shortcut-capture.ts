@@ -12,16 +12,20 @@ import { events } from '../constant'
 
 export default class electronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
-		this.bindClose()
+		this.multiScreen = !!props ? !!props.multiScreen : false
+		this.initWin()
+		this.bindHide()
 		this.bindClipboard()
 		this.bindDownload()
 		this.listenCapturingDisplayId()
-		this.multiScreen = !!props ? !!props.multiScreen : false
 	}
+
 	// 显示器数组
 	private captureWins: BrowserWindow[] = []
 	// 允许多屏幕
 	private multiScreen: boolean = false
+	// 屏幕信息
+	private displays: Electron.Display[] = []
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -32,35 +36,26 @@ export default class electronShortcutCapture {
 			  )}`
 
 	/**
-	 * 初始化窗口
+	 * 获取当前鼠标所在的屏幕
+	 */
+	private getCurrentFocusDisplay = () => {
+		const mousePoint = screen.getCursorScreenPoint()
+		const display = screen.getDisplayNearestPoint(mousePoint)
+		return display
+	}
+
+	/**
+	 * 初始化窗口,打开预备窗口供使用，不用每次重新创建
 	 */
 	private initWin() {
-		let displays: Electron.Display[] = []
-		if (!this.multiScreen) {
-			const mousePoint = screen.getCursorScreenPoint()
-			const display = screen.getDisplayNearestPoint(mousePoint)
-			displays = [display]
-		} else {
-			// 获取设备所有显示器
-			displays = screen.getAllDisplays()
-		}
-		this.captureWins = displays.map(display => {
+		// 获取设备所有显示器
+		this.displays = screen.getAllDisplays()
+		this.captureWins = this.displays.map(display => {
 			const captureWin = new BrowserWindow(browserWindowProps(display))
 			return captureWin
 		})
-
-		this.captureWins.map((v, idx) => {
+		this.captureWins.forEach(v => {
 			v.loadURL(electronShortcutCapture.URL)
-			v.setVisibleOnAllWorkspaces(true)
-			v.setAlwaysOnTop(true, 'screen-saver')
-			setTimeout(() => {
-				this.getScreenSources({
-					win: v,
-					displayId: displays[idx].id,
-					width: displays[idx].size.width,
-					height: displays[idx].size.height
-				})
-			}, 300)
 		})
 	}
 
@@ -68,34 +63,42 @@ export default class electronShortcutCapture {
 	 * 打开截图
 	 */
 	show() {
-		this.initWin()
+		let handleCaptureWins = this.captureWins
+		const currentFocusDisplay = this.getCurrentFocusDisplay()
+		if (!this.multiScreen) {
+			handleCaptureWins = this.captureWins.filter((_, idx) => {
+				return this.displays[idx].id === currentFocusDisplay.id
+			})
+		}
+
+		handleCaptureWins.forEach((v, idx) => {
+			this.getScreenSources({
+				win: v,
+				displayId: currentFocusDisplay.id,
+				width: currentFocusDisplay.size.width,
+				height: currentFocusDisplay.size.height
+			})
+			// 设置窗口可以在全屏窗口之上显示。
+			v.setVisibleOnAllWorkspaces(true)
+			v.setAlwaysOnTop(true, 'screen-saver')
+			v.show()
+		})
 	}
 
 	/**
 	 * 绑定窗口隐藏事件
 	 */
-	private bindClose() {
+	private bindHide() {
 		ipcMain.on(events.close, () => {
-			this.close()
+			this.hide()
 		})
-	}
-
-	close() {
-		ipcMain.removeAllListeners(events.download)
-		ipcMain.removeAllListeners(events.close)
-		ipcMain.removeAllListeners(events.clipboard)
-		ipcMain.removeAllListeners(events.setCapturingDisplayId)
-		this.captureWins.map((v, idx) => {
-			v.setVisibleOnAllWorkspaces(false)
-			v.close()
-			v = null
-		})
-		this.captureWins = []
 	}
 
 	private hide() {
-		this.captureWins.map((v, idx) => {
+		this.captureWins.forEach(v => {
+			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
+			v.webContents.send(events.close)
 		})
 	}
 
@@ -119,7 +122,7 @@ export default class electronShortcutCapture {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
-			this.close()
+			this.hide()
 		})
 	}
 
@@ -129,7 +132,7 @@ export default class electronShortcutCapture {
 	private bindClipboard() {
 		ipcMain.on(events.clipboard, (_, dataURL) => {
 			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
-			this.close()
+			this.hide()
 		})
 	}
 
@@ -138,7 +141,7 @@ export default class electronShortcutCapture {
 	 */
 	private listenCapturingDisplayId() {
 		ipcMain.on(events.setCapturingDisplayId, (_, displayId: number) => {
-			this.captureWins.map(v => {
+			this.captureWins.forEach(v => {
 				v.webContents.send(events.receiveCapturingDisplayId, displayId)
 			})
 		})

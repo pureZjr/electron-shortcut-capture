@@ -2,7 +2,7 @@ import { app, globalShortcut } from 'electron'
 import ElectronShortcutCapture from './electron-shortcut-capture'
 
 app.on('ready', () => {
-	require('electron-debug')({ devToolsMode: 'right', showDevTools: false })
+	require('electron-debug')({ devToolsMode: 'right', showDevTools: true })
 
 	globalShortcut.register('alt+shift+w', () => {
 		new ElectronShortcutCapture({

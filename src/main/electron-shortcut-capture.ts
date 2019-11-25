@@ -6,6 +6,7 @@ import {
 	clipboard,
 	nativeImage
 } from 'electron'
+import { EventEmitter } from 'events'
 
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
@@ -160,22 +161,36 @@ export default class electronShortcutCapture {
 		width: number
 		height: number
 	}) => {
-		const desktopCapture = (process as any)
+		let desktopCapture = (process as any)
 			.electronBinding('desktop_capturer')
 			.createDesktopCapturer()
-		desktopCapture.emit = (event, _, sources) => {
-			for (let i = 0; i < sources.length; i++) {
-				if (Number(sources[i].display_id) === Number(args.displayId)) {
-					args.win.webContents.send(events.screenSourcesToPng, {
-						toPngSource: sources[i].thumbnail.toPNG(),
-						width: args.width,
-						height: args.height
-					})
-					break
-				}
+
+		const stopRunning = () => {
+			if (desktopCapture) {
+				desktopCapture.emit = null
+				desktopCapture = null
 			}
 		}
-
+		const emitter = new EventEmitter()
+		emitter.once(
+			'finished',
+			(_, sources: Electron.DesktopCapturerSource[]) => {
+				stopRunning()
+				for (let i = 0; i < sources.length; i++) {
+					if (
+						Number(sources[i].display_id) === Number(args.displayId)
+					) {
+						args.win.webContents.send(events.screenSourcesToPng, {
+							toPngSource: sources[i].thumbnail.toPNG(),
+							width: args.width,
+							height: args.height
+						})
+						break
+					}
+				}
+			}
+		)
+		desktopCapture.emit = emitter.emit.bind(emitter)
 		desktopCapture.startHandling(
 			false,
 			true,

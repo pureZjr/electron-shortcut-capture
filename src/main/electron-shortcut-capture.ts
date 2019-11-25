@@ -29,6 +29,8 @@ export default class electronShortcutCapture {
 	private multiScreen: boolean = false
 	// 屏幕信息
 	private displays: Electron.Display[] = []
+	// 正在截图
+	private shortcuting: boolean = false
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -66,6 +68,10 @@ export default class electronShortcutCapture {
 	 * 打开截图
 	 */
 	show() {
+		if (this.shortcuting) {
+			return console.log('正在截图')
+		}
+		this.shortcuting = true
 		this.handleCaptureWins = this.captureWins
 		let currentFocusDisplay = this.getCurrentFocusDisplay()
 		if (!this.multiScreen) {
@@ -106,6 +112,7 @@ export default class electronShortcutCapture {
 			v.hide()
 			v.webContents.send(events.close)
 		})
+		this.shortcuting = false
 	}
 
 	/**

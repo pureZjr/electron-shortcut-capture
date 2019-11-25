@@ -22,6 +22,8 @@ export default class electronShortcutCapture {
 
 	// 显示器数组
 	private captureWins: BrowserWindow[] = []
+	// 当前需要操作显示器数组
+	private handleCaptureWins: BrowserWindow[] = []
 	// 允许多屏幕
 	private multiScreen: boolean = false
 	// 屏幕信息
@@ -63,15 +65,15 @@ export default class electronShortcutCapture {
 	 * 打开截图
 	 */
 	show() {
-		let handleCaptureWins = this.captureWins
+		this.handleCaptureWins = this.captureWins
 		const currentFocusDisplay = this.getCurrentFocusDisplay()
 		if (!this.multiScreen) {
-			handleCaptureWins = this.captureWins.filter((_, idx) => {
+			this.handleCaptureWins = this.captureWins.filter((_, idx) => {
 				return this.displays[idx].id === currentFocusDisplay.id
 			})
 		}
 
-		handleCaptureWins.forEach((v, idx) => {
+		this.handleCaptureWins.forEach((v, idx) => {
 			this.getScreenSources({
 				win: v,
 				displayId: currentFocusDisplay.id,
@@ -95,7 +97,7 @@ export default class electronShortcutCapture {
 	}
 
 	private hide() {
-		this.captureWins.forEach(v => {
+		this.handleCaptureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			v.webContents.send(events.close)
@@ -140,7 +142,7 @@ export default class electronShortcutCapture {
 	 */
 	private listenCapturingDisplayId() {
 		ipcMain.on(events.setCapturingDisplayId, (_, displayId: number) => {
-			this.captureWins.forEach(v => {
+			this.handleCaptureWins.forEach(v => {
 				v.webContents.send(events.receiveCapturingDisplayId, displayId)
 			})
 		})

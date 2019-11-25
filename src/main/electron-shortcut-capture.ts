@@ -122,7 +122,6 @@ export default class electronShortcutCapture {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
-			this.hide()
 		})
 	}
 

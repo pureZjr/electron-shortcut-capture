@@ -9,7 +9,7 @@ export function makecurve(
 
 	// 设置线条颜色
 	ctx.strokeStyle = 'red'
-	ctx.lineWidth = 1
+	ctx.lineWidth = 4
 	ctx.lineJoin = 'round'
 	ctx.lineCap = 'round'
 
@@ -32,6 +32,7 @@ export function makecurve(
 		const { x, y } = getPos(evt)
 		points.push({ x, y })
 		beginPoint = { x, y }
+		canvasRef.getContext('2d').beginPath()
 	}
 
 	function move(evt) {
@@ -66,6 +67,7 @@ export function makecurve(
 		beginPoint = null
 		isDown = false
 		points = []
+		canvasRef.getContext('2d').closePath()
 	}
 
 	function getPos(evt) {
@@ -89,6 +91,10 @@ export function makecurve(
 
 	return {
 		start: () => bind(),
-		close: () => unbind()
+		close: () => unbind(),
+		update: (args: { color?: string; lineWidth?: number }) => {
+			ctx.lineWidth = args.lineWidth || 4
+			ctx.strokeStyle = args.color || 'red'
+		}
 	}
 }

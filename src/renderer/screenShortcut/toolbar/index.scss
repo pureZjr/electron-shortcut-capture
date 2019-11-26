@@ -17,4 +17,48 @@
 		padding: 0 6px;
 		width: 30px;
 	}
+
+	.tool {
+		position: relative;
+	}
+}
+
+.setting-container {
+	background: #302b29;
+	border-radius: 4px;
+	height: 30px;
+	left: 0;
+	padding: 0 12px;
+	top: 35px;
+}
+
+.thickness {
+	align-items: center;
+	display: flex;
+	height: 100%;
+
+	.point {
+		background: #5e5a57;
+		border-radius: 50%;
+	}
+
+	.small {
+		height: 4px;
+		margin-right: 12px;
+		width: 4px;
+	}
+
+	.middle {
+		height: 9px;
+		margin-right: 12px;
+		width: 9px;
+	}
+
+	.large {
+		height: 12px;
+		width: 12px;
+	}
+	.active {
+		background: #fff;
+	}
 }

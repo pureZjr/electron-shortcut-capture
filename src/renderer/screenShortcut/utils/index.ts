@@ -27,32 +27,34 @@ export const getSourceMac = (
 export const getSourceWin = (
 	cb: (source: ElectronShortcutCapture.ISource) => void
 ) => {
-	const { x, y } = remote.getCurrentWindow().getBounds()
-	const display = remote.screen
-		.getAllDisplays()
-		.filter(d => d.bounds.x === x && d.bounds.y === y)[0]
-	desktopCapturer.getSources(
-		{
-			types: ['screen'],
-			thumbnailSize: {
-				width: display.size.width,
-				height: display.size.height
+	ipcRenderer.once(events.show, () => {
+		const { x, y } = remote.getCurrentWindow().getBounds()
+		const display = remote.screen
+			.getAllDisplays()
+			.filter(d => d.bounds.x === x && d.bounds.y === y)[0]
+		desktopCapturer.getSources(
+			{
+				types: ['screen'],
+				thumbnailSize: {
+					width: display.size.width,
+					height: display.size.height
+				}
+			},
+			(error, sources) => {
+				const currSourceItem = sources.filter(
+					v => Number(display.id) === Number(v.display_id)
+				)
+				if (!currSourceItem.length || error) {
+					cb(null)
+				}
+				cb({
+					width: display.size.width,
+					height: display.size.height,
+					toPngSource: currSourceItem[0].thumbnail.toPNG()
+				})
 			}
-		},
-		(error, sources) => {
-			const currSourceItem = sources.filter(
-				v => Number(display.id) === Number(v.display_id)
-			)
-			if (!currSourceItem.length || error) {
-				cb(null)
-			}
-			cb({
-				width: display.size.width,
-				height: display.size.height,
-				toPngSource: currSourceItem[0].thumbnail.toPNG()
-			})
-		}
-	)
+		)
+	})
 }
 
 /**

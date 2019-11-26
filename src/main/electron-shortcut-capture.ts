@@ -84,12 +84,17 @@ export default class electronShortcutCapture {
 			currentFocusDisplay = !this.multiScreen
 				? currentFocusDisplay
 				: this.displays[idx]
-			this.getScreenSources({
-				win: v,
-				displayId: currentFocusDisplay.id,
-				width: currentFocusDisplay.size.width,
-				height: currentFocusDisplay.size.height
-			})
+			if (require('os').platform() === 'darwin') {
+				v.webContents.send(events.show)
+			} else {
+				this.getScreenSources({
+					win: v,
+					displayId: currentFocusDisplay.id,
+					width: currentFocusDisplay.size.width,
+					height: currentFocusDisplay.size.height
+				})
+			}
+
 			// 设置窗口可以在全屏窗口之上显示。
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')

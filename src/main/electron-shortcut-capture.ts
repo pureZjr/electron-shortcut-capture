@@ -83,16 +83,13 @@ export default class electronShortcutCapture {
 			currentFocusDisplay = !this.multiScreen
 				? currentFocusDisplay
 				: this.displays[idx]
-			if (require('os').platform() === 'darwin') {
-				this.getScreenSources({
-					win: v,
-					displayId: currentFocusDisplay.id,
-					width: currentFocusDisplay.size.width,
-					height: currentFocusDisplay.size.height
-				})
-			} else {
-				v.webContents.send(events.show)
-			}
+
+			this.getScreenSources({
+				win: v,
+				displayId: currentFocusDisplay.id,
+				width: currentFocusDisplay.size.width,
+				height: currentFocusDisplay.size.height
+			})
 
 			// 设置窗口可以在全屏窗口之上显示。
 			v.setVisibleOnAllWorkspaces(true)
@@ -106,17 +103,31 @@ export default class electronShortcutCapture {
 	 */
 	private bindHide() {
 		ipcMain.on(events.close, () => {
-			this.hide()
+			this.hide(true)
 		})
 	}
 
-	private hide() {
+	private hide(autoRunReopen?: boolean) {
 		this.handleCaptureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			v.webContents.send(events.close)
 		})
 		this.shortcuting = false
+		if (autoRunReopen && require('os').platform() != 'darwin') {
+			this.reopen()
+		}
+	}
+
+	/**
+	 * 重新打开，win上面用获取的截图有问题
+	 */
+	private reopen() {
+		this.handleCaptureWins.forEach(v => {
+			v.close()
+		})
+		this.captureWins = []
+		this.initWin()
 	}
 
 	/**
@@ -139,6 +150,9 @@ export default class electronShortcutCapture {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
+			if (require('os').platform() != 'darwin') {
+				this.reopen()
+			}
 		})
 	}
 
@@ -148,7 +162,7 @@ export default class electronShortcutCapture {
 	private bindClipboard() {
 		ipcMain.on(events.clipboard, (_, dataURL) => {
 			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
-			this.hide()
+			this.hide(true)
 		})
 	}
 

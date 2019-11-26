@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react'
 import { get } from 'lodash'
-import os from 'os'
 
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
 import { close } from './events'
-import { getSourceMac, getSourceWin } from './utils'
+import { getSource } from './utils'
 
 const ScreenShot: React.FC = () => {
 	const [rect, setRect] = React.useState<ElectronShortcutCapture.IRect>({
@@ -29,11 +28,7 @@ const ScreenShot: React.FC = () => {
 	const [destoryLayer, setDestoryLayer] = React.useState(false)
 
 	React.useEffect(() => {
-		if (os.platform() === 'darwin') {
-			getSourceMac(setSource)
-		} else {
-			getSourceWin(setSource)
-		}
+		getSource(setSource)
 
 		window.addEventListener('contextmenu', () => {
 			close()

@@ -1,5 +1,4 @@
 import React from 'react'
-import ToolTip from 'react-portal-tooltip'
 
 import IconComplete from '../assets/svg/sure.svg'
 import IconCancel from '../assets/svg/cancel.svg'
@@ -7,6 +6,7 @@ import IconDownload from '../assets/svg/download.svg'
 import IconPen from '../assets/svg/pen.svg'
 import { close, download, clipboard } from '../events'
 import { makecurve } from './utils'
+import Setting from './setting'
 import './index.scss'
 
 interface IProps {
@@ -23,73 +23,25 @@ const ToolBar: React.FC<IProps> = ({
 	rect
 }) => {
 	const [handlePean, setHandlePean] = React.useState(false)
-	const [settingVisible, setSettingVisible] = React.useState(false)
-	const [thicknessNum, setThicknessNum] = React.useState(4)
-	const [pen, setPen] = React.useState(null)
+	const [currToolId, setCurrToolId] = React.useState('')
+	const [pen, setPen] = React.useState<{
+		start: () => void
+		close: () => void
+		update: (args: { color?: string; lineWidth?: number }) => void
+	}>(null)
 
 	const onHandleToolbar = () => {
 		controlToolbar()
 	}
 
-	// 粗细
-	const renderThickness = () => {
-		return (
-			<div className="thickness">
-				<div
-					className={`point small ${
-						thicknessNum === 4 ? 'active' : ''
-					} `}
-					onClick={() => {
-						pen.update({ lineWidth: 4 })
-						setThicknessNum(4)
-					}}
-				></div>
-				<div
-					className={`point middle ${
-						thicknessNum === 9 ? 'active' : ''
-					} `}
-					onClick={() => {
-						pen.update({ lineWidth: 9 })
-						setThicknessNum(9)
-					}}
-				></div>
-				<div
-					className={`point large ${
-						thicknessNum === 12 ? 'active' : ''
-					} `}
-					onClick={() => {
-						pen.update({ lineWidth: 12 })
-						setThicknessNum(12)
-					}}
-				></div>
-			</div>
-		)
-	}
-
-	// 画图配置
-	const renderSetting = id => {
-		const style = {
-			style: {
-				marginTop: 10,
-				padding: 0
-			},
-			arrowStyle: {
-				color: '#302b29',
-				borderColor: false
-			}
+	const onHandlePenClick = (args: ElectronShortcutCapture.ISettingProps) => {
+		if (!pen) {
+			return
 		}
-
-		return (
-			<ToolTip
-				active={settingVisible}
-				position="bottom"
-				arrow="center"
-				parent={id}
-				style={style}
-			>
-				<div className="setting-container">{renderThickness()}</div>
-			</ToolTip>
-		)
+		pen.update({
+			lineWidth: args.thicknessNum,
+			color: args.color
+		})
 	}
 
 	const tools = [
@@ -115,14 +67,18 @@ const ToolBar: React.FC<IProps> = ({
 			icon: (
 				<div className="tool">
 					<IconPen width={18} height={18} color="#c5b3a5" id="pen" />
-					{renderSetting('#pen')}
+					<Setting
+						toolId="#pen"
+						settingVisible={currToolId === '#pen'}
+						onHandleClick={onHandlePenClick}
+					/>
 				</div>
 			),
 			click: () => {
 				if (handlePean) {
 					return
 				}
-				setSettingVisible(true)
+				setCurrToolId('#pen')
 				onHandleToolbar()
 				setHandlePean(true)
 				const p = makecurve(rect, canvasRef)

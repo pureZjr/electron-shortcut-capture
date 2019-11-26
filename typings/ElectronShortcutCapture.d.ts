@@ -23,4 +23,9 @@ declare namespace ElectronShortcutCapture {
 		height: number
 		toPngSource: any
 	}
+
+	interface ISettingProps {
+		thicknessNum?: number
+		color?: string
+	}
 }

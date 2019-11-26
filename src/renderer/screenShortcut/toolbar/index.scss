@@ -26,13 +26,14 @@
 .setting-container {
 	background: #302b29;
 	border-radius: 4px;
+	display: flex;
 	height: 30px;
 	left: 0;
 	padding: 0 12px;
 	top: 35px;
 }
 
-.thickness {
+.setting-thickness {
 	align-items: center;
 	display: flex;
 	height: 100%;
@@ -60,5 +61,27 @@
 	}
 	.active {
 		background: #fff;
+	}
+}
+
+.setting-color {
+	align-items: center;
+	display: flex;
+	height: 100%;
+	margin-left: 12px;
+
+	.active {
+		border: 1px solid #fff;
+		margin: 0 2px;
+	}
+
+	> div {
+		height: 18px;
+		margin: 0 3px;
+		width: 18px;
+
+		&:last-of-type {
+			margin-right: 0;
+		}
 	}
 }

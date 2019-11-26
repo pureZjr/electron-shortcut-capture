@@ -1,15 +1,21 @@
-export function makecurve(
+import { Color, LineWidth } from './setting'
+
+export const makecurve: (
 	rect: ElectronShortcutCapture.IRect,
 	canvasRef: HTMLCanvasElement
-) {
+) => {
+	start: () => void
+	close: () => void
+	update: (args: { color?: string; lineWidth?: number }) => void
+} = (rect: ElectronShortcutCapture.IRect, canvasRef: HTMLCanvasElement) => {
 	let isDown = false
 	let points = []
 	let beginPoint = null
 	const ctx = canvasRef.getContext('2d')
 
 	// 设置线条颜色
-	ctx.strokeStyle = 'red'
-	ctx.lineWidth = 4
+	ctx.strokeStyle = Color.red
+	ctx.lineWidth = LineWidth.small
 	ctx.lineJoin = 'round'
 	ctx.lineCap = 'round'
 
@@ -93,8 +99,8 @@ export function makecurve(
 		start: () => bind(),
 		close: () => unbind(),
 		update: (args: { color?: string; lineWidth?: number }) => {
-			ctx.lineWidth = args.lineWidth || 4
-			ctx.strokeStyle = args.color || 'red'
+			ctx.lineWidth = args.lineWidth || LineWidth.small
+			ctx.strokeStyle = args.color || Color.red
 		}
 	}
 }

@@ -4,9 +4,10 @@ import './index.scss'
 
 interface IProps {
 	onDraw: (args: ElectronShortcutCapture.IRect) => void
+	setDestoryLayer: (destoryLayer: boolean) => void
 }
 
-const Layer: React.FC<IProps> = ({ onDraw }) => {
+const Layer: React.FC<IProps> = ({ onDraw, setDestoryLayer }) => {
 	const [isMoving, setIsMoving] = React.useState(false)
 	const [startShortCut, setStartShortCut] = React.useState(false)
 	// 框图起始点
@@ -27,8 +28,11 @@ const Layer: React.FC<IProps> = ({ onDraw }) => {
 			draw(e)
 		}
 	}
+	// 框完图就销毁事件，不准再重复框，只能调整大小或者位置
 	const mouseup = () => {
+		window.removeEventListener('mouseup', mouseup)
 		setIsMoving(false)
+		setDestoryLayer(true)
 	}
 	const draw = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		const { x, y } = point

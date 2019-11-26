@@ -26,6 +26,7 @@ const ScreenShot: React.FC = () => {
 	const [source, setSource] = React.useState<ElectronShortcutCapture.ISource>(
 		null
 	)
+	const [destoryLayer, setDestoryLayer] = React.useState(false)
 
 	React.useEffect(() => {
 		if (os.platform() === 'darwin') {
@@ -128,7 +129,9 @@ const ScreenShot: React.FC = () => {
 				capturingDisplayId={capturingDisplayId}
 				setCapturingDisplayId={setCapturingDisplayId}
 			/>
-			<Layer onDraw={onDraw} />
+			{!destoryLayer && (
+				<Layer onDraw={onDraw} setDestoryLayer={setDestoryLayer} />
+			)}
 		</Fragment>
 	)
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { ipcRenderer } from 'electron'
 
 import Toolbar from '../toolbar'
@@ -20,11 +20,13 @@ interface IProps {
 interface IState {
 	dragType: string
 	dragpoint: { x: number; y: number }
-	oRect: any
+	currRect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
 	style: React.CSSProperties
 	// 截取全屏
 	isShortcutFullScreen: boolean
+	// 取消缩放
+	cancelZoom: boolean
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -33,10 +35,11 @@ class Rectangle extends Component<IProps, IState> {
 		this.state = {
 			dragType: null,
 			dragpoint: null,
-			oRect: null,
+			currRect: null,
 			canvasRef: null,
 			style: {},
-			isShortcutFullScreen: false
+			isShortcutFullScreen: false,
+			cancelZoom: false
 		}
 	}
 
@@ -48,7 +51,12 @@ class Rectangle extends Component<IProps, IState> {
 			const width = x2 - x1
 			const height = y2 - y1
 			ref.getContext('2d').clearRect(0, 0, width, height)
+			ref.addEventListener('mousedown', this.mousedownToMove)
 		}
+	}
+
+	mousedownToMove = e => {
+		this.mousedown(e, 'm')
 	}
 
 	mousemove = e => {
@@ -56,7 +64,9 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	mousedown = (
-		e: React.MouseEvent<HTMLDivElement | HTMLCanvasElement, MouseEvent>,
+		e:
+			| React.MouseEvent<HTMLDivElement | HTMLCanvasElement, MouseEvent>
+			| MouseEvent,
 		dragType: string
 	) => {
 		if (this.shortcutDisabled()) {
@@ -69,7 +79,7 @@ class Rectangle extends Component<IProps, IState> {
 		this.setState({
 			dragType,
 			dragpoint: { x: e.clientX, y: e.clientY },
-			oRect: this.props.rect
+			currRect: this.props.rect
 		})
 	}
 
@@ -98,10 +108,10 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	shift = (e: MouseEvent) => {
-		const { dragpoint, oRect } = this.state
+		const { dragpoint, currRect } = this.state
 		const x = e.clientX - dragpoint.x
 		const y = e.clientY - dragpoint.y
-		let { x1, y1, x2, y2 } = oRect
+		let { x1, y1, x2, y2 } = currRect
 		x1 += x
 		y1 += y
 		x2 += x
@@ -110,10 +120,10 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	resize = (e: MouseEvent) => {
-		const { dragpoint, oRect, dragType } = this.state
+		const { dragpoint, currRect, dragType } = this.state
 		const x = e.clientX - dragpoint.x
 		const y = e.clientY - dragpoint.y
-		let { x1, y1, x2, y2 } = oRect
+		let { x1, y1, x2, y2 } = currRect
 		switch (dragType) {
 			case 'n':
 				y1 += y
@@ -200,6 +210,64 @@ class Rectangle extends Component<IProps, IState> {
 		}
 	}
 
+	/**
+	 * 只要操作了toolbar，移动、缩放功能就关闭
+	 */
+	controlToolbar = () => {
+		if (this.state.cancelZoom) {
+			return
+		}
+		this.setState({
+			cancelZoom: true
+		})
+		window.removeEventListener('mousemove', this.mousemove)
+		window.removeEventListener('mouseup', this.mouseup)
+
+		this.state.canvasRef.removeEventListener(
+			'mousedown',
+			this.mousedownToMove
+		)
+	}
+
+	renderDragPoint() {
+		return (
+			<Fragment>
+				<div
+					className="rectangle-pointer rectangle-pointer-n"
+					onMouseDown={e => this.mousedown(e, 'n')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-ne"
+					onMouseDown={e => this.mousedown(e, 'ne')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-e"
+					onMouseDown={e => this.mousedown(e, 'e')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-se"
+					onMouseDown={e => this.mousedown(e, 'se')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-s"
+					onMouseDown={e => this.mousedown(e, 's')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-sw"
+					onMouseDown={e => this.mousedown(e, 'sw')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-w"
+					onMouseDown={e => this.mousedown(e, 'w')}
+				></div>
+				<div
+					className="rectangle-pointer rectangle-pointer-nw"
+					onMouseDown={e => this.mousedown(e, 'nw')}
+				></div>
+			</Fragment>
+		)
+	}
+
 	componentDidMount() {
 		window.addEventListener('mousemove', this.mousemove)
 		window.addEventListener('mouseup', this.mouseup)
@@ -234,7 +302,13 @@ class Rectangle extends Component<IProps, IState> {
 	}
 
 	render() {
-		const { style, canvasRef, isShortcutFullScreen } = this.state
+		const {
+			style,
+			canvasRef,
+			isShortcutFullScreen,
+			cancelZoom
+		} = this.state
+		const { rect } = this.props
 		if (this.shortcutDisabled()) {
 			return null
 		}
@@ -246,49 +320,19 @@ class Rectangle extends Component<IProps, IState> {
 					style={{
 						bottom: `${isShortcutFullScreen ? '5px' : '-55px'}`
 					}}
+					controlToolbar={this.controlToolbar}
+					rect={rect}
 				/>
 				<canvas
 					ref={this.setCanvasRef}
 					width={style.width}
 					height={style.height}
-					onMouseDown={e => this.mousedown(e, 'm')}
 				></canvas>
 				<div className="rectangle-border rectangle-border-n"></div>
 				<div className="rectangle-border rectangle-border-e"></div>
 				<div className="rectangle-border rectangle-border-s"></div>
 				<div className="rectangle-border rectangle-border-w"></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-n"
-					onMouseDown={e => this.mousedown(e, 'n')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-ne"
-					onMouseDown={e => this.mousedown(e, 'ne')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-e"
-					onMouseDown={e => this.mousedown(e, 'e')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-se"
-					onMouseDown={e => this.mousedown(e, 'se')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-s"
-					onMouseDown={e => this.mousedown(e, 's')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-sw"
-					onMouseDown={e => this.mousedown(e, 'sw')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-w"
-					onMouseDown={e => this.mousedown(e, 'w')}
-				></div>
-				<div
-					className="rectangle-pointer rectangle-pointer-nw"
-					onMouseDown={e => this.mousedown(e, 'nw')}
-				></div>
+				{cancelZoom ? null : this.renderDragPoint()}
 			</div>
 		)
 	}

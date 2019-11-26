@@ -79,20 +79,19 @@ export default class electronShortcutCapture {
 				return this.displays[idx].id === currentFocusDisplay.id
 			})
 		}
-
 		this.handleCaptureWins.forEach((v, idx) => {
 			currentFocusDisplay = !this.multiScreen
 				? currentFocusDisplay
 				: this.displays[idx]
 			if (require('os').platform() === 'darwin') {
-				v.webContents.send(events.show)
-			} else {
 				this.getScreenSources({
 					win: v,
 					displayId: currentFocusDisplay.id,
 					width: currentFocusDisplay.size.width,
 					height: currentFocusDisplay.size.height
 				})
+			} else {
+				v.webContents.send(events.show)
 			}
 
 			// 设置窗口可以在全屏窗口之上显示。

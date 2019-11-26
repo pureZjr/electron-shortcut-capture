@@ -53,7 +53,6 @@ const Background: React.FC<IProps> = ({
 	}, [rect])
 
 	const drawBackground = () => {
-		console.log(source)
 		const currCtx = canvasRef.current.getContext('2d')
 		const { width, height, toPngSource } = source
 		const $img = new Image()

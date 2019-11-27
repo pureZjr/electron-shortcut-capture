@@ -6,8 +6,9 @@ import IconDownload from '../assets/svg/download.svg'
 import IconPen from '../assets/svg/pen.svg'
 import IconCircle from '../assets/svg/circle.svg'
 import IconRect from '../assets/svg/rect.svg'
+import IconArrow from '../assets/svg/arrow.svg'
 import { close, download, clipboard } from '../events'
-import { makecurve, frame } from './tools'
+import { makecurve, frame, arrow } from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -31,6 +32,9 @@ const ToolBar: React.FC<IProps> = ({
 	const [drawFrame, setDrawFrame] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
 	}>(null)
+	const [drawArrow, setDrawArrow] = React.useState<{
+		update: (args: { color?: string; lineWidth?: number }) => void
+	}>(null)
 
 	const onHandleToolbar = () => {
 		controlToolbar()
@@ -47,6 +51,12 @@ const ToolBar: React.FC<IProps> = ({
 			case '#circle':
 			case '#rect':
 				drawFrame.update({
+					lineWidth: args.thicknessNum,
+					color: args.color
+				})
+				break
+			case '#arrow':
+				drawArrow.update({
 					lineWidth: args.thicknessNum,
 					color: args.color
 				})
@@ -126,6 +136,26 @@ const ToolBar: React.FC<IProps> = ({
 				setCurrToolId('#rect')
 				onHandleToolbar()
 				setDrawFrame(frame(rect, canvasRef, 'rect'))
+			}
+		},
+		{
+			icon: (
+				<div className="tool">
+					<IconArrow
+						width={18}
+						height={18}
+						color="#c5b3a5"
+						id="arrow"
+					/>
+				</div>
+			),
+			click: () => {
+				if (currToolId === '#arrow') {
+					return
+				}
+				setCurrToolId('#arrow')
+				onHandleToolbar()
+				setDrawArrow(arrow(rect, canvasRef))
 			}
 		}
 	]

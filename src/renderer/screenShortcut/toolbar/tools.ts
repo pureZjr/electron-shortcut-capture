@@ -96,7 +96,6 @@ export const frame = (
 	if (!!control) {
 		control.unbind()
 	}
-
 	control = commonControl({
 		rect,
 		canvasRef,
@@ -112,11 +111,11 @@ export const frame = (
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
 	}
 	function onMousemove({ x, y }) {
-		drawLine(x, y)
+		drawFrame(x, y)
 	}
 	function onMouseup({ x, y }) {}
 
-	function drawLine(x, y) {
+	function drawFrame(x, y) {
 		const canvas = ctx.canvas
 		ctx.beginPath()
 		ctx.putImageData(tempCanvas, 0, 0, 0, 0, canvas.width, canvas.height)
@@ -135,6 +134,82 @@ export const frame = (
 		} else {
 		}
 		ctx.stroke()
+	}
+
+	return {
+		update: (args: { color?: string; lineWidth?: number }) => {
+			control.update(args)
+		}
+	}
+}
+
+/**
+ * 画箭头
+ */
+
+export const arrow = (
+	rect: ElectronShortcutCapture.IRect,
+	canvasRef: HTMLCanvasElement
+) => {
+	const ctx = canvasRef.getContext('2d')
+	let beginPoint: { x: number; y: number } = null
+	let tempCanvas
+
+	if (!!control) {
+		control.unbind()
+	}
+	control = commonControl({
+		rect,
+		canvasRef,
+		onMousedown,
+		onMousemove
+	})
+	control.init()
+
+	function onMousedown({ x, y }) {
+		beginPoint = { x, y }
+		const canvas = ctx.canvas
+		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
+	}
+	function onMousemove({ x, y }) {
+		drawArrow(x, y)
+	}
+
+	function drawArrow(x, y) {
+		const canvas = ctx.canvas
+		// 三角斜边一直线夹角
+		const theta = 30
+		// 三角斜边长度
+		const headlen = 10
+		// 计算各角度和对应的P2,P3坐标
+		const angle =
+				(Math.atan2(beginPoint.y - y, beginPoint.x - x) * 180) /
+				Math.PI,
+			angle1 = ((angle + theta) * Math.PI) / 180,
+			angle2 = ((angle - theta) * Math.PI) / 180,
+			topX = headlen * Math.cos(angle1),
+			topY = headlen * Math.sin(angle1),
+			botX = headlen * Math.cos(angle2),
+			botY = headlen * Math.sin(angle2)
+		ctx.save()
+		ctx.beginPath()
+		ctx.putImageData(tempCanvas, 0, 0, 0, 0, canvas.width, canvas.height)
+
+		let arrowX = beginPoint.x - topX,
+			arrowY = beginPoint.y - topY
+
+		ctx.moveTo(arrowX, arrowY)
+		ctx.moveTo(beginPoint.x, beginPoint.y)
+		ctx.lineTo(x, y)
+		arrowX = x + topX
+		arrowY = y + topY
+		ctx.moveTo(arrowX, arrowY)
+		ctx.lineTo(x, y)
+		arrowX = x + botX
+		arrowY = y + botY
+		ctx.lineTo(arrowX, arrowY)
+		ctx.stroke()
+		ctx.restore()
 	}
 
 	return {

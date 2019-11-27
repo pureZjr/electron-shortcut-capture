@@ -82,11 +82,12 @@ export const makecurve: (
 }
 
 /**
- * 画圆圈
+ * 画框（圆圈/方形）
  */
-export const circle = (
+export const frame = (
 	rect: ElectronShortcutCapture.IRect,
-	canvasRef: HTMLCanvasElement
+	canvasRef: HTMLCanvasElement,
+	type: string
 ) => {
 	const ctx = canvasRef.getContext('2d')
 	let beginPoint: { x: number; y: number } = null
@@ -118,11 +119,21 @@ export const circle = (
 	function drawLine(x, y) {
 		const canvas = ctx.canvas
 		ctx.beginPath()
-		const r = Math.sqrt(
-			Math.pow(beginPoint.x - x, 2) + Math.pow(beginPoint.y - y, 2)
-		)
 		ctx.putImageData(tempCanvas, 0, 0, 0, 0, canvas.width, canvas.height)
-		ctx.arc(x, y, r, 0, 2 * Math.PI)
+		if (type === 'rect') {
+			ctx.rect(
+				beginPoint.x,
+				beginPoint.y,
+				x - beginPoint.x,
+				y - beginPoint.y
+			)
+		} else if (type === 'circle') {
+			const r = Math.sqrt(
+				Math.pow(beginPoint.x - x, 2) + Math.pow(beginPoint.y - y, 2)
+			)
+			ctx.arc(x, y, r, 0, 2 * Math.PI)
+		} else {
+		}
 		ctx.stroke()
 	}
 

@@ -5,8 +5,9 @@ import IconCancel from '../assets/svg/cancel.svg'
 import IconDownload from '../assets/svg/download.svg'
 import IconPen from '../assets/svg/pen.svg'
 import IconCircle from '../assets/svg/circle.svg'
+import IconRect from '../assets/svg/rect.svg'
 import { close, download, clipboard } from '../events'
-import { makecurve, circle } from './tools'
+import { makecurve, frame } from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -27,7 +28,7 @@ const ToolBar: React.FC<IProps> = ({
 	const [pen, setPen] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
 	}>(null)
-	const [drawCircle, setDrawCircle] = React.useState<{
+	const [drawFrame, setDrawFrame] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
 	}>(null)
 
@@ -44,7 +45,8 @@ const ToolBar: React.FC<IProps> = ({
 				})
 				break
 			case '#circle':
-				drawCircle.update({
+			case '#rect':
+				drawFrame.update({
 					lineWidth: args.thicknessNum,
 					color: args.color
 				})
@@ -103,7 +105,27 @@ const ToolBar: React.FC<IProps> = ({
 				}
 				setCurrToolId('#circle')
 				onHandleToolbar()
-				setDrawCircle(circle(rect, canvasRef))
+				setDrawFrame(frame(rect, canvasRef, 'circle'))
+			}
+		},
+		{
+			icon: (
+				<div className="tool">
+					<IconRect
+						width={18}
+						height={18}
+						color="#c5b3a5"
+						id="rect"
+					/>
+				</div>
+			),
+			click: () => {
+				if (currToolId === '#rect') {
+					return
+				}
+				setCurrToolId('#rect')
+				onHandleToolbar()
+				setDrawFrame(frame(rect, canvasRef, 'rect'))
 			}
 		}
 	]

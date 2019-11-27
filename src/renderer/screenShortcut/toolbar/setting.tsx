@@ -49,6 +49,8 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 		setTimeout(() => {
 			setSetVisible(true)
 		}, 0)
+		setColor(Color.red)
+		setThicknessNum(LineWidth.small)
 	}, [toolId])
 
 	// 粗细

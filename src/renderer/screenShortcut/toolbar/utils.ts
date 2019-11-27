@@ -1,106 +1,105 @@
 import { Color, LineWidth } from './setting'
 
-export const makecurve: (
-	rect: ElectronShortcutCapture.IRect,
+interface IPoint {
+	x: number
+	y: number
+}
+
+const commonControl: (args: {
+	rect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
-) => {
-	start: () => void
-	close: () => void
+	onMousedown?: (args: IPoint) => void
+	onMousemove?: (args: IPoint) => void
+	onMouseup?: (args: IPoint) => void
+}) => {
 	update: (args: { color?: string; lineWidth?: number }) => void
-} = (rect: ElectronShortcutCapture.IRect, canvasRef: HTMLCanvasElement) => {
+	init: () => void
+	unbind: () => void
+} = (args: {
+	rect: ElectronShortcutCapture.IRect
+	canvasRef: HTMLCanvasElement
+	onMousedown?: (args: IPoint) => void
+	onMousemove?: (args: IPoint) => void
+	onMouseup?: (args: IPoint) => void
+}) => {
 	let isDown = false
-	let points = []
-	let beginPoint = null
+	const canvasRef = args.canvasRef
 	const ctx = canvasRef.getContext('2d')
 
 	// 设置线条颜色
 	ctx.strokeStyle = Color.red
 	ctx.lineWidth = LineWidth.small
-	ctx.lineJoin = 'round'
-	ctx.lineCap = 'round'
 
+	// 绑定操作
 	function bind() {
-		canvasRef.addEventListener('mousedown', down)
-		canvasRef.addEventListener('mousemove', move)
-		canvasRef.addEventListener('mouseup', up)
-		canvasRef.addEventListener('mouseout', up)
+		canvasRef.addEventListener('mousedown', mousedown)
+		canvasRef.addEventListener('mousemove', mousemove)
+		canvasRef.addEventListener('mouseup', mouseup)
+		canvasRef.addEventListener('mouseout', mouseup)
 	}
 
+	// 解绑操作
 	function unbind() {
-		canvasRef.removeEventListener('mousedown', down, false)
-		canvasRef.removeEventListener('mousemove', move, false)
-		canvasRef.removeEventListener('mouseup', up, false)
-		canvasRef.removeEventListener('mouseout', up, false)
+		canvasRef.removeEventListener('mousedown', mousedown)
+		canvasRef.removeEventListener('mousemove', mousemove)
+		canvasRef.removeEventListener('mouseup', mouseup)
+		canvasRef.removeEventListener('mouseout', mouseup)
 	}
 
-	function down(evt) {
+	// mousedown
+	function mousedown(evt: MouseEvent) {
 		isDown = true
 		const { x, y } = getPos(evt)
-		points.push({ x, y })
-		beginPoint = { x, y }
 		canvasRef.getContext('2d').beginPath()
-	}
-
-	function move(evt) {
-		if (!isDown) return
-
-		const { x, y } = getPos(evt)
-		points.push({ x, y })
-
-		if (points.length > 3) {
-			const lastTwoPoints = points.slice(-2)
-			const controlPoint = lastTwoPoints[0]
-			const endPoint = {
-				x: (lastTwoPoints[0].x + lastTwoPoints[1].x) / 2,
-				y: (lastTwoPoints[0].y + lastTwoPoints[1].y) / 2
-			}
-			drawLine(beginPoint, controlPoint, endPoint)
-			beginPoint = endPoint
+		if (typeof args.onMousedown === 'function') {
+			args.onMousedown({ x, y })
 		}
 	}
 
-	function up(evt) {
+	// mousemove
+	function mousemove(evt: MouseEvent) {
 		if (!isDown) return
-		const { x, y } = getPos(evt)
-		points.push({ x, y })
-		if (points.length > 3) {
-			const lastTwoPoints = points.slice(-2)
-			const controlPoint = lastTwoPoints[0]
-			const endPoint = lastTwoPoints[1]
-			drawLine(beginPoint, controlPoint, endPoint)
+		if (typeof args.onMousemove === 'function') {
+			const { x, y } = getPos(evt)
+			args.onMousemove({ x, y })
+		}
+	}
+
+	// mouseup
+	function mouseup(evt: MouseEvent) {
+		if (!isDown) return
+		isDown = false
+		if (typeof args.onMouseup === 'function') {
+			const { x, y } = getPos(evt)
+			args.onMouseup({ x, y })
 		}
 		ctx.save()
-		beginPoint = null
-		isDown = false
-		points = []
-		canvasRef.getContext('2d').closePath()
 	}
 
-	function getPos(evt) {
-		const { x1, y1 } = rect
+	// 获取起始点
+	function getPos(evt: MouseEvent): IPoint {
+		const { x1, y1 } = args.rect
 		return {
 			x: evt.clientX - x1,
 			y: evt.clientY - y1
 		}
 	}
 
-	function drawLine(beginPoint, controlPoint, endPoint) {
-		ctx.moveTo(beginPoint.x, beginPoint.y)
-		ctx.quadraticCurveTo(
-			controlPoint.x,
-			controlPoint.y,
-			endPoint.x,
-			endPoint.y
-		)
-		ctx.stroke()
+	// 更新样式
+	function update(args: { color?: string; lineWidth?: number }) {
+		ctx.lineWidth = args.lineWidth || LineWidth.small
+		ctx.strokeStyle = args.color || Color.red
+	}
+
+	function init() {
+		bind()
 	}
 
 	return {
-		start: () => bind(),
-		close: () => unbind(),
-		update: (args: { color?: string; lineWidth?: number }) => {
-			ctx.lineWidth = args.lineWidth || LineWidth.small
-			ctx.strokeStyle = args.color || Color.red
-		}
+		update,
+		init,
+		unbind
 	}
 }
+
+export default commonControl

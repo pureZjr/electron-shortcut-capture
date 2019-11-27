@@ -4,8 +4,9 @@ import IconComplete from '../assets/svg/sure.svg'
 import IconCancel from '../assets/svg/cancel.svg'
 import IconDownload from '../assets/svg/download.svg'
 import IconPen from '../assets/svg/pen.svg'
+import IconCircle from '../assets/svg/circle.svg'
 import { close, download, clipboard } from '../events'
-import { makecurve } from './utils'
+import { makecurve, circle } from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -22,11 +23,11 @@ const ToolBar: React.FC<IProps> = ({
 	controlToolbar,
 	rect
 }) => {
-	const [handlePean, setHandlePean] = React.useState(false)
 	const [currToolId, setCurrToolId] = React.useState('')
 	const [pen, setPen] = React.useState<{
-		start: () => void
-		close: () => void
+		update: (args: { color?: string; lineWidth?: number }) => void
+	}>(null)
+	const [drawCircle, setDrawCircle] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
 	}>(null)
 
@@ -34,14 +35,21 @@ const ToolBar: React.FC<IProps> = ({
 		controlToolbar()
 	}
 
-	const onHandlePenClick = (args: ElectronShortcutCapture.ISettingProps) => {
-		if (!pen) {
-			return
+	const onHandleClick = (args: ElectronShortcutCapture.ISettingProps) => {
+		switch (currToolId) {
+			case '#pen':
+				pen.update({
+					lineWidth: args.thicknessNum,
+					color: args.color
+				})
+				break
+			case '#circle':
+				drawCircle.update({
+					lineWidth: args.thicknessNum,
+					color: args.color
+				})
+				break
 		}
-		pen.update({
-			lineWidth: args.thicknessNum,
-			color: args.color
-		})
 	}
 
 	const tools = [
@@ -67,23 +75,35 @@ const ToolBar: React.FC<IProps> = ({
 			icon: (
 				<div className="tool">
 					<IconPen width={18} height={18} color="#c5b3a5" id="pen" />
-					<Setting
-						toolId="#pen"
-						settingVisible={currToolId === '#pen'}
-						onHandleClick={onHandlePenClick}
-					/>
 				</div>
 			),
 			click: () => {
-				if (handlePean) {
+				if (currToolId === '#pen') {
 					return
 				}
 				setCurrToolId('#pen')
 				onHandleToolbar()
-				setHandlePean(true)
-				const p = makecurve(rect, canvasRef)
-				setPen(p)
-				p.start()
+				setPen(makecurve(rect, canvasRef))
+			}
+		},
+		{
+			icon: (
+				<div className="tool">
+					<IconCircle
+						width={18}
+						height={18}
+						color="#c5b3a5"
+						id="circle"
+					/>
+				</div>
+			),
+			click: () => {
+				if (currToolId === '#circle') {
+					return
+				}
+				setCurrToolId('#circle')
+				onHandleToolbar()
+				setDrawCircle(circle(rect, canvasRef))
 			}
 		}
 	]
@@ -97,6 +117,7 @@ const ToolBar: React.FC<IProps> = ({
 					</div>
 				)
 			})}
+			<Setting toolId={currToolId} onHandleClick={onHandleClick} />
 		</div>
 	)
 }

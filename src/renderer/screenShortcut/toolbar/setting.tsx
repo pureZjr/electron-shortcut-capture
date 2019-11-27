@@ -18,14 +18,13 @@ export enum Color {
 
 interface IProps {
 	toolId: string
-	settingVisible: boolean
 	onHandleClick: (args: ElectronShortcutCapture.ISettingProps) => void
 }
 
 const style = {
 	style: {
-		marginTop: 10,
-		padding: 0
+		padding: 0,
+		zIndex: 104
 	},
 	arrowStyle: {
 		color: '#302b29',
@@ -33,13 +32,10 @@ const style = {
 	}
 }
 
-const Setting: React.FC<IProps> = ({
-	toolId,
-	settingVisible,
-	onHandleClick
-}) => {
+const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 	const [thicknessNum, setThicknessNum] = React.useState(LineWidth.small)
 	const [color, setColor] = React.useState(Color.red)
+	const [visible, setSetVisible] = React.useState(false)
 
 	React.useEffect(() => {
 		onHandleClick({
@@ -47,6 +43,13 @@ const Setting: React.FC<IProps> = ({
 			color
 		})
 	}, [thicknessNum, color])
+
+	React.useEffect(() => {
+		setSetVisible(false)
+		setTimeout(() => {
+			setSetVisible(true)
+		}, 0)
+	}, [toolId])
 
 	// 粗细
 	const renderThickness = () => {
@@ -132,10 +135,14 @@ const Setting: React.FC<IProps> = ({
 		)
 	}
 
+	if (!toolId) {
+		return null
+	}
+
 	return (
 		<ToolTip
-			active={settingVisible}
-			position="bottom"
+			active={visible}
+			position="top"
 			arrow="center"
 			parent={toolId}
 			style={style}

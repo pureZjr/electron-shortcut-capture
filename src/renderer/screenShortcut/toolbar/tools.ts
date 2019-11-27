@@ -1,15 +1,31 @@
 import commonControl from './utils'
 
 let control = null
+const canvasStore = []
+
+/**
+ * 保存每次绘图后的图像
+ */
+function setCanvasImageData(ctx) {
+	const canvas = ctx.canvas
+	canvasStore.push(ctx.getImageData(0, 0, canvas.width, canvas.height))
+}
+
 /**
  * 画曲线
  */
-export const makecurve: (
-	rect: ElectronShortcutCapture.IRect,
+export const makecurve: (args: {
+	rect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
-) => {
+	setHasDraw: (boo: boolean) => void
+}) => {
 	update: (args: { color?: string; lineWidth?: number }) => void
-} = (rect: ElectronShortcutCapture.IRect, canvasRef: HTMLCanvasElement) => {
+} = (args: {
+	rect: ElectronShortcutCapture.IRect
+	canvasRef: HTMLCanvasElement
+	setHasDraw: (boo: boolean) => void
+}) => {
+	const { rect, canvasRef, setHasDraw } = args
 	let points = []
 	let beginPoint: { x: number; y: number } = null
 	const ctx = canvasRef.getContext('2d')
@@ -20,7 +36,6 @@ export const makecurve: (
 	if (!!control) {
 		control.unbind()
 	}
-
 	control = commonControl({
 		rect,
 		canvasRef,
@@ -28,14 +43,14 @@ export const makecurve: (
 		onMousemove,
 		onMouseup
 	})
-
 	control.init()
 
 	function onMousedown({ x, y }) {
 		beginPoint = { x, y }
 		points.push({ x, y })
+		setCanvasImageData(ctx)
+		setHasDraw(true)
 	}
-
 	function onMousemove({ x, y }) {
 		points.push({ x, y })
 
@@ -50,7 +65,6 @@ export const makecurve: (
 			beginPoint = endPoint
 		}
 	}
-
 	function onMouseup({ x, y }) {
 		points.push({ x, y })
 		if (points.length > 3) {
@@ -62,7 +76,6 @@ export const makecurve: (
 		beginPoint = null
 		points = []
 	}
-
 	function drawLine(beginPoint, controlPoint, endPoint) {
 		ctx.moveTo(beginPoint.x, beginPoint.y)
 		ctx.quadraticCurveTo(
@@ -84,11 +97,13 @@ export const makecurve: (
 /**
  * 画框（圆圈/方形）
  */
-export const frame = (
-	rect: ElectronShortcutCapture.IRect,
-	canvasRef: HTMLCanvasElement,
+export const frame = (args: {
+	rect: ElectronShortcutCapture.IRect
+	canvasRef: HTMLCanvasElement
 	type: string
-) => {
+	setHasDraw: (boo: boolean) => void
+}) => {
+	const { rect, canvasRef, type, setHasDraw } = args
 	const ctx = canvasRef.getContext('2d')
 	let beginPoint: { x: number; y: number } = null
 	let tempCanvas
@@ -100,8 +115,7 @@ export const frame = (
 		rect,
 		canvasRef,
 		onMousedown,
-		onMousemove,
-		onMouseup
+		onMousemove
 	})
 	control.init()
 
@@ -109,12 +123,12 @@ export const frame = (
 		beginPoint = { x, y }
 		const canvas = ctx.canvas
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
+		setCanvasImageData(ctx)
+		setHasDraw(true)
 	}
 	function onMousemove({ x, y }) {
 		drawFrame(x, y)
 	}
-	function onMouseup({ x, y }) {}
-
 	function drawFrame(x, y) {
 		const canvas = ctx.canvas
 		ctx.beginPath()
@@ -147,10 +161,12 @@ export const frame = (
  * 画箭头
  */
 
-export const arrow = (
-	rect: ElectronShortcutCapture.IRect,
+export const arrow = (args: {
+	rect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
-) => {
+	setHasDraw: (boo: boolean) => void
+}) => {
+	const { rect, canvasRef, setHasDraw } = args
 	const ctx = canvasRef.getContext('2d')
 	let beginPoint: { x: number; y: number } = null
 	let tempCanvas
@@ -170,11 +186,12 @@ export const arrow = (
 		beginPoint = { x, y }
 		const canvas = ctx.canvas
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
+		setCanvasImageData(ctx)
+		setHasDraw(true)
 	}
 	function onMousemove({ x, y }) {
 		drawArrow(x, y)
 	}
-
 	function drawArrow(x, y) {
 		const canvas = ctx.canvas
 		// 三角斜边一直线夹角
@@ -191,7 +208,7 @@ export const arrow = (
 			topY = headlen * Math.sin(angle1),
 			botX = headlen * Math.cos(angle2),
 			botY = headlen * Math.sin(angle2)
-		ctx.save()
+
 		ctx.beginPath()
 		ctx.putImageData(tempCanvas, 0, 0, 0, 0, canvas.width, canvas.height)
 
@@ -217,4 +234,18 @@ export const arrow = (
 			control.update(args)
 		}
 	}
+}
+
+/**
+ * 撤销
+ */
+export const backout = (canvasRef: HTMLCanvasElement) => {
+	if (!canvasStore.length) {
+		return
+	}
+	const ctx = canvasRef.getContext('2d')
+	const canvas = ctx.canvas
+	ctx.putImageData(canvasStore.pop(), 0, 0, 0, 0, canvas.width, canvas.height)
+
+	return !!canvasStore.length
 }

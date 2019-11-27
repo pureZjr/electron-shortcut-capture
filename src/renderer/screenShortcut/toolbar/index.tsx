@@ -7,8 +7,9 @@ import IconPen from '../assets/svg/pen.svg'
 import IconCircle from '../assets/svg/circle.svg'
 import IconRect from '../assets/svg/rect.svg'
 import IconArrow from '../assets/svg/arrow.svg'
+import IconBackout from '../assets/svg/backout.svg'
 import { close, download, clipboard } from '../events'
-import { makecurve, frame, arrow } from './tools'
+import { makecurve, frame, arrow, backout } from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -35,6 +36,8 @@ const ToolBar: React.FC<IProps> = ({
 	const [drawArrow, setDrawArrow] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
 	}>(null)
+	// 是否有绘图
+	const [hasDraw, setHasDraw] = React.useState(false)
 
 	const onHandleToolbar = () => {
 		controlToolbar()
@@ -78,15 +81,29 @@ const ToolBar: React.FC<IProps> = ({
 			}
 		},
 		{
-			icon: <IconDownload width={18} height={18} color="#c5b3a5" />,
+			icon: <IconDownload width={18} height={18} color="#fff" />,
 			click: () => {
 				download(canvasRef)
 			}
 		},
 		{
 			icon: (
+				<IconBackout
+					width={18}
+					height={18}
+					color={hasDraw ? '#fff' : '#c5b3a5'}
+				/>
+			),
+			click: () => {
+				if (hasDraw) {
+					setHasDraw(backout(canvasRef))
+				}
+			}
+		},
+		{
+			icon: (
 				<div className="tool">
-					<IconPen width={18} height={18} color="#c5b3a5" id="pen" />
+					<IconPen width={18} height={18} color="#fff" id="pen" />
 				</div>
 			),
 			click: () => {
@@ -95,7 +112,13 @@ const ToolBar: React.FC<IProps> = ({
 				}
 				setCurrToolId('#pen')
 				onHandleToolbar()
-				setPen(makecurve(rect, canvasRef))
+				setPen(
+					makecurve({
+						rect,
+						canvasRef,
+						setHasDraw
+					})
+				)
 			}
 		},
 		{
@@ -104,7 +127,7 @@ const ToolBar: React.FC<IProps> = ({
 					<IconCircle
 						width={18}
 						height={18}
-						color="#c5b3a5"
+						color="#fff"
 						id="circle"
 					/>
 				</div>
@@ -115,18 +138,20 @@ const ToolBar: React.FC<IProps> = ({
 				}
 				setCurrToolId('#circle')
 				onHandleToolbar()
-				setDrawFrame(frame(rect, canvasRef, 'circle'))
+				setDrawFrame(
+					frame({
+						rect,
+						canvasRef,
+						type: 'circle',
+						setHasDraw
+					})
+				)
 			}
 		},
 		{
 			icon: (
 				<div className="tool">
-					<IconRect
-						width={18}
-						height={18}
-						color="#c5b3a5"
-						id="rect"
-					/>
+					<IconRect width={18} height={18} color="#fff" id="rect" />
 				</div>
 			),
 			click: () => {
@@ -135,18 +160,20 @@ const ToolBar: React.FC<IProps> = ({
 				}
 				setCurrToolId('#rect')
 				onHandleToolbar()
-				setDrawFrame(frame(rect, canvasRef, 'rect'))
+				setDrawFrame(
+					frame({
+						rect,
+						canvasRef,
+						type: 'rect',
+						setHasDraw
+					})
+				)
 			}
 		},
 		{
 			icon: (
 				<div className="tool">
-					<IconArrow
-						width={18}
-						height={18}
-						color="#c5b3a5"
-						id="arrow"
-					/>
+					<IconArrow width={18} height={18} color="#fff" id="arrow" />
 				</div>
 			),
 			click: () => {
@@ -155,7 +182,13 @@ const ToolBar: React.FC<IProps> = ({
 				}
 				setCurrToolId('#arrow')
 				onHandleToolbar()
-				setDrawArrow(arrow(rect, canvasRef))
+				setDrawArrow(
+					arrow({
+						rect,
+						canvasRef,
+						setHasDraw
+					})
+				)
 			}
 		}
 	]

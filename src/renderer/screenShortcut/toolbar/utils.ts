@@ -73,7 +73,6 @@ const commonControl: (args: {
 			const { x, y } = getPos(evt)
 			args.onMouseup({ x, y })
 		}
-		ctx.save()
 	}
 
 	// 获取起始点

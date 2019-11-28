@@ -91,13 +91,17 @@ const Layer: React.FC<IProps> = ({
 		}
 	}
 	const onHover = e => {
-		if (startShortCut || !!pixelBoxProps) {
+		if (startShortCut) {
 			return false
 		}
 		e.target.style.background = 'rgba(255, 255, 255, 0.1)'
 	}
 	const onBlur = e => {
-		if (startShortCut || !!pixelBoxProps) {
+		setPixelBoxProps(null)
+		if (
+			startShortCut ||
+			(e.clientX > 10 && e.clientX < bounds.width - 10)
+		) {
 			return false
 		}
 		e.target.style.background = 'rgba(0, 0, 0, 0.3)'
@@ -141,7 +145,7 @@ const Layer: React.FC<IProps> = ({
 						</div>
 						）
 					</div>
-					RGB:{colorHex(rgb.replace(',255)', ')'))}
+					rgb:{colorHex(rgb.replace(',255)', ')'))}
 				</div>
 			</div>
 		)

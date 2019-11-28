@@ -4,7 +4,8 @@ import {
 	ipcMain,
 	dialog,
 	clipboard,
-	nativeImage
+	nativeImage,
+	globalShortcut
 } from 'electron'
 import { EventEmitter } from 'events'
 
@@ -19,6 +20,7 @@ export default class electronShortcutCapture {
 		this.bindClipboard()
 		this.bindDownload()
 		this.listenCapturingDisplayId()
+		this.listenEsc()
 	}
 
 	// 显示器数组
@@ -114,7 +116,7 @@ export default class electronShortcutCapture {
 			v.webContents.send(events.close)
 		})
 		this.shortcuting = false
-		if (autoRunReopen && require('os').platform() != 'darwin') {
+		if (autoRunReopen && require('os').platform() !== 'darwin') {
 			this.reopen()
 		}
 	}
@@ -150,7 +152,7 @@ export default class electronShortcutCapture {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
-			if (require('os').platform() != 'darwin') {
+			if (require('os').platform() !== 'darwin') {
 				this.reopen()
 			}
 		})
@@ -222,5 +224,14 @@ export default class electronShortcutCapture {
 			{ width: args.width, height: args.height },
 			true
 		)
+	}
+
+	/**
+	 * 监听esc退出
+	 */
+	private listenEsc = () => {
+		globalShortcut.register('esc', () => {
+			this.hide(true)
+		})
 	}
 }

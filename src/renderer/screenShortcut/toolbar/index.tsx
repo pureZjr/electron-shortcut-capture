@@ -69,19 +69,19 @@ const ToolBar: React.FC<IProps> = ({
 
 	const tools = [
 		{
-			icon: <IconComplete width={18} height={18} color="#4a6a39" />,
+			icon: <IconComplete width={16} height={16} color="#47c65b" />,
 			click: () => {
 				clipboard(canvasRef)
 			}
 		},
 		{
-			icon: <IconCancel width={18} height={18} color="#a13940" />,
+			icon: <IconCancel width={16} height={16} color="#ee4418" />,
 			click: () => {
 				close()
 			}
 		},
 		{
-			icon: <IconDownload width={18} height={18} color="#fff" />,
+			icon: <IconDownload width={16} height={16} color="#fff" />,
 			click: () => {
 				download(canvasRef)
 			}
@@ -89,9 +89,9 @@ const ToolBar: React.FC<IProps> = ({
 		{
 			icon: (
 				<IconBackout
-					width={18}
-					height={18}
-					color={hasDraw ? '#fff' : '#c5b3a5'}
+					width={16}
+					height={16}
+					color={hasDraw ? '#fff' : '#736b66'}
 				/>
 			),
 			click: () => {
@@ -101,9 +101,17 @@ const ToolBar: React.FC<IProps> = ({
 			}
 		},
 		{
+			icon: <div className="line"></div>
+		},
+		{
 			icon: (
 				<div className="tool">
-					<IconPen width={18} height={18} color="#fff" id="pen" />
+					<IconPen
+						width={16}
+						height={16}
+						color={currToolId === '#pen' ? '#47c65b' : '#fff'}
+						id="pen"
+					/>
 				</div>
 			),
 			click: () => {
@@ -125,9 +133,9 @@ const ToolBar: React.FC<IProps> = ({
 			icon: (
 				<div className="tool">
 					<IconCircle
-						width={18}
-						height={18}
-						color="#fff"
+						width={16}
+						height={16}
+						color={currToolId === '#circle' ? '#47c65b' : '#fff'}
 						id="circle"
 					/>
 				</div>
@@ -151,7 +159,12 @@ const ToolBar: React.FC<IProps> = ({
 		{
 			icon: (
 				<div className="tool">
-					<IconRect width={18} height={18} color="#fff" id="rect" />
+					<IconRect
+						width={16}
+						height={16}
+						color={currToolId === '#rect' ? '#47c65b' : '#fff'}
+						id="rect"
+					/>
 				</div>
 			),
 			click: () => {
@@ -173,7 +186,12 @@ const ToolBar: React.FC<IProps> = ({
 		{
 			icon: (
 				<div className="tool">
-					<IconArrow width={18} height={18} color="#fff" id="arrow" />
+					<IconArrow
+						width={16}
+						height={16}
+						color={currToolId === '#arrow' ? '#47c65b' : '#fff'}
+						id="arrow"
+					/>
 				</div>
 			),
 			click: () => {

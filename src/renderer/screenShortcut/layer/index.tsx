@@ -45,6 +45,9 @@ const Layer: React.FC<IProps> = ({
 		if (isMoving) {
 			draw(e)
 		} else {
+			if (!backgroundCtx) {
+				return
+			}
 			setPixelBoxProps({
 				rgb: `(${backgroundCtx
 					.getImageData(e.clientX, e.clientY, 1, 1)

@@ -86,13 +86,13 @@ const Layer: React.FC<IProps> = ({
 		}
 	}
 	const onHover = e => {
-		if (startShortCut) {
+		if (startShortCut || !!pixelBoxProps) {
 			return false
 		}
 		e.target.style.background = 'rgba(255, 255, 255, 0.1)'
 	}
 	const onBlur = e => {
-		if (startShortCut) {
+		if (startShortCut || !!pixelBoxProps) {
 			return false
 		}
 		e.target.style.background = 'rgba(0, 0, 0, 0.3)'

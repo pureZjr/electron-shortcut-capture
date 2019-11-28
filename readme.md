@@ -1,7 +1,8 @@
 # electron-shortcut-capture
 
 electron-shortcut-capture 是一个用在 electron 上使用的截图工具。
-_由于用 mac 开发，在 window 测试较少，有什么问题欢迎[issue](https://github.com/pureZjr/electron-shortcut-capture/issues 'issue')_
+
+<!-- _由于用 mac 开发，在 window 测试较少，有什么问题欢迎[issue](https://github.com/pureZjr/electron-shortcut-capture/issues 'issue')_ -->
 
 ## theory
 
@@ -65,5 +66,6 @@ new ShortcutCapture({
 -   [x] 画方框
 -   [x] 画箭头
 -   [x] 撤销
+-   [x] 放大镜
 -   [ ] 优化截图，加快开启截图
 -   [ ] 工具栏增加画图，箭头等功能

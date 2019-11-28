@@ -81,6 +81,12 @@ const Layer: React.FC<IProps> = ({
 		window.removeEventListener('mouseup', mouseup)
 		setIsMoving(false)
 		setDestoryLayer(true)
+		renderMask()
+	}
+	const renderMask = () => {
+		const div = document.createElement('div')
+		div.className = 'mask'
+		document.body.append(div)
 	}
 	const draw = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		const { x, y } = point

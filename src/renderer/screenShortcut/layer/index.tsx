@@ -5,6 +5,7 @@ import './index.scss'
 
 interface IProps {
 	backgroundCtx: CanvasRenderingContext2D
+	bounds: { x: number; y: number; width: number; height: number }
 	onDraw: (args: ElectronShortcutCapture.IRect) => void
 	setDestoryLayer: (destoryLayer: boolean) => void
 }
@@ -17,6 +18,7 @@ interface IPixelBoxProps {
 
 const Layer: React.FC<IProps> = ({
 	backgroundCtx,
+	bounds,
 	onDraw,
 	setDestoryLayer
 }) => {
@@ -105,12 +107,15 @@ const Layer: React.FC<IProps> = ({
 			return null
 		}
 		const { x, y, rgb } = pixelBoxProps
+		const left = x - 120 < 1 ? 20 : x - 120
+		const top = y + 20 > bounds.height - 140 ? bounds.height - 160 : y + 20
+
 		return (
 			<div
 				className="pixel-box"
 				style={{
-					left: x - 120,
-					top: y + 20
+					left,
+					top
 				}}
 			>
 				<div className="focus">

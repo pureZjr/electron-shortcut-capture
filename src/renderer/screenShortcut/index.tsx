@@ -133,6 +133,7 @@ const ScreenShot: React.FC = () => {
 					onDraw={onDraw}
 					setDestoryLayer={setDestoryLayer}
 					backgroundCtx={backgroundCtx}
+					bounds={bounds}
 				/>
 			)}
 		</Fragment>

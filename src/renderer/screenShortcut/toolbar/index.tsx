@@ -105,14 +105,12 @@ const ToolBar: React.FC<IProps> = ({
 		},
 		{
 			icon: (
-				<div className="tool">
-					<IconPen
-						width={16}
-						height={16}
-						color={currToolId === '#pen' ? '#47c65b' : '#fff'}
-						id="pen"
-					/>
-				</div>
+				<IconPen
+					width={16}
+					height={16}
+					color={currToolId === '#pen' ? '#47c65b' : '#fff'}
+					id="pen"
+				/>
 			),
 			click: () => {
 				if (currToolId === '#pen') {
@@ -131,14 +129,36 @@ const ToolBar: React.FC<IProps> = ({
 		},
 		{
 			icon: (
-				<div className="tool">
-					<IconCircle
-						width={16}
-						height={16}
-						color={currToolId === '#circle' ? '#47c65b' : '#fff'}
-						id="circle"
-					/>
-				</div>
+				<IconArrow
+					width={16}
+					height={16}
+					color={currToolId === '#arrow' ? '#47c65b' : '#fff'}
+					id="arrow"
+				/>
+			),
+			click: () => {
+				if (currToolId === '#arrow') {
+					return
+				}
+				setCurrToolId('#arrow')
+				onHandleToolbar()
+				setDrawArrow(
+					arrow({
+						rect,
+						canvasRef,
+						setHasDraw
+					})
+				)
+			}
+		},
+		{
+			icon: (
+				<IconCircle
+					width={16}
+					height={16}
+					color={currToolId === '#circle' ? '#47c65b' : '#fff'}
+					id="circle"
+				/>
 			),
 			click: () => {
 				if (currToolId === '#circle') {
@@ -158,14 +178,12 @@ const ToolBar: React.FC<IProps> = ({
 		},
 		{
 			icon: (
-				<div className="tool">
-					<IconRect
-						width={16}
-						height={16}
-						color={currToolId === '#rect' ? '#47c65b' : '#fff'}
-						id="rect"
-					/>
-				</div>
+				<IconRect
+					width={16}
+					height={16}
+					color={currToolId === '#rect' ? '#47c65b' : '#fff'}
+					id="rect"
+				/>
 			),
 			click: () => {
 				if (currToolId === '#rect') {
@@ -178,32 +196,6 @@ const ToolBar: React.FC<IProps> = ({
 						rect,
 						canvasRef,
 						type: 'rect',
-						setHasDraw
-					})
-				)
-			}
-		},
-		{
-			icon: (
-				<div className="tool">
-					<IconArrow
-						width={16}
-						height={16}
-						color={currToolId === '#arrow' ? '#47c65b' : '#fff'}
-						id="arrow"
-					/>
-				</div>
-			),
-			click: () => {
-				if (currToolId === '#arrow') {
-					return
-				}
-				setCurrToolId('#arrow')
-				onHandleToolbar()
-				setDrawArrow(
-					arrow({
-						rect,
-						canvasRef,
 						setHasDraw
 					})
 				)

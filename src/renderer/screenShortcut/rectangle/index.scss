@@ -1,8 +1,8 @@
-$border: 1px solid #fff;
-$pointer-size: 6px;
+$border: 1px solid #000;
+$pointer-size: 5px;
 $pointer-bg: #fff;
-$pointer-border: 1px solid #fff;
-$pointer-border-radius: 2px;
+$pointer-border: 1px solid #000;
+$pointer-border-radius: 50%;
 
 .rectangle {
 	box-shadow: 0 0 7px rgba(0, 0, 0, 0.2);
@@ -23,6 +23,7 @@ $pointer-border-radius: 2px;
 
 	&-border {
 		position: absolute;
+		z-index: 4;
 
 		&-n {
 			border-top: $border;
@@ -69,6 +70,7 @@ $pointer-border-radius: 2px;
 		&-nw {
 			position: absolute;
 			transform: translate3d(-50%, -50%, 0);
+			z-index: 5;
 		}
 
 		&-n,

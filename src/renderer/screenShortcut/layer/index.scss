@@ -6,4 +6,57 @@
 	right: 0;
 	top: 0;
 	z-index: 70;
+
+	.pixel-box {
+		height: 130px;
+		position: absolute;
+		width: 100px;
+	}
+
+	.focus {
+		border: 1px solid #cccccc;
+		height: 100px;
+		position: relative;
+		width: 100px;
+
+		&::before {
+			background: chartreuse;
+			content: '';
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50px;
+			width: 100px;
+		}
+
+		&::after {
+			background: chartreuse;
+			content: '';
+			height: 100px;
+			left: 50px;
+			position: absolute;
+			top: 0;
+			width: 1px;
+		}
+	}
+
+	.footer {
+		background: #000;
+		color: #fff;
+		display: flex;
+		flex-direction: column;
+		font-size: 10px;
+		height: 40px;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.position {
+		display: flex;
+		padding-left: 12px;
+
+		> div {
+			flex: 1;
+		}
+	}
 }

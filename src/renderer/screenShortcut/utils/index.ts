@@ -30,3 +30,23 @@ export const getCurrentDisplay: () => Electron.Display = () => {
 		.filter(d => d.bounds.x === x && d.bounds.y === y)[0]
 	return display
 }
+
+/**
+ * rgb转16进制
+ */
+export const colorHex = function(rgb: string) {
+	// 如果是rgb颜色表示
+	const aColor = rgb.replace(/(?:\(|\)|rgb|RGB)*/g, '').split(',')
+	let strHex = '#'
+	for (let i = 0; i < aColor.length; i++) {
+		let hex = Number(aColor[i]).toString(16)
+		if (hex === '0') {
+			hex += hex
+		}
+		strHex += hex
+	}
+	if (strHex.length !== 7) {
+		strHex = rgb
+	}
+	return strHex
+}

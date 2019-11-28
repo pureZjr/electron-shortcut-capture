@@ -8,13 +8,15 @@ interface IProps {
 	rectangleCtx: CanvasRenderingContext2D
 	source: ElectronShortcutCapture.ISource
 	setDisplay: (display: Electron.Display) => void
+	setBackgroundCtx: (ctx: CanvasRenderingContext2D) => void
 }
 
 const Background: React.FC<IProps> = ({
 	rect,
 	rectangleCtx,
 	setDisplay,
-	source
+	source,
+	setBackgroundCtx
 }) => {
 	const [width, setWidth] = React.useState(0)
 	const [height, setHeight] = React.useState(0)
@@ -60,6 +62,7 @@ const Background: React.FC<IProps> = ({
 		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
 			currCtx.drawImage($img, 0, 0, width, height, 0, 0, width, height)
+			setBackgroundCtx(canvasRef.current.getContext('2d'))
 		})
 	}
 

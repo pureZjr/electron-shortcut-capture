@@ -18,6 +18,9 @@ const ScreenShot: React.FC = () => {
 	const [rectangleCtx, setRectangleCtx] = React.useState<
 		CanvasRenderingContext2D
 	>(null)
+	const [backgroundCtx, setBackgroundCtx] = React.useState<
+		CanvasRenderingContext2D
+	>(null)
 	// 正在操作截图的显示器id
 	const [capturingDisplayId, setCapturingDisplayId] = React.useState<number>(
 		null
@@ -114,6 +117,7 @@ const ScreenShot: React.FC = () => {
 				rectangleCtx={rectangleCtx}
 				rect={rect}
 				source={source}
+				setBackgroundCtx={setBackgroundCtx}
 			/>
 			<Rectangle
 				onResize={onResize}
@@ -125,7 +129,11 @@ const ScreenShot: React.FC = () => {
 				setCapturingDisplayId={setCapturingDisplayId}
 			/>
 			{!destoryLayer && (
-				<Layer onDraw={onDraw} setDestoryLayer={setDestoryLayer} />
+				<Layer
+					onDraw={onDraw}
+					setDestoryLayer={setDestoryLayer}
+					backgroundCtx={backgroundCtx}
+				/>
 			)}
 		</Fragment>
 	)

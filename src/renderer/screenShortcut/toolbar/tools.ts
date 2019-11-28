@@ -160,7 +160,6 @@ export const frame = (args: {
 /**
  * 画箭头
  */
-
 export const arrow = (args: {
 	rect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement

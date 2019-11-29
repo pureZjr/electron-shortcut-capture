@@ -1,44 +1,43 @@
 import React from 'react'
 
-import { getCurrentDisplay } from '../utils'
 import './index.scss'
 
 interface IProps {
+	// 框图坐标参数
 	rect: ElectronShortcutCapture.IRect
+	// 框图Context
 	rectangleCtx: CanvasRenderingContext2D
+	// 屏幕截图资源
 	source: ElectronShortcutCapture.ISource
-	setDisplay: (display: Electron.Display) => void
+	bounds: ElectronShortcutCapture.IBounds
 	setBackgroundCtx: (ctx: CanvasRenderingContext2D) => void
 }
 
 const Background: React.FC<IProps> = ({
 	rect,
 	rectangleCtx,
-	setDisplay,
 	source,
+	bounds,
 	setBackgroundCtx
 }) => {
-	const [width, setWidth] = React.useState(0)
-	const [height, setHeight] = React.useState(0)
-
 	const canvasRef = React.useRef<HTMLCanvasElement>(null)
 
-	React.useEffect(() => {
-		const currDisplay = getCurrentDisplay()
-		setWidth(currDisplay.size.width)
-		setHeight(currDisplay.size.height)
-		setDisplay(currDisplay)
-	}, [])
-
+	/**
+	 * 一旦接收到屏幕截图就开始画canvas
+	 */
 	React.useEffect(() => {
 		if (!!source) {
 			drawBackground()
 		}
 	}, [source])
 
+	/**
+	 * 监听框图坐标参数，参数改变重新画图
+	 */
 	React.useEffect(() => {
 		// 画框中的图
 		const { x1, y1 } = rect
+		const { width, height } = bounds
 		if (!!rectangleCtx) {
 			rectangleCtx.drawImage(
 				canvasRef.current,
@@ -54,6 +53,7 @@ const Background: React.FC<IProps> = ({
 		}
 	}, [rect])
 
+	// 画背景
 	const drawBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
 		const { width, height, toPngSource } = source
@@ -70,8 +70,8 @@ const Background: React.FC<IProps> = ({
 		<canvas
 			id="bg-container"
 			ref={canvasRef}
-			width={width}
-			height={height}
+			width={bounds.width}
+			height={bounds.height}
 		></canvas>
 	)
 }

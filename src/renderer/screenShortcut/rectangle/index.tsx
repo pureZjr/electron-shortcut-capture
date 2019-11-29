@@ -2,19 +2,17 @@ import React, { Component, Fragment } from 'react'
 import { ipcRenderer } from 'electron'
 
 import Toolbar from '../toolbar'
-import { getCurrentDisplay } from '../utils'
 import { setCapturingDisplay } from '../events'
 import { events } from '../../../constant'
 import './index.scss'
 
 interface IProps {
+	bounds: { x: number; y: number; width: number; height: number }
+	currDisplayId: number
 	rect: ElectronShortcutCapture.IRect
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
-	bounds: { x: number; y: number; width: number; height: number }
-	capturingDisplayId: number
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
-	setCapturingDisplayId: (displayId: number) => void
 }
 
 interface IState {
@@ -27,6 +25,8 @@ interface IState {
 	isShortcutFullScreen: boolean
 	// 取消缩放
 	cancelZoom: boolean
+	// 操作截图的id
+	capturingDisplayId: number
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -39,7 +39,8 @@ class Rectangle extends Component<IProps, IState> {
 			canvasRef: null,
 			style: {},
 			isShortcutFullScreen: false,
-			cancelZoom: false
+			cancelZoom: false,
+			capturingDisplayId: 0
 		}
 	}
 
@@ -101,9 +102,9 @@ class Rectangle extends Component<IProps, IState> {
 				})
 			}
 		}
-		if (!this.props.capturingDisplayId) {
-			const displayId = getCurrentDisplay().id
-			setCapturingDisplay(displayId)
+		if (!this.state.capturingDisplayId) {
+			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
+			setCapturingDisplay(this.props.currDisplayId)
 		}
 	}
 
@@ -190,20 +191,20 @@ class Rectangle extends Component<IProps, IState> {
 		ipcRenderer.on(
 			events.receiveCapturingDisplayId,
 			(_, displayId: number) => {
-				if (!this.props.capturingDisplayId) {
-					this.props.setCapturingDisplayId(displayId)
+				if (!this.state.capturingDisplayId) {
+					this.setState({
+						capturingDisplayId: displayId
+					})
 				}
 			}
 		)
 	}
 
 	shortcutDisabled = () => {
-		const { capturingDisplayId } = this.props
+		const { currDisplayId } = this.props
+		const { capturingDisplayId } = this.state
 		// 判断capturingDisplayId是否等于currDisplayId，不是的话返回
-		if (
-			!!capturingDisplayId &&
-			capturingDisplayId !== getCurrentDisplay().id
-		) {
+		if (!!capturingDisplayId && capturingDisplayId !== currDisplayId) {
 			return true
 		} else {
 			return false

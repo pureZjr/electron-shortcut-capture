@@ -28,4 +28,11 @@ declare namespace ElectronShortcutCapture {
 		thicknessNum?: number
 		color?: string
 	}
+
+	interface IBounds {
+		height: number
+		width: number
+		x: number
+		y: number
+	}
 }

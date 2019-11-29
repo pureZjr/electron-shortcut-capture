@@ -1,59 +1,51 @@
 import React, { Fragment } from 'react'
-import { get } from 'lodash'
 
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
 import { close } from './events'
-import { getSource } from './utils'
+import { getSource, getCurrentDisplay } from './utils'
 
 const ScreenShot: React.FC = () => {
+	// 框图坐标参数
 	const [rect, setRect] = React.useState<ElectronShortcutCapture.IRect>({
 		x1: 0,
 		y1: 0,
 		x2: 0,
 		y2: 0
 	})
-	const [display, setDisplay] = React.useState<Electron.Display>(null)
+	// 框图Context
 	const [rectangleCtx, setRectangleCtx] = React.useState<
 		CanvasRenderingContext2D
 	>(null)
+	// 背景Context
 	const [backgroundCtx, setBackgroundCtx] = React.useState<
 		CanvasRenderingContext2D
 	>(null)
-	// 正在操作截图的显示器id
-	const [capturingDisplayId, setCapturingDisplayId] = React.useState<number>(
-		null
-	)
 	const [source, setSource] = React.useState<ElectronShortcutCapture.ISource>(
 		null
 	)
 	const [destoryLayer, setDestoryLayer] = React.useState(false)
+	const [bounds, setBounds] = React.useState<ElectronShortcutCapture.IBounds>(
+		{
+			width: 0,
+			height: 0,
+			x: 0,
+			y: 0
+		}
+	)
+	const [currDisplayId, setCurrDisplayId] = React.useState(0)
 
 	React.useEffect(() => {
 		getSource(setSource)
-
+		// 鼠标右键关闭截图
 		window.addEventListener('contextmenu', () => {
 			close()
 		})
+		const currDisplay = getCurrentDisplay()
+		setCurrDisplayId(currDisplay.id)
+		setBounds(currDisplay.bounds)
 	}, [])
-
-	const bounds = React.useMemo(() => {
-		return {
-			x: 0,
-			y: 0,
-			width: get(display, 'size.width', 0),
-			height: get(display, 'size.height', 0)
-		}
-	}, [display])
-
-	const width = React.useMemo(() => {
-		return bounds.width
-	}, [bounds])
-
-	const height = React.useMemo(() => {
-		return bounds.height
-	}, [bounds])
 
 	const onResize = (rect: ElectronShortcutCapture.IRect) => {
 		drawRectangle(rect)
@@ -74,6 +66,7 @@ const ScreenShot: React.FC = () => {
 	 * 修正矩形坐标
 	 */
 	const getRect = ({ x1, y1, x2, y2 }: ElectronShortcutCapture.IRect) => {
+		const { width, height } = bounds
 		const x = x1
 		const y = y1
 		if (x1 > x2) {
@@ -113,11 +106,11 @@ const ScreenShot: React.FC = () => {
 	return (
 		<Fragment>
 			<Background
-				setDisplay={setDisplay}
 				rectangleCtx={rectangleCtx}
 				rect={rect}
 				source={source}
 				setBackgroundCtx={setBackgroundCtx}
+				bounds={bounds}
 			/>
 			<Rectangle
 				onResize={onResize}
@@ -125,8 +118,7 @@ const ScreenShot: React.FC = () => {
 				rect={rect}
 				setRectangleCtx={setRectangleCtx}
 				bounds={bounds}
-				capturingDisplayId={capturingDisplayId}
-				setCapturingDisplayId={setCapturingDisplayId}
+				currDisplayId={currDisplayId}
 			/>
 			{!destoryLayer && (
 				<Layer

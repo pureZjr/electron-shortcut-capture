@@ -73,10 +73,6 @@ class Rectangle extends Component<IProps, IState> {
 		if (this.shortcutDisabled()) {
 			return false
 		}
-		const { x1, y1, x2, y2 } = this.props.rect
-		const width = x2 - x1
-		const height = y2 - y1
-		this.state.canvasRef.getContext('2d').clearRect(0, 0, width, height)
 		this.setState({
 			dragType,
 			dragpoint: { x: e.clientX, y: e.clientY },

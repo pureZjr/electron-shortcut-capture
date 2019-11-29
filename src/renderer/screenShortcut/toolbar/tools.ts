@@ -29,6 +29,7 @@ export const makecurve: (args: {
 	let points = []
 	let beginPoint: { x: number; y: number } = null
 	const ctx = canvasRef.getContext('2d')
+	let hasMove = false
 
 	ctx.lineJoin = 'round'
 	ctx.lineCap = 'round'
@@ -49,9 +50,9 @@ export const makecurve: (args: {
 		beginPoint = { x, y }
 		points.push({ x, y })
 		setCanvasImageData(ctx)
-		setHasDraw(true)
 	}
 	function onMousemove({ x, y }) {
+		hasMove = true
 		points.push({ x, y })
 
 		if (points.length > 3) {
@@ -66,6 +67,13 @@ export const makecurve: (args: {
 		}
 	}
 	function onMouseup({ x, y }) {
+		if (hasMove) {
+			setHasDraw(true)
+		} else {
+			canvasStore.pop()
+		}
+		hasMove = false
+
 		points.push({ x, y })
 		if (points.length > 3) {
 			const lastTwoPoints = points.slice(-2)
@@ -107,6 +115,7 @@ export const frame = (args: {
 	const ctx = canvasRef.getContext('2d')
 	let beginPoint: { x: number; y: number } = null
 	let tempCanvas
+	let hasMove = false
 
 	if (!!control) {
 		control.unbind()
@@ -115,7 +124,8 @@ export const frame = (args: {
 		rect,
 		canvasRef,
 		onMousedown,
-		onMousemove
+		onMousemove,
+		onMouseup
 	})
 	control.init()
 
@@ -124,10 +134,18 @@ export const frame = (args: {
 		const canvas = ctx.canvas
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
 		setCanvasImageData(ctx)
-		setHasDraw(true)
 	}
 	function onMousemove({ x, y }) {
+		hasMove = true
 		drawFrame(x, y)
+	}
+	function onMouseup() {
+		if (hasMove) {
+			setHasDraw(true)
+		} else {
+			canvasStore.pop()
+		}
+		hasMove = false
 	}
 	function drawFrame(x, y) {
 		const canvas = ctx.canvas
@@ -169,6 +187,7 @@ export const arrow = (args: {
 	const ctx = canvasRef.getContext('2d')
 	let beginPoint: { x: number; y: number } = null
 	let tempCanvas
+	let hasMove = false
 
 	if (!!control) {
 		control.unbind()
@@ -177,7 +196,8 @@ export const arrow = (args: {
 		rect,
 		canvasRef,
 		onMousedown,
-		onMousemove
+		onMousemove,
+		onMouseup
 	})
 	control.init()
 
@@ -186,10 +206,18 @@ export const arrow = (args: {
 		const canvas = ctx.canvas
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
 		setCanvasImageData(ctx)
-		setHasDraw(true)
 	}
 	function onMousemove({ x, y }) {
+		hasMove = true
 		drawArrow(x, y)
+	}
+	function onMouseup() {
+		if (hasMove) {
+			setHasDraw(true)
+		} else {
+			canvasStore.pop()
+		}
+		hasMove = false
 	}
 	function drawArrow(x, y) {
 		const canvas = ctx.canvas
@@ -244,7 +272,7 @@ export const backout = (canvasRef: HTMLCanvasElement) => {
 	}
 	const ctx = canvasRef.getContext('2d')
 	const canvas = ctx.canvas
+	ctx.clearRect(0, 0, canvas.width, canvas.height)
 	ctx.putImageData(canvasStore.pop(), 0, 0, 0, 0, canvas.width, canvas.height)
-
 	return !!canvasStore.length
 }

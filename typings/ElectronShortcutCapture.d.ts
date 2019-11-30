@@ -18,6 +18,8 @@ declare namespace ElectronShortcutCapture {
 		multiScreen?: boolean
 		// 下载文件前缀
 		downloadFileprefix?: string
+		// 点击完成返回剪贴板内容
+		onClipboard?: (data: Electron.NativeImage) => void
 	}
 
 	interface ISource {

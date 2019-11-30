@@ -16,6 +16,7 @@ export default class electronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.multiScreen = !!props ? !!props.multiScreen : false
 		this.downloadFileprefix = !!props ? props.downloadFileprefix : ''
+		this.onClipboard = !!props ? props.onClipboard : null
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -35,6 +36,7 @@ export default class electronShortcutCapture {
 	// 正在截图
 	private shortcuting: boolean = false
 	private downloadFileprefix: string = ''
+	private onClipboard: (data: Electron.NativeImage) => void = null
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -166,7 +168,11 @@ export default class electronShortcutCapture {
 	 */
 	private bindClipboard() {
 		ipcMain.on(events.clipboard, (_, dataURL) => {
-			clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
+			const data = nativeImage.createFromDataURL(dataURL)
+			clipboard.writeImage(data)
+			if (typeof this.onClipboard === 'function') {
+				this.onClipboard(dataURL)
+			}
 			this.hide(true)
 		})
 	}

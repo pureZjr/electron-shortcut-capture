@@ -45,10 +45,11 @@ new ShortcutCapture({
 })
 ```
 
-| 名称               | 类型    | 说明                         | 默认值  |
-| ------------------ | ------- | ---------------------------- | ------- |
-| multiScreen        | boolean | 是否使用多屏幕截图，默认关闭 | `false` |
-| downloadFileprefix | string  | 下载文件前缀                 | ``      |
+| 名称               | 类型                                 | 说明                         | 默认值  |
+| ------------------ | ------------------------------------ | ---------------------------- | ------- |
+| multiScreen        | boolean                              | 是否使用多屏幕截图，默认关闭 | `false` |
+| downloadFileprefix | string                               | 下载文件前缀                 |         |
+| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容       |         |
 
 ## Methods
 

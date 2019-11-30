@@ -15,6 +15,7 @@ import { events } from '../constant'
 export default class electronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.multiScreen = !!props ? !!props.multiScreen : false
+		this.downloadFileprefix = !!props ? props.downloadFileprefix : ''
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -33,6 +34,7 @@ export default class electronShortcutCapture {
 	private displays: Electron.Display[] = []
 	// 正在截图
 	private shortcuting: boolean = false
+	private downloadFileprefix: string = ''
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -140,7 +142,8 @@ export default class electronShortcutCapture {
 			this.hide()
 			const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '')
 			const dataBuffer = Buffer.from(base64Data, 'base64')
-			const filename = new Date().getTime() + '.png'
+			const filename =
+				this.downloadFileprefix + new Date().getTime() + '.png'
 			const path = dialog.showSaveDialogSync({
 				defaultPath: filename
 			})

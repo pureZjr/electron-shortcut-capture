@@ -4,7 +4,8 @@ import ElectronShortcutCapture from './electron-shortcut-capture'
 app.on('ready', () => {
 	require('electron-debug')({ devToolsMode: 'right', showDevTools: true })
 	const electronShortcutCapture = new ElectronShortcutCapture({
-		multiScreen: false
+		multiScreen: false,
+		downloadFileprefix: '云聊_'
 	})
 
 	globalShortcut.register('alt+shift+w', () => {

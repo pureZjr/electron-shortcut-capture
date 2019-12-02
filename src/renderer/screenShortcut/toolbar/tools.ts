@@ -276,3 +276,73 @@ export const backout = (canvasRef: HTMLCanvasElement) => {
 	ctx.putImageData(canvasStore.pop(), 0, 0, 0, 0, canvas.width, canvas.height)
 	return !!canvasStore.length
 }
+
+/**
+ * 马赛克
+ */
+export const mosaic = (args: {
+	rect: ElectronShortcutCapture.IRect
+	canvasRef: HTMLCanvasElement
+	setHasDraw: (boo: boolean) => void
+}) => {
+	const { rect, canvasRef } = args
+	const ctx = canvasRef.getContext('2d')
+	let hasMove = false
+
+	if (!!control) {
+		control.unbind()
+	}
+	control = commonControl({
+		rect,
+		canvasRef,
+		onMousedown,
+		onMousemove,
+		onMouseup
+	})
+	control.init()
+
+	let size = 10
+	let lastPosiX = 0
+	let lastPosiY = 0
+
+	function getRgb(x, y) {
+		const c = ctx.getImageData(x, y, 1, 1).data
+		const red = c[0]
+		const green = c[1]
+		const blue = c[2]
+		return `rgb(${red},${green},${blue})`
+	}
+	function setRgb(x, y) {
+		ctx.fillStyle = getRgb(x, y)
+		ctx.fillRect(x, y, size, size)
+	}
+
+	function onMousedown({ x, y }) {
+		lastPosiX = x
+		lastPosiY = y
+		setRgb(x, y)
+		setCanvasImageData(ctx)
+	}
+	function onMousemove({ x, y }) {
+		hasMove = true
+		if (Math.abs(x - lastPosiX) > size || Math.abs(y - lastPosiY) > size) {
+			lastPosiX = x
+			lastPosiY = y
+			setRgb(x, y)
+		}
+	}
+	function onMouseup() {
+		if (hasMove) {
+			args.setHasDraw(true)
+		} else {
+			canvasStore.pop()
+		}
+		hasMove = false
+	}
+
+	return {
+		update: (args: { lineWidth?: number }) => {
+			size = args.lineWidth === 4 ? 10 : args.lineWidth === 9 ? 14 : 18
+		}
+	}
+}

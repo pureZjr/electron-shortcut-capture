@@ -151,7 +151,7 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 		>
 			<div className="setting-container">
 				{renderThickness()}
-				{renderColor()}
+				{['#mosaic'].includes(toolId) ? null : renderColor()}
 			</div>
 		</ToolTip>
 	)

@@ -8,8 +8,9 @@ import IconCircle from '../assets/svg/circle.svg'
 import IconRect from '../assets/svg/rect.svg'
 import IconArrow from '../assets/svg/arrow.svg'
 import IconBackout from '../assets/svg/backout.svg'
+import IconMosaic from '../assets/svg/mosaic.svg'
 import { close, download, clipboard } from '../events'
-import { makecurve, frame, arrow, backout } from './tools'
+import { makecurve, frame, arrow, backout, mosaic } from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -35,6 +36,9 @@ const ToolBar: React.FC<IProps> = ({
 	}>(null)
 	const [drawArrow, setDrawArrow] = React.useState<{
 		update: (args: { color?: string; lineWidth?: number }) => void
+	}>(null)
+	const [drawMosaic, setDrawMosaic] = React.useState<{
+		update: (args: { lineWidth?: number }) => void
 	}>(null)
 	// 是否有绘图
 	const [hasDraw, setHasDraw] = React.useState(false)
@@ -62,6 +66,11 @@ const ToolBar: React.FC<IProps> = ({
 				drawArrow.update({
 					lineWidth: args.thicknessNum,
 					color: args.color
+				})
+				break
+			case '#mosaic':
+				drawMosaic.update({
+					lineWidth: args.thicknessNum
 				})
 				break
 		}
@@ -102,6 +111,30 @@ const ToolBar: React.FC<IProps> = ({
 		},
 		{
 			icon: <div className="line"></div>
+		},
+		{
+			icon: (
+				<IconMosaic
+					width={16}
+					height={16}
+					color={currToolId === '#mosaic' ? '#47c65b' : '#fff'}
+					id="mosaic"
+				/>
+			),
+			click: () => {
+				if (currToolId === '#mosaic') {
+					return
+				}
+				setCurrToolId('#mosaic')
+				onHandleToolbar()
+				setDrawMosaic(
+					mosaic({
+						rect,
+						canvasRef,
+						setHasDraw
+					})
+				)
+			}
 		},
 		{
 			icon: (

@@ -1,8 +1,10 @@
 import { app, globalShortcut } from 'electron'
+const debug = require('electron-debug')
+
 import ElectronShortcutCapture from './electron-shortcut-capture'
 
 app.on('ready', () => {
-	require('electron-debug')({ devToolsMode: 'right', showDevTools: true })
+	debug({ devToolsMode: 'undocked', showDevTools: true })
 	const electronShortcutCapture = new ElectronShortcutCapture({
 		multiScreen: false,
 		downloadFileprefix: '云聊_'

@@ -314,7 +314,7 @@ export const mosaic = (args: {
 	}
 	function setRgb(x, y) {
 		ctx.fillStyle = getRgb(x, y)
-		ctx.fillRect(x, y, size, size)
+		ctx.fillRect(x - size / 2, y - size / 2, size, size)
 	}
 
 	function onMousedown({ x, y }) {

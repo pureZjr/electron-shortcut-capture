@@ -14,13 +14,7 @@ function setCanvasImageData(ctx) {
 /**
  * 画曲线
  */
-export const makecurve: (args: {
-	rect: ElectronShortcutCapture.IRect
-	canvasRef: HTMLCanvasElement
-	setHasDraw: (boo: boolean) => void
-}) => {
-	update: (args: { color?: string; lineWidth?: number }) => void
-} = (args: {
+export const makecurve = (args: {
 	rect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
 	setHasDraw: (boo: boolean) => void

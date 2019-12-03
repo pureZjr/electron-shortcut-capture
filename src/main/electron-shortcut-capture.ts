@@ -22,7 +22,6 @@ export default class electronShortcutCapture {
 		this.bindClipboard()
 		this.bindDownload()
 		this.listenCapturingDisplayId()
-		this.listenEsc()
 	}
 
 	// 显示器数组
@@ -77,6 +76,7 @@ export default class electronShortcutCapture {
 		if (this.shortcuting) {
 			return console.log('正在截图')
 		}
+		this.listenEsc()
 		this.shortcuting = true
 		this.handleCaptureWins = this.captureWins
 		let currentFocusDisplay = this.getCurrentFocusDisplay()
@@ -120,6 +120,7 @@ export default class electronShortcutCapture {
 			v.webContents.send(events.close)
 		})
 		this.shortcuting = false
+		this.unListenEsc()
 		if (autoRunReopen && require('os').platform() !== 'darwin') {
 			this.reopen()
 		}
@@ -242,5 +243,12 @@ export default class electronShortcutCapture {
 		globalShortcut.register('esc', () => {
 			this.hide(true)
 		})
+	}
+
+	/**
+	 * 取消监听esc退出
+	 */
+	private unListenEsc = () => {
+		globalShortcut.unregister('esc')
 	}
 }

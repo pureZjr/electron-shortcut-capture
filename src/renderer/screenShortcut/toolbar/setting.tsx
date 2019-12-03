@@ -1,6 +1,8 @@
 import React from 'react'
 import ToolTip from 'react-portal-tooltip'
 
+import IconDown from '../assets/svg/down.svg'
+
 export enum LineWidth {
 	small = 4,
 	middle = 9,
@@ -14,6 +16,12 @@ export enum Color {
 	yellow = '#b8991f',
 	black = '#483d3e',
 	white = '#afa6a5'
+}
+
+export enum Fontsize {
+	大 = 16,
+	中 = 14,
+	小 = 12
 }
 
 interface IProps {
@@ -36,13 +44,16 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 	const [thicknessNum, setThicknessNum] = React.useState(LineWidth.small)
 	const [color, setColor] = React.useState(Color.red)
 	const [visible, setSetVisible] = React.useState(false)
+	const [fontSize, setFontSize] = React.useState(Fontsize.小)
+	const [fontSizeVisible, setFontSizeVisible] = React.useState(false)
 
 	React.useEffect(() => {
 		onHandleClick({
 			thicknessNum,
-			color
+			color,
+			fontSize
 		})
-	}, [thicknessNum, color])
+	}, [thicknessNum, color, fontSize])
 
 	React.useEffect(() => {
 		setSetVisible(false)
@@ -52,6 +63,33 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 		setColor(Color.red)
 		setThicknessNum(LineWidth.small)
 	}, [toolId])
+
+	const onShowFontsize = () => {
+		setFontSizeVisible(true)
+	}
+
+	const onChangeFontsize = (fontsize: number) => {
+		setFontSize(fontsize)
+		setFontSizeVisible(false)
+	}
+
+	// 字号
+	const renderFontSize = () => {
+		return (
+			<div className="setting-fontsize">
+				<div className="selected" onClick={onShowFontsize}>
+					<span style={{ padding: '0 6px' }} />
+					{fontSize === 12 ? '小' : fontSize === 14 ? '中' : '大'}
+					<IconDown color="#797471" width="12" height="12" />
+				</div>
+				<div className={`list ${fontSizeVisible ? 'active' : ''}`}>
+					<div onClick={() => onChangeFontsize(Fontsize.大)}>大</div>
+					<div onClick={() => onChangeFontsize(Fontsize.中)}>中</div>
+					<div onClick={() => onChangeFontsize(Fontsize.小)}>小</div>
+				</div>
+			</div>
+		)
+	}
 
 	// 粗细
 	const renderThickness = () => {
@@ -150,7 +188,8 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 			style={style}
 		>
 			<div className="setting-container">
-				{renderThickness()}
+				{['#text'].includes(toolId) ? renderFontSize() : null}
+				{['#text'].includes(toolId) ? null : renderThickness()}
 				{['#mosaic'].includes(toolId) ? null : renderColor()}
 			</div>
 		</ToolTip>

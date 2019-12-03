@@ -31,6 +31,7 @@ declare namespace ElectronShortcutCapture {
 	interface ISettingProps {
 		thicknessNum?: number
 		color?: string
+		fontSize?: number
 	}
 
 	interface IBounds {

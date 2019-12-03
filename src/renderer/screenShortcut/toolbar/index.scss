@@ -75,19 +75,65 @@
 	display: flex;
 	height: 100%;
 	margin-left: 12px;
+	width: 152px;
 
 	.active {
 		border: 1px solid #fff;
-		margin: 0 2px;
 	}
 
 	> div {
+		border: 1px solid #fff0;
 		height: 18px;
-		margin: 0 3px;
+		margin-right: 6px;
 		width: 18px;
 
 		&:last-of-type {
 			margin-right: 0;
 		}
+	}
+}
+
+.setting-fontsize {
+	background: #dad5d2;
+	color: #797471;
+	font-size: 12px;
+	font-weight: 500;
+	height: 22px;
+	line-height: 22px;
+	margin: 4px 0;
+	position: relative;
+	text-align: center;
+	width: 80px;
+
+	.selected {
+		align-items: center;
+		display: flex;
+		justify-content: space-around;
+		padding: 0 6px;
+	}
+
+	.list {
+		background: #7c7974;
+		border-radius: 4px;
+		bottom: 32px;
+		color: #fff;
+		display: none;
+		position: absolute;
+		text-align: center;
+		width: 80px;
+
+		div {
+			height: 26px;
+			line-height: 26px;
+			width: 100%;
+
+			&:hover {
+				color: #47c65b;
+			}
+		}
+	}
+
+	.active {
+		display: block;
 	}
 }

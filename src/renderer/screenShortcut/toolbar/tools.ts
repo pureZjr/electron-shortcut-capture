@@ -394,6 +394,84 @@ export const text = (args: {
 		hasClickToolTipPortal = !!existToolTipPortal.length
 	}
 
+	function inputAreaBindBlur() {
+		const inputAreas = document.getElementsByClassName('input-area')
+		for (let i = 0; i < inputAreas.length; i++) {
+			const inputArea = inputAreas[i] as HTMLDivElement
+			inputArea.addEventListener('blur', () => {
+				editStatus = 2
+				setTimeout(() => {
+					if (editStatus === 1 || hasClickToolTipPortal) {
+						return
+					}
+					inputArea.contentEditable = 'false'
+					inputArea.style.boxShadow = 'unset'
+					if (!inputArea.textContent) {
+						// 没有输入文字
+						inputArea.remove()
+						canvasStore.pop()
+					} else {
+						args.setHasDraw(true)
+					}
+				}, 120)
+			})
+		}
+	}
+
+	// inputArea绑定事件
+	function inputAreaBindEvent() {
+		let currentControlInputArea: HTMLDivElement = null
+
+		// 单击选中文字
+		args.canvasRef.parentElement.addEventListener('click', e => {
+			inputAreaBindBlur()
+			const target = e.target as HTMLDivElement
+			if (target.className === 'input-area') {
+				target.style.boxShadow = 'unset'
+				currElement = target
+				target.style.boxShadow = '0 0 1px red'
+			}
+		})
+
+		const drag = ({ clientY, clientX }) => {
+			currentControlInputArea.style.top = `${clientY - rect.y1}px`
+			currentControlInputArea.style.left = `${clientX - rect.x1}px`
+		}
+
+		// 拖动
+		args.canvasRef.parentElement.addEventListener('mousedown', e => {
+			const target = e.target as HTMLDivElement
+			currentControlInputArea = target
+			if (target.className === 'input-area') {
+				save()
+				canvasRef.addEventListener('mousemove', drag)
+			}
+		})
+
+		// 结束拖动
+		args.canvasRef.parentElement.addEventListener('mouseup', e => {
+			const target = e.target as HTMLDivElement
+			if (target.className === 'input-area') {
+				canvasRef.removeEventListener('mousemove', drag)
+			}
+		})
+
+		// 双击重新获取焦点
+		args.canvasRef.parentElement.addEventListener('dblclick', e => {
+			const target = e.target as HTMLDivElement
+			if (target.className === 'input-area') {
+				editStatus = 1
+				target.contentEditable = 'true'
+				setTimeout(() => {
+					target.focus()
+					;(target as any).value = (target as any).value
+				}, 100)
+			}
+		})
+	}
+
+	inputAreaBindEvent()
+
 	// 创建输入框
 	function createInputArea(x, y) {
 		const inputArea = document.createElement('div')
@@ -411,40 +489,25 @@ export const text = (args: {
 			currElement.style.boxShadow = 'unset'
 		}
 		currElement = inputArea
-		inputArea.addEventListener('blur', () => {
-			editStatus = 2
-			setTimeout(() => {
-				if (editStatus === 1 || hasClickToolTipPortal) {
-					return
-				}
-				inputArea.contentEditable = 'false'
-				inputArea.style.boxShadow = 'unset'
-				if (!inputArea.textContent) {
-					// 没有输入文字
-					inputArea.remove()
-					canvasStore.pop()
-				} else {
-					args.setHasDraw(true)
-				}
-			}, 120)
-		})
 
-		// 单击选中文字
-		inputArea.addEventListener('click', () => {
-			inputArea.style.boxShadow = 'unset'
-			currElement = inputArea
-			inputArea.style.boxShadow = '0 0 1px red'
-		})
-
-		// 双击重新获取焦点
-		inputArea.addEventListener('dblclick', () => {
-			editStatus = 1
-			inputArea.contentEditable = 'true'
-			setTimeout(() => {
-				inputArea.focus()
-				;(inputArea as any).value = (inputArea as any).value
-			}, 100)
-		})
+		// inputArea.addEventListener('blur', () => {
+		// 	console.log('blur1')
+		// 	editStatus = 2
+		// 	setTimeout(() => {
+		// 		if (editStatus === 1 || hasClickToolTipPortal) {
+		// 			return
+		// 		}
+		// 		inputArea.contentEditable = 'false'
+		// 		inputArea.style.boxShadow = 'unset'
+		// 		if (!inputArea.textContent) {
+		// 			// 没有输入文字
+		// 			inputArea.remove()
+		// 			canvasStore.pop()
+		// 		} else {
+		// 			args.setHasDraw(true)
+		// 		}
+		// 	}, 120)
+		// })
 	}
 
 	// 更新文字样式

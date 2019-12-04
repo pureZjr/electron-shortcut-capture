@@ -9,7 +9,7 @@ const browserWindowProps = (
 		height: display.bounds.height,
 		x: display.bounds.x,
 		y: display.bounds.y,
-		type: 'desktop',
+		// type: 'textured',
 		useContentSize: true,
 		frame: false,
 		show: false,

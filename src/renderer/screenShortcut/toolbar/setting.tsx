@@ -19,9 +19,9 @@ export enum Color {
 }
 
 export enum Fontsize {
-	大 = 16,
-	中 = 14,
-	小 = 12
+	大 = 34,
+	中 = 24,
+	小 = 14
 }
 
 interface IProps {
@@ -79,7 +79,7 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 			<div className="setting-fontsize">
 				<div className="selected" onClick={onShowFontsize}>
 					<span style={{ padding: '0 6px' }} />
-					{fontSize === 12 ? '小' : fontSize === 14 ? '中' : '大'}
+					{fontSize === 14 ? '小' : fontSize === 24 ? '中' : '大'}
 					<IconDown color="#797471" width="12" height="12" />
 				</div>
 				<div className={`list ${fontSizeVisible ? 'active' : ''}`}>

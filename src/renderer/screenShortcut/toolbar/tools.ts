@@ -4,11 +4,15 @@ let control = null
 const canvasStore = []
 
 /**
- * 保存每次绘图后的图像
+ * 保存每次绘图后的图像/或者节点
  */
 function setCanvasImageData(ctx) {
 	const canvas = ctx.canvas
-	canvasStore.push(ctx.getImageData(0, 0, canvas.width, canvas.height))
+	if (!!canvas) {
+		canvasStore.push(ctx.getImageData(0, 0, canvas.width, canvas.height))
+	} else {
+		canvasStore.push(ctx)
+	}
 }
 
 /**
@@ -264,10 +268,20 @@ export const backout = (canvasRef: HTMLCanvasElement) => {
 	if (!canvasStore.length) {
 		return
 	}
-	const ctx = canvasRef.getContext('2d')
-	const canvas = ctx.canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height)
-	ctx.putImageData(canvasStore.pop(), 0, 0, 0, 0, canvas.width, canvas.height)
+	const last = canvasStore.pop()
+	const isFragment = !!last.nodeName
+	if (isFragment) {
+		const inputAreas = document.getElementsByClassName('input-area')
+		for (let i = inputAreas.length - 1; i > -1; i--) {
+			inputAreas[i].remove()
+		}
+		canvasRef.parentElement.appendChild(last)
+	} else {
+		const ctx = canvasRef.getContext('2d')
+		const canvas = ctx.canvas
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
+		ctx.putImageData(last, 0, 0, 0, 0, canvas.width, canvas.height)
+	}
 	return !!canvasStore.length
 }
 
@@ -337,6 +351,147 @@ export const mosaic = (args: {
 	return {
 		update: (args: { lineWidth?: number }) => {
 			size = args.lineWidth === 4 ? 10 : args.lineWidth === 9 ? 14 : 18
+		}
+	}
+}
+
+/**
+ * 文字
+ */
+export const text = (args: {
+	rect: ElectronShortcutCapture.IRect
+	canvasRef: HTMLCanvasElement
+	setHasDraw: (boo: boolean) => void
+}) => {
+	const { rect, canvasRef } = args
+	let fontSize = 14
+	let color = '#d02726'
+	// 1：开始 2：结束
+	let editStatus: 1 | 2 = 2
+	let currElement: HTMLDivElement = null
+	let hasClickToolTipPortal = false
+
+	if (!!control) {
+		window.removeEventListener('click', clickOutside)
+		control.unbind()
+	}
+	control = commonControl({
+		rect,
+		canvasRef,
+		onMousedown,
+		onMousemove,
+		onMouseup
+	})
+	control.init()
+
+	window.addEventListener('click', clickOutside)
+
+	// 点击外部
+	function clickOutside(e) {
+		const existToolTipPortal = e.path.filter(v => {
+			return v.className === 'ToolTipPortal'
+		})
+		hasClickToolTipPortal = !!existToolTipPortal.length
+	}
+
+	// 创建输入框
+	function createInputArea(x, y) {
+		const inputArea = document.createElement('div')
+		canvasRef.parentElement.appendChild(inputArea)
+		styles(inputArea)
+		inputArea.style.top = `${y}px`
+		inputArea.style.left = `${x}px`
+		inputArea.contentEditable = 'true'
+		inputArea.className = 'input-area'
+		inputArea.style.boxShadow = '0 0 1px red'
+		setTimeout(() => {
+			inputArea.focus()
+		}, 100)
+		if (!!currElement) {
+			currElement.style.boxShadow = 'unset'
+		}
+		currElement = inputArea
+		inputArea.addEventListener('blur', () => {
+			editStatus = 2
+			setTimeout(() => {
+				if (editStatus === 1 || hasClickToolTipPortal) {
+					return
+				}
+				inputArea.contentEditable = 'false'
+				inputArea.style.boxShadow = 'unset'
+				if (!inputArea.textContent) {
+					// 没有输入文字
+					inputArea.remove()
+					canvasStore.pop()
+				} else {
+					args.setHasDraw(true)
+				}
+			}, 120)
+		})
+
+		// 单击选中文字
+		inputArea.addEventListener('click', () => {
+			inputArea.style.boxShadow = 'unset'
+			currElement = inputArea
+			inputArea.style.boxShadow = '0 0 1px red'
+		})
+
+		// 双击重新获取焦点
+		inputArea.addEventListener('dblclick', () => {
+			editStatus = 1
+			inputArea.contentEditable = 'true'
+			setTimeout(() => {
+				inputArea.focus()
+				;(inputArea as any).value = (inputArea as any).value
+			}, 100)
+		})
+	}
+
+	// 更新文字样式
+	function updateCurrElement() {
+		if (!!currElement) {
+			styles(currElement)
+			editStatus = 1
+			setTimeout(() => {
+				currElement.focus()
+			}, 100)
+		}
+	}
+
+	// 文字样式
+	function styles(ele) {
+		ele.style.color = color
+		ele.style.fontSize = `${fontSize}px`
+	}
+
+	// 保存
+	function save() {
+		const fragment = document.createDocumentFragment()
+		const inputAreas = document.getElementsByClassName('input-area')
+		for (let i = 0; i < inputAreas.length; i++) {
+			fragment.appendChild(inputAreas[i].cloneNode(true))
+			console.dir(inputAreas[i])
+		}
+		setCanvasImageData(fragment)
+	}
+
+	function onMousedown({ x, y }) {
+		if (editStatus === 2) {
+			save()
+			editStatus = 1
+			createInputArea(x, y)
+		}
+	}
+
+	function onMousemove() {}
+
+	function onMouseup() {}
+
+	return {
+		update: (args: { fontSize?: number; color?: string }) => {
+			fontSize = args.fontSize
+			color = args.color
+			updateCurrElement()
 		}
 	}
 }

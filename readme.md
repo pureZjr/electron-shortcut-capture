@@ -49,6 +49,7 @@ new ShortcutCapture({
 | ------------------ | ------------------------------------ | ---------------------------- | ------- |
 | multiScreen        | boolean                              | 是否使用多屏幕截图，默认关闭 | `false` |
 | downloadFileprefix | string                               | 下载文件前缀                 |         |
+| key                | string                               | 快捷键                       |         |
 | onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容       |         |
 
 ## Methods
@@ -75,3 +76,4 @@ new ShortcutCapture({
 -   [x] 放大镜
 -   [x] 右键、esc 退出
 -   [x] 马赛克
+-   [x] 文字（支持拖动，换行。暂时其他工具不能穿透文字、不能再文字上面操作）

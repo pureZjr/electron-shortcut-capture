@@ -17,11 +17,13 @@ export default class electronShortcutCapture {
 		this.multiScreen = !!props ? !!props.multiScreen : false
 		this.downloadFileprefix = !!props ? props.downloadFileprefix : ''
 		this.onClipboard = !!props ? props.onClipboard : null
+		this.key = !!props ? props.key : ''
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
 		this.bindDownload()
 		this.listenCapturingDisplayId()
+		this.bindKey()
 	}
 
 	// 显示器数组
@@ -30,6 +32,8 @@ export default class electronShortcutCapture {
 	private handleCaptureWins: BrowserWindow[] = []
 	// 允许多屏幕
 	private multiScreen: boolean = false
+	// 快捷键
+	private key: string = ''
 	// 屏幕信息
 	private displays: Electron.Display[] = []
 	// 正在截图
@@ -250,5 +254,16 @@ export default class electronShortcutCapture {
 	 */
 	private unListenEsc = () => {
 		globalShortcut.unregister('esc')
+	}
+
+	/**
+	 * 绑定截图快捷键
+	 */
+	private bindKey = () => {
+		if (this.key) {
+			globalShortcut.register(this.key, () => {
+				this.show()
+			})
+		}
 	}
 }

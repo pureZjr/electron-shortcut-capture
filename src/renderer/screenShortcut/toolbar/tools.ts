@@ -446,8 +446,24 @@ export const text = (args: {
 
 		const drag = ({ clientY, clientX }) => {
 			hasMoving = true
-			currentControlInputArea.style.top = `${clientY - rect.y1}px`
-			currentControlInputArea.style.left = `${clientX - rect.x1}px`
+			const width = currentControlInputArea.clientWidth
+			const height = currentControlInputArea.clientHeight
+			currentControlInputArea.style.top = `${clientY -
+				rect.y1 -
+				height / 2}px`
+			currentControlInputArea.style.left = `${clientX -
+				rect.x1 -
+				width / 2}px`
+		}
+
+		const mouseout = () => {
+			window.addEventListener('mousemove', drag)
+			console.log('绑定window：mousemove')
+		}
+
+		const mouseenter = () => {
+			window.removeEventListener('mousemove', drag)
+			console.log('解绑window：mousemove')
 		}
 
 		// 拖动
@@ -461,10 +477,23 @@ export const text = (args: {
 					? target.parentElement
 					: target) as HTMLDivElement
 				currentControlInputArea = inputTarget
+				currentControlInputArea.style.zIndex = '111'
 				if (inputTarget.contentEditable === 'false') {
-					console.log('开始拖动,save')
 					save()
-					canvasRef.addEventListener('mousemove', drag)
+					console.log(
+						'绑定mousemove，mouseout，mouseenter，超过一次有bug'
+					)
+					currentControlInputArea.addEventListener('mousemove', drag)
+
+					currentControlInputArea.addEventListener(
+						'mouseout',
+						mouseout
+					)
+
+					currentControlInputArea.addEventListener(
+						'mouseenter',
+						mouseenter
+					)
 				}
 			}
 		})
@@ -479,11 +508,20 @@ export const text = (args: {
 				const inputTarget = isChild ? target.parentElement : target
 				if (inputTarget.contentEditable === 'false') {
 					if (!hasMoving) {
-						console.log('没有拖动,删除save')
 						canvasStore.pop()
 					}
 					hasMoving = false
-					canvasRef.removeEventListener('mousemove', drag)
+					currentControlInputArea.style.zIndex = '110'
+					console.log('结束拖动')
+					currentControlInputArea.removeEventListener(
+						'mouseout',
+						mouseout
+					)
+					window.removeEventListener('mousemove', drag)
+					currentControlInputArea.removeEventListener(
+						'mousemove',
+						drag
+					)
 				}
 			}
 		})
@@ -574,7 +612,6 @@ export const text = (args: {
 
 	function onMousedown({ x, y }) {
 		if (editStatus === 2) {
-			console.log('onMousedown,save')
 			save()
 			editStatus = 1
 			createInputArea(x, y)

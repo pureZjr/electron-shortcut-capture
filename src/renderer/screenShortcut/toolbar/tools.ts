@@ -370,6 +370,8 @@ export const text = (args: {
 	let editStatus: 1 | 2 = 2
 	let currElement: HTMLDivElement = null
 	let hasClickToolTipPortal = false
+	// 是否拖动
+	let hasMoving = false
 
 	if (!!control) {
 		window.removeEventListener('click', clickOutside)
@@ -394,27 +396,23 @@ export const text = (args: {
 		hasClickToolTipPortal = !!existToolTipPortal.length
 	}
 
-	function inputAreaBindBlur() {
-		const inputAreas = document.getElementsByClassName('input-area')
-		for (let i = 0; i < inputAreas.length; i++) {
-			const inputArea = inputAreas[i] as HTMLDivElement
-			inputArea.addEventListener('blur', () => {
-				editStatus = 2
-				setTimeout(() => {
-					if (editStatus === 1 || hasClickToolTipPortal) {
-						return
-					}
-					inputArea.contentEditable = 'false'
-					inputArea.style.boxShadow = 'unset'
-					if (!inputArea.textContent) {
-						// 没有输入文字
-						inputArea.remove()
-						canvasStore.pop()
-					} else {
-						args.setHasDraw(true)
-					}
-				}, 120)
-			})
+	function inputAreaBindBlur(inputTarget: HTMLDivElement) {
+		inputTarget.onblur = () => {
+			editStatus = 2
+			setTimeout(() => {
+				if (editStatus === 1 || hasClickToolTipPortal) {
+					return
+				}
+				inputTarget.contentEditable = 'false'
+				inputTarget.style.boxShadow = 'unset'
+				if (!inputTarget.textContent) {
+					// 没有输入文字
+					inputTarget.remove()
+					canvasStore.pop()
+				} else {
+					args.setHasDraw(true)
+				}
+			}, 120)
 		}
 	}
 
@@ -422,18 +420,32 @@ export const text = (args: {
 	function inputAreaBindEvent() {
 		let currentControlInputArea: HTMLDivElement = null
 
+		function cleanInputAreaShadow() {
+			const inputAreas = document.getElementsByClassName('input-area')
+			for (let i = 0; i < inputAreas.length; i++) {
+				;(inputAreas[i] as HTMLDivElement).style.boxShadow = 'unset'
+			}
+		}
+
 		// 单击选中文字
 		args.canvasRef.parentElement.addEventListener('click', e => {
-			inputAreaBindBlur()
 			const target = e.target as HTMLDivElement
-			if (target.className === 'input-area') {
-				target.style.boxShadow = 'unset'
-				currElement = target
-				target.style.boxShadow = '0 0 1px red'
+			const isChild = target.parentElement.className === 'input-area'
+			const isCurrent = target.className === 'input-area'
+
+			if (isChild || isCurrent) {
+				const inputTarget = (isChild
+					? target.parentElement
+					: target) as HTMLDivElement
+				inputAreaBindBlur(inputTarget)
+				cleanInputAreaShadow()
+				currElement = inputTarget
+				inputTarget.style.boxShadow = '0 0 1px red'
 			}
 		})
 
 		const drag = ({ clientY, clientX }) => {
+			hasMoving = true
 			currentControlInputArea.style.top = `${clientY - rect.y1}px`
 			currentControlInputArea.style.left = `${clientX - rect.x1}px`
 		}
@@ -441,30 +453,54 @@ export const text = (args: {
 		// 拖动
 		args.canvasRef.parentElement.addEventListener('mousedown', e => {
 			const target = e.target as HTMLDivElement
-			currentControlInputArea = target
-			if (target.className === 'input-area') {
-				save()
-				canvasRef.addEventListener('mousemove', drag)
+			const isChild = target.parentElement.className === 'input-area'
+			const isCurrent = target.className === 'input-area'
+
+			if (isChild || isCurrent) {
+				const inputTarget = (isChild
+					? target.parentElement
+					: target) as HTMLDivElement
+				currentControlInputArea = inputTarget
+				if (inputTarget.contentEditable === 'false') {
+					console.log('开始拖动,save')
+					save()
+					canvasRef.addEventListener('mousemove', drag)
+				}
 			}
 		})
 
 		// 结束拖动
 		args.canvasRef.parentElement.addEventListener('mouseup', e => {
 			const target = e.target as HTMLDivElement
-			if (target.className === 'input-area') {
-				canvasRef.removeEventListener('mousemove', drag)
+			const isChild = target.parentElement.className === 'input-area'
+			const isCurrent = target.className === 'input-area'
+
+			if (isChild || isCurrent) {
+				const inputTarget = isChild ? target.parentElement : target
+				if (inputTarget.contentEditable === 'false') {
+					if (!hasMoving) {
+						console.log('没有拖动,删除save')
+						canvasStore.pop()
+					}
+					hasMoving = false
+					canvasRef.removeEventListener('mousemove', drag)
+				}
 			}
 		})
 
 		// 双击重新获取焦点
 		args.canvasRef.parentElement.addEventListener('dblclick', e => {
 			const target = e.target as HTMLDivElement
-			if (target.className === 'input-area') {
+			const isChild = target.parentElement.className === 'input-area'
+			const isCurrent = target.className === 'input-area'
+
+			if (isChild || isCurrent) {
+				const inputTarget = isChild ? target.parentElement : target
 				editStatus = 1
-				target.contentEditable = 'true'
+				inputTarget.contentEditable = 'true'
 				setTimeout(() => {
-					target.focus()
-					;(target as any).value = (target as any).value
+					inputTarget.focus()
+					;(inputTarget as any).value = (inputTarget as any).value
 				}, 100)
 			}
 		})
@@ -490,24 +526,23 @@ export const text = (args: {
 		}
 		currElement = inputArea
 
-		// inputArea.addEventListener('blur', () => {
-		// 	console.log('blur1')
-		// 	editStatus = 2
-		// 	setTimeout(() => {
-		// 		if (editStatus === 1 || hasClickToolTipPortal) {
-		// 			return
-		// 		}
-		// 		inputArea.contentEditable = 'false'
-		// 		inputArea.style.boxShadow = 'unset'
-		// 		if (!inputArea.textContent) {
-		// 			// 没有输入文字
-		// 			inputArea.remove()
-		// 			canvasStore.pop()
-		// 		} else {
-		// 			args.setHasDraw(true)
-		// 		}
-		// 	}, 120)
-		// })
+		inputArea.onblur = () => {
+			editStatus = 2
+			setTimeout(() => {
+				if (editStatus === 1 || hasClickToolTipPortal) {
+					return
+				}
+				inputArea.contentEditable = 'false'
+				inputArea.style.boxShadow = 'unset'
+				if (!inputArea.textContent) {
+					// 没有输入文字
+					inputArea.remove()
+					canvasStore.pop()
+				} else {
+					args.setHasDraw(true)
+				}
+			}, 120)
+		}
 	}
 
 	// 更新文字样式
@@ -533,13 +568,13 @@ export const text = (args: {
 		const inputAreas = document.getElementsByClassName('input-area')
 		for (let i = 0; i < inputAreas.length; i++) {
 			fragment.appendChild(inputAreas[i].cloneNode(true))
-			console.dir(inputAreas[i])
 		}
 		setCanvasImageData(fragment)
 	}
 
 	function onMousedown({ x, y }) {
 		if (editStatus === 2) {
+			console.log('onMousedown,save')
 			save()
 			editStatus = 1
 			createInputArea(x, y)

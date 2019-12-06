@@ -226,6 +226,9 @@ class Rectangle extends Component<IProps, IState> {
 		)
 	}
 
+	/**
+	 * 缩放点
+	 */
 	renderDragPoint() {
 		return (
 			<Fragment>

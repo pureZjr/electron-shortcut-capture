@@ -112,13 +112,21 @@ const Layer: React.FC<IProps> = ({
 		}
 		e.target.style.background = 'rgba(0, 0, 0, 0.3)'
 	}
+	/**
+	 * 放大镜
+	 */
 	const renderPixelBox = () => {
 		if (!pixelBoxProps) {
 			return null
 		}
 		const { x, y, rgb } = pixelBoxProps
-		const left = x - 120 < 1 ? 20 : x - 120
-		const top = y + 20 > bounds.height - 140 ? bounds.height - 160 : y + 20
+		let left = x - 120 < 1 ? 20 : x - 120
+		let top = y + 20 > bounds.height - 140 ? bounds.height - 160 : y + 20
+		// 左下角位置
+		if (bounds.height - y < 170 && x < 150) {
+			top = y - 160
+			left = x + 20
+		}
 
 		return (
 			<div

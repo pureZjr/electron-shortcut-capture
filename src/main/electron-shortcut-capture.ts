@@ -104,6 +104,7 @@ export default class electronShortcutCapture {
 			// 设置窗口可以在全屏窗口之上显示。
 			v.setVisibleOnAllWorkspaces(true)
 			v.setAlwaysOnTop(true, 'screen-saver')
+			v.setBackgroundColor('#00000000')
 			v.show()
 		})
 	}
@@ -122,6 +123,7 @@ export default class electronShortcutCapture {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			v.webContents.send(events.close)
+			v.setBackgroundColor('#30000000')
 		})
 		this.shortcuting = false
 		this.unListenEsc()

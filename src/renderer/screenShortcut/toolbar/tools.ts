@@ -49,8 +49,18 @@ export const makecurve = (args: {
 		points.push({ x, y })
 		setCanvasImageData(ctx)
 	}
-	function onMousemove({ x, y }) {
+
+	// 鼠标移动
+	function move(e) {
+		const isWinBind = !!e.target
 		hasMove = true
+		let x = e.clientX
+		let y = e.clientY
+
+		if (isWinBind) {
+			x = e.clientX - rect.x1
+			y = e.clientY - rect.y1
+		}
 		points.push({ x, y })
 
 		if (points.length > 3) {
@@ -64,7 +74,52 @@ export const makecurve = (args: {
 			beginPoint = endPoint
 		}
 	}
+
+	// canvas上的鼠标移动
+	function onMousemove({ x, y }) {
+		move({
+			clientX: x,
+			clientY: y
+		})
+	}
+
+	// window上面的鼠标移动
+	function winMouseup({ clientX, clientY }) {
+		window.removeEventListener('mousemove', move)
+		setHasDraw(true)
+		hasMove = false
+		points.push({ x: clientX - rect.x1, y: clientY - rect.y1 })
+		if (points.length > 3) {
+			const lastTwoPoints = points.slice(-2)
+			const controlPoint = lastTwoPoints[0]
+			const endPoint = lastTwoPoints[1]
+			drawLine(beginPoint, controlPoint, endPoint)
+		}
+		beginPoint = null
+		points = []
+		setTimeout(() => {
+			window.removeEventListener('mouseup', winMouseup)
+		}, 0)
+	}
+
+	/**
+	 * 鼠标起
+	 * 由于鼠标进过文字的时候会触发，所以下面加以判断鼠标位置是否在canvas里面
+	 * 是：立刻绑定window移动事件接着画
+	 * 否：结束
+	 * 其他工具如此类推
+	 * */
+
 	function onMouseup({ x, y }) {
+		const width = args.canvasRef.clientWidth
+		const height = args.canvasRef.clientHeight
+		const isOut = 0 > x || x > width || 0 > y || y > height
+		if (!isOut) {
+			// 穿过文字
+			window.addEventListener('mousemove', move)
+			window.addEventListener('mouseup', winMouseup)
+			return
+		}
 		if (hasMove) {
 			setHasDraw(true)
 		} else {
@@ -133,11 +188,47 @@ export const frame = (args: {
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
 		setCanvasImageData(ctx)
 	}
-	function onMousemove({ x, y }) {
+
+	// 鼠标移动
+	function move(e) {
+		const isWinBind = !!e.target
 		hasMove = true
+		let x = e.clientX
+		let y = e.clientY
+		if (isWinBind) {
+			x = e.clientX - rect.x1
+			y = e.clientY - rect.y1
+		}
 		drawFrame(x, y)
 	}
-	function onMouseup() {
+
+	function onMousemove({ x, y }) {
+		move({
+			clientX: x,
+			clientY: y
+		})
+	}
+
+	// window上面的鼠标移动
+	function winMouseup() {
+		window.removeEventListener('mousemove', move)
+		setHasDraw(true)
+		hasMove = false
+		setTimeout(() => {
+			window.removeEventListener('mouseup', winMouseup)
+		}, 0)
+	}
+
+	function onMouseup({ x, y }) {
+		const width = args.canvasRef.clientWidth
+		const height = args.canvasRef.clientHeight
+		const isOut = 0 > x || x > width || 0 > y || y > height
+		if (!isOut) {
+			// 穿过文字
+			window.addEventListener('mousemove', move)
+			window.addEventListener('mouseup', winMouseup)
+			return
+		}
 		if (hasMove) {
 			setHasDraw(true)
 		} else {
@@ -205,11 +296,47 @@ export const arrow = (args: {
 		tempCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height)
 		setCanvasImageData(ctx)
 	}
-	function onMousemove({ x, y }) {
+
+	// 鼠标移动
+	function move(e) {
+		const isWinBind = !!e.target
 		hasMove = true
+		let x = e.clientX
+		let y = e.clientY
+		if (isWinBind) {
+			x = e.clientX - rect.x1
+			y = e.clientY - rect.y1
+		}
 		drawArrow(x, y)
 	}
-	function onMouseup() {
+
+	function onMousemove({ x, y }) {
+		move({
+			clientX: x,
+			clientY: y
+		})
+	}
+
+	// window上面的鼠标移动
+	function winMouseup() {
+		window.removeEventListener('mousemove', move)
+		setHasDraw(true)
+		hasMove = false
+		setTimeout(() => {
+			window.removeEventListener('mouseup', winMouseup)
+		}, 0)
+	}
+
+	function onMouseup({ x, y }) {
+		const width = args.canvasRef.clientWidth
+		const height = args.canvasRef.clientHeight
+		const isOut = 0 > x || x > width || 0 > y || y > height
+		if (!isOut) {
+			// 穿过文字
+			window.addEventListener('mousemove', move)
+			window.addEventListener('mouseup', winMouseup)
+			return
+		}
 		if (hasMove) {
 			setHasDraw(true)
 		} else {
@@ -325,6 +452,22 @@ export const mosaic = (args: {
 		ctx.fillRect(x - size / 2, y - size / 2, size, size)
 	}
 
+	function move(e) {
+		const isWinBind = !!e.target
+		hasMove = true
+		let x = e.clientX
+		let y = e.clientY
+		if (isWinBind) {
+			x = e.clientX - rect.x1
+			y = e.clientY - rect.y1
+		}
+		if (Math.abs(x - lastPosiX) > size || Math.abs(y - lastPosiY) > size) {
+			lastPosiX = x
+			lastPosiY = y
+			setRgb(x, y)
+		}
+	}
+
 	function onMousedown({ x, y }) {
 		lastPosiX = x
 		lastPosiY = y
@@ -332,14 +475,33 @@ export const mosaic = (args: {
 		setCanvasImageData(ctx)
 	}
 	function onMousemove({ x, y }) {
-		hasMove = true
-		if (Math.abs(x - lastPosiX) > size || Math.abs(y - lastPosiY) > size) {
-			lastPosiX = x
-			lastPosiY = y
-			setRgb(x, y)
-		}
+		move({
+			clientX: x,
+			clientY: y
+		})
 	}
-	function onMouseup() {
+
+	// window上面的鼠标移动
+	function winMouseup() {
+		window.removeEventListener('mousemove', move)
+		args.setHasDraw(true)
+		hasMove = false
+		setTimeout(() => {
+			window.removeEventListener('mouseup', winMouseup)
+		}, 0)
+	}
+
+	function onMouseup({ x, y }) {
+		const width = args.canvasRef.clientWidth
+		const height = args.canvasRef.clientHeight
+		const isOut = 0 > x || x > width || 0 > y || y > height
+		if (!isOut) {
+			// 穿过文字
+			window.addEventListener('mousemove', move)
+			window.addEventListener('mouseup', winMouseup)
+			return
+		}
+
 		if (hasMove) {
 			args.setHasDraw(true)
 		} else {

@@ -144,10 +144,9 @@ $pointer-border-radius: 50%;
 		color: #fff;
 		display: flex;
 		font-size: 12px;
-		left: -30px;
 		padding: 6px;
 		position: absolute;
-		top: -40px;
+		z-index: 111;
 	}
 }
 

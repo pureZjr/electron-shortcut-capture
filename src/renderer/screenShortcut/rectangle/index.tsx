@@ -323,9 +323,17 @@ class Rectangle extends Component<IProps, IState> {
 				: '-55px'
 		}`
 
+		const styles =
+			isShortcutFullScreen || rect.y1 <= 40
+				? { top: '5px', left: '4px' }
+				: { top: '-40px', left: '-30px' }
+
 		return (
 			<div className="rectangle" style={style}>
-				<div className="size">{`${style.width} * ${style.height}`}</div>
+				<div
+					className="size"
+					style={styles}
+				>{`${style.width} * ${style.height}`}</div>
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{

@@ -565,6 +565,7 @@ export const text = (args: {
 				if (editStatus === 1 || hasClickToolTipPortal) {
 					return
 				}
+				currElement = null
 				inputTarget.contentEditable = 'false'
 				inputTarget.style.boxShadow = 'unset'
 				if (!inputTarget.textContent) {
@@ -732,6 +733,7 @@ export const text = (args: {
 				if (editStatus === 1 || hasClickToolTipPortal) {
 					return
 				}
+				currElement = null
 				inputArea.contentEditable = 'false'
 				inputArea.style.boxShadow = 'unset'
 				if (!inputArea.textContent) {

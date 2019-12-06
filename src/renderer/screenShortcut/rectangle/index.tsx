@@ -312,13 +312,24 @@ class Rectangle extends Component<IProps, IState> {
 		if (this.shortcutDisabled()) {
 			return null
 		}
+
+		const bottom = `${
+			isShortcutFullScreen ||
+			this.props.bounds.height -
+				rect.y1 -
+				parseInt(style.height as any, 0) <=
+				60
+				? '5px'
+				: '-55px'
+		}`
+
 		return (
 			<div className="rectangle" style={style}>
 				<div className="size">{`${style.width} * ${style.height}`}</div>
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{
-						bottom: `${isShortcutFullScreen ? '5px' : '-55px'}`
+						bottom
 					}}
 					controlToolbar={this.controlToolbar}
 					rect={rect}

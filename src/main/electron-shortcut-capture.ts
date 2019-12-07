@@ -220,8 +220,11 @@ export default class electronShortcutCapture {
 			(_, sources: Electron.DesktopCapturerSource[]) => {
 				stopRunning()
 				for (let i = 0; i < sources.length; i++) {
+					// 这里正常情况下是要判断display_id的,不知道win7的display为毛是空的，所以多做一个判断display_id为空的判断
 					if (
-						Number(sources[i].display_id) === Number(args.displayId)
+						Number(sources[i].display_id) ===
+							Number(args.displayId) ||
+						sources[i].display_id === ''
 					) {
 						args.win.webContents.send(events.screenSourcesToPng, {
 							toPngSource: sources[i].thumbnail.toPNG(),

@@ -1,6 +1,6 @@
 {
     "name": "electron-shortcut-capture",
-    "version": "1.0.48",
+    "version": "1.0.49",
     "description": "",
     "main": "./dist/main/main.js",
     "scripts": {

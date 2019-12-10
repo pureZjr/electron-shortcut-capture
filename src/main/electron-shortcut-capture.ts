@@ -15,7 +15,7 @@ import { events } from '../constant'
 export default class electronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.multiScreen = !!props ? !!props.multiScreen : false
-		this.downloadFileprefix = !!props ? props.downloadFileprefix : ''
+		this.downloadFileprefix = !!props ? props.downloadFileprefix || '' : ''
 		this.onClipboard = !!props ? props.onClipboard : null
 		this.key = !!props ? props.key : ''
 		this.initWin()

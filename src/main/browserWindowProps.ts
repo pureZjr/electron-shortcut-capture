@@ -20,7 +20,7 @@ const browserWindowProps = (
 		// 窗口不可以拖动
 		movable: false,
 		// 全屏窗口
-		fullscreen: false,
+		fullscreen: process.platform === 'darwin' ? false : true,
 		// 在 macOS 上使用 pre-Lion 全屏
 		simpleFullscreen: true,
 		backgroundColor: '#30000000',
@@ -30,7 +30,7 @@ const browserWindowProps = (
 		focusable: true,
 		enableLargerThanScreen: true,
 		// 是否在任务栏中显示窗口
-		skipTaskbar: false,
+		skipTaskbar: process.platform === 'darwin' ? false : true,
 		// 窗口不可以最小化
 		minimizable: false,
 		// 窗口不可以最大化

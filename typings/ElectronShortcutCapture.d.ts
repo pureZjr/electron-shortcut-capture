@@ -6,10 +6,6 @@ declare namespace ElectronShortcutCapture {
 		y2: number
 	}
 
-	interface IElectronShortcutCapture {
-		show: () => void
-	}
-
 	interface IElectronShortcutCaptureProps {
 		/**
 		 * 允许多屏幕，默认false，只对当前操作的屏幕进行截图

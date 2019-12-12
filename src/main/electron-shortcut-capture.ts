@@ -118,7 +118,7 @@ export default class electronShortcutCapture {
 		})
 	}
 
-	private hide(autoRunReopen?: boolean) {
+	hide(autoRunReopen?: boolean) {
 		this.handleCaptureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
@@ -269,6 +269,23 @@ export default class electronShortcutCapture {
 			globalShortcut.register(this.key, () => {
 				this.show()
 			})
+		}
+	}
+	/**
+	 * 更新快捷键
+	 */
+	updateBindKey = (key: string) => {
+		if (key) {
+			if (this.key) {
+				globalShortcut.unregister(this.key)
+			}
+			this.key = key
+			globalShortcut.register(key, () => {
+				this.show()
+			})
+		} else {
+			globalShortcut.unregister(this.key)
+			this.key = key
 		}
 	}
 }

@@ -326,8 +326,13 @@ class Rectangle extends Component<IProps, IState> {
 		const styles =
 			isShortcutFullScreen || rect.y1 <= 40
 				? { top: '5px', left: '4px' }
-				: { top: '-40px', left: '-30px' }
+				: { top: '-40px', left: '4px' }
 
+		let toolbarRight = 4
+
+		if (rect.x2 - rect.x1 < 470 && rect.x2 < 470) {
+			toolbarRight = rect.x2 - 470
+		}
 		return (
 			<div className="rectangle" style={style}>
 				<div
@@ -337,7 +342,8 @@ class Rectangle extends Component<IProps, IState> {
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{
-						bottom
+						bottom,
+						right: toolbarRight
 					}}
 					controlToolbar={this.controlToolbar}
 					rect={rect}

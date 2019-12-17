@@ -276,16 +276,24 @@ export default class electronShortcutCapture {
 	 */
 	updateBindKey = (key: string) => {
 		if (key) {
-			if (this.key) {
-				globalShortcut.unregister(this.key)
+			try {
+				if (this.key) {
+					globalShortcut.unregister(this.key)
+				}
+				this.key = key
+				globalShortcut.register(key, () => {
+					this.show()
+				})
+			} catch {
+				this.key = ''
 			}
-			this.key = key
-			globalShortcut.register(key, () => {
-				this.show()
-			})
 		} else {
-			globalShortcut.unregister(this.key)
-			this.key = key
+			try {
+				globalShortcut.unregister(this.key)
+				this.key = key
+			} catch {
+				this.key = ''
+			}
 		}
 	}
 }

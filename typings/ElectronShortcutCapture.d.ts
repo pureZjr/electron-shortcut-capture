@@ -18,6 +18,8 @@ declare namespace ElectronShortcutCapture {
 		key?: string
 		// 点击完成返回剪贴板内容
 		onClipboard?: (data: Electron.NativeImage) => void
+		// 关闭截图回调
+		onHide?: () => void
 	}
 
 	interface ISource {

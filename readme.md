@@ -51,6 +51,7 @@ new ShortcutCapture({
 | downloadFileprefix | string                               | 下载文件前缀                 |         |
 | key                | string                               | 快捷键                       |         |
 | onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容       |         |
+| onHide             | () => void                           | 关闭截图回调                 |         |
 
 ## Methods
 

@@ -18,6 +18,7 @@ export default class electronShortcutCapture {
 		this.downloadFileprefix = !!props ? props.downloadFileprefix || '' : ''
 		this.onClipboard = !!props ? props.onClipboard : null
 		this.key = !!props ? props.key : ''
+		this.onHide = !!props ? props.onHide : null
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -40,6 +41,7 @@ export default class electronShortcutCapture {
 	private shortcuting: boolean = false
 	private downloadFileprefix: string = ''
 	private onClipboard: (data: Electron.NativeImage) => void = null
+	private onHide: () => void = null
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -129,6 +131,9 @@ export default class electronShortcutCapture {
 		this.unListenEsc()
 		if (autoRunReopen && require('os').platform() !== 'darwin') {
 			this.reopen()
+		}
+		if (this.onHide) {
+			this.onHide()
 		}
 	}
 

@@ -20,6 +20,7 @@ interface IState {
 	dragpoint: { x: number; y: number }
 	currRect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
+	rectangle: HTMLDivElement
 	style: React.CSSProperties
 	// 截取全屏
 	isShortcutFullScreen: boolean
@@ -37,6 +38,7 @@ class Rectangle extends Component<IProps, IState> {
 			dragpoint: null,
 			currRect: null,
 			canvasRef: null,
+			rectangle: null,
 			style: {},
 			isShortcutFullScreen: false,
 			cancelZoom: false,
@@ -53,6 +55,12 @@ class Rectangle extends Component<IProps, IState> {
 			const height = y2 - y1
 			ref.getContext('2d').clearRect(0, 0, width, height)
 			ref.addEventListener('mousedown', this.mousedownToMove)
+		}
+	}
+
+	setRectangle = (ref: HTMLDivElement) => {
+		if (!!ref) {
+			this.setState({ rectangle: ref })
 		}
 	}
 
@@ -85,10 +93,20 @@ class Rectangle extends Component<IProps, IState> {
 		if (!x1 && !y1 && !x2 && !y2) {
 			// 点击显示器，没有框图，全屏选择
 			const { width, height } = this.props.bounds
+			const style: React.CSSProperties = {
+				width: `${width}px`,
+				height: `${height}px`,
+				left: `0px`,
+				top: `0px`,
+				visibility: width && height ? 'visible' : 'hidden'
+			}
 			this.setState({
-				isShortcutFullScreen: true
+				isShortcutFullScreen: true,
+				style
 			})
 			this.props.onResize({ x1: 0, y1: 0, x2: width, y2: height })
+			window.removeEventListener('mouseup', this.mouseup)
+			this.controlToolbar()
 		} else {
 			if (!this.state.dragType) {
 				this.props.onResize({ x1, y1, x2, y2 })
@@ -101,6 +119,12 @@ class Rectangle extends Component<IProps, IState> {
 		if (!this.state.capturingDisplayId) {
 			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
 			setCapturingDisplay(this.props.currDisplayId)
+			setTimeout(() => {
+				this.state.rectangle.addEventListener(
+					'dblclick',
+					this.onHandleDoubleClick
+				)
+			}, 200)
 		}
 	}
 
@@ -270,6 +294,10 @@ class Rectangle extends Component<IProps, IState> {
 
 	onHandleDoubleClick = () => {
 		clipboard(this.state.canvasRef)
+		this.state.rectangle.removeEventListener(
+			'dblclick',
+			this.onHandleDoubleClick
+		)
 	}
 
 	componentDidMount() {
@@ -338,11 +366,7 @@ class Rectangle extends Component<IProps, IState> {
 			toolbarRight = rect.x2 - 470
 		}
 		return (
-			<div
-				className="rectangle"
-				style={style}
-				onDoubleClick={this.onHandleDoubleClick}
-			>
+			<div className="rectangle" style={style} ref={this.setRectangle}>
 				<div
 					className="size"
 					style={styles}

@@ -35,6 +35,7 @@ const ScreenShot: React.FC = () => {
 		}
 	)
 	const [currDisplayId, setCurrDisplayId] = React.useState(0)
+	const [bgHasDraw, setBgHasDraw] = React.useState(false)
 
 	React.useEffect(() => {
 		getSource(setSource)
@@ -111,6 +112,7 @@ const ScreenShot: React.FC = () => {
 				source={source}
 				setBackgroundCtx={setBackgroundCtx}
 				bounds={bounds}
+				setBgHasDraw={setBgHasDraw}
 			/>
 			<Rectangle
 				onResize={onResize}
@@ -119,8 +121,9 @@ const ScreenShot: React.FC = () => {
 				setRectangleCtx={setRectangleCtx}
 				bounds={bounds}
 				currDisplayId={currDisplayId}
+				bgHasDraw={bgHasDraw}
 			/>
-			{!destoryLayer && (
+			{!destoryLayer && bgHasDraw && (
 				<Layer
 					onDraw={onDraw}
 					setDestoryLayer={setDestoryLayer}

@@ -10,6 +10,7 @@ interface IProps {
 	bounds: { x: number; y: number; width: number; height: number }
 	currDisplayId: number
 	rect: ElectronShortcutCapture.IRect
+	bgHasDraw: boolean
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
@@ -119,12 +120,10 @@ class Rectangle extends Component<IProps, IState> {
 		if (!this.state.capturingDisplayId) {
 			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
 			setCapturingDisplay(this.props.currDisplayId)
-			setTimeout(() => {
-				this.state.rectangle.addEventListener(
-					'dblclick',
-					this.onHandleDoubleClick
-				)
-			}, 200)
+			this.state.rectangle.addEventListener(
+				'dblclick',
+				this.onHandleDoubleClick
+			)
 		}
 	}
 
@@ -300,12 +299,6 @@ class Rectangle extends Component<IProps, IState> {
 		)
 	}
 
-	componentDidMount() {
-		window.addEventListener('mousemove', this.mousemove)
-		window.addEventListener('mouseup', this.mouseup)
-		this.listenCapturingDisplayId()
-	}
-
 	componentWillUpdate(nextProps) {
 		const { rect } = nextProps
 		const { x1, x2, y1, y2 } = rect
@@ -325,6 +318,12 @@ class Rectangle extends Component<IProps, IState> {
 			this.setState({
 				style
 			})
+		}
+		if (nextProps.bgHasDraw) {
+			// 当背景画好之后才允许各种画图操作
+			window.addEventListener('mousemove', this.mousemove)
+			window.addEventListener('mouseup', this.mouseup)
+			this.listenCapturingDisplayId()
 		}
 	}
 

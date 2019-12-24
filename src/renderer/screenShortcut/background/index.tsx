@@ -11,6 +11,7 @@ interface IProps {
 	source: ElectronShortcutCapture.ISource
 	bounds: ElectronShortcutCapture.IBounds
 	setBackgroundCtx: (ctx: CanvasRenderingContext2D) => void
+	setBgHasDraw: (boo: boolean) => void
 }
 
 const Background: React.FC<IProps> = ({
@@ -18,7 +19,8 @@ const Background: React.FC<IProps> = ({
 	rectangleCtx,
 	source,
 	bounds,
-	setBackgroundCtx
+	setBackgroundCtx,
+	setBgHasDraw
 }) => {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null)
 
@@ -27,6 +29,7 @@ const Background: React.FC<IProps> = ({
 	 */
 	React.useEffect(() => {
 		if (!!source) {
+			setBgHasDraw(true)
 			drawBackground()
 		}
 	}, [source])

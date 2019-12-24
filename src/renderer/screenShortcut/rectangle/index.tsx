@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { ipcRenderer } from 'electron'
 
 import Toolbar from '../toolbar'
-import { setCapturingDisplay } from '../events'
+import { setCapturingDisplay, clipboard } from '../events'
 import { events } from '../../../constant'
 import './index.scss'
 
@@ -268,6 +268,10 @@ class Rectangle extends Component<IProps, IState> {
 		)
 	}
 
+	onHandleDoubleClick = () => {
+		clipboard(this.state.canvasRef)
+	}
+
 	componentDidMount() {
 		window.addEventListener('mousemove', this.mousemove)
 		window.addEventListener('mouseup', this.mouseup)
@@ -334,7 +338,11 @@ class Rectangle extends Component<IProps, IState> {
 			toolbarRight = rect.x2 - 470
 		}
 		return (
-			<div className="rectangle" style={style}>
+			<div
+				className="rectangle"
+				style={style}
+				onDoubleClick={this.onHandleDoubleClick}
+			>
 				<div
 					className="size"
 					style={styles}

@@ -79,3 +79,4 @@ new ShortcutCapture({
 -   [x] 右键、esc 退出
 -   [x] 马赛克
 -   [x] 文字
+-   [x] 双加选中截取部分，相当于点击完成

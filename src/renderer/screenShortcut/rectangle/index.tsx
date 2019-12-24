@@ -120,10 +120,12 @@ class Rectangle extends Component<IProps, IState> {
 		if (!this.state.capturingDisplayId) {
 			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
 			setCapturingDisplay(this.props.currDisplayId)
-			this.state.rectangle.addEventListener(
-				'dblclick',
-				this.onHandleDoubleClick
-			)
+			setTimeout(() => {
+				this.state.rectangle.addEventListener(
+					'dblclick',
+					this.onHandleDoubleClick
+				)
+			}, 200)
 		}
 	}
 

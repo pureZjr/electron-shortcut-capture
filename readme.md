@@ -12,6 +12,8 @@ _有什么问题欢迎[issue](https://github.com/pureZjr/electron-shortcut-captu
 2. 截取当前屏幕的图片，并用 canvas 画出来。
 3. 步骤 1 的全屏窗口加载步骤 2 的页面，这样你就可以对 canvas 做例如 QQ 截图的操作了。
 
+![流程](https://ydy-staff.ydjai.com/desktop/8f1e1ab8a9e32795aea6c70572494e67.png '流程')
+
 ## issue
 
 **已知问题：**

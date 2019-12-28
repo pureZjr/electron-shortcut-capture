@@ -22,7 +22,7 @@ const Layer: React.FC<IProps> = ({
 	onDraw,
 	setDestoryLayer
 }) => {
-	const [isMoving, setIsMoving] = React.useState(false)
+	// 是否开始框图
 	const [startShortCut, setStartShortCut] = React.useState(false)
 	// 框图起始点
 	const [point, setPoint] = React.useState({ x: 0, y: 0 })
@@ -39,12 +39,11 @@ const Layer: React.FC<IProps> = ({
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setPixelBoxProps(null)
 		setPoint({ x: e.clientX, y: e.clientY })
-		setIsMoving(true)
 		setStartShortCut(true)
 		;(e.target as HTMLDivElement).style.background = 'rgba(0, 0, 0, 0.3)'
 	}
 	const mousemove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		if (isMoving) {
+		if (startShortCut) {
 			draw(e)
 		} else {
 			if (!backgroundCtx) {
@@ -76,10 +75,10 @@ const Layer: React.FC<IProps> = ({
 			}
 		}
 	}
-	// 框完图就销毁事件，不准再重复框，只能调整大小或者位置
+	// 框完图就销毁事件，不准再重复框，只能调整大小或者移动位置
 	const mouseup = () => {
 		window.removeEventListener('mouseup', mouseup)
-		setIsMoving(false)
+		setStartShortCut(false)
 		setDestoryLayer(true)
 	}
 	const draw = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -94,7 +93,7 @@ const Layer: React.FC<IProps> = ({
 		if (startShortCut) {
 			return false
 		}
-		e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+		e.target.style.background = 'rgba(255, 255, 255, 0)'
 	}
 	const onBlur = e => {
 		setPixelBoxProps(null)

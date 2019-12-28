@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { ipcRenderer } from 'electron'
 
 import Toolbar from '../toolbar'
 import { setCapturingDisplay, clipboard } from '../events'
-import { events } from '../../../constant'
+
 import './index.scss'
 
 interface IProps {
@@ -11,9 +10,11 @@ interface IProps {
 	currDisplayId: number
 	rect: ElectronShortcutCapture.IRect
 	bgHasDraw: boolean
+	capturingDisplayId: number
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
 	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
+	shortcutDisabled: () => Boolean
 }
 
 interface IState {
@@ -27,8 +28,6 @@ interface IState {
 	isShortcutFullScreen: boolean
 	// 取消缩放
 	cancelZoom: boolean
-	// 操作截图的id
-	capturingDisplayId: number
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -42,8 +41,7 @@ class Rectangle extends Component<IProps, IState> {
 			rectangle: null,
 			style: {},
 			isShortcutFullScreen: false,
-			cancelZoom: false,
-			capturingDisplayId: 0
+			cancelZoom: false
 		}
 	}
 
@@ -79,7 +77,7 @@ class Rectangle extends Component<IProps, IState> {
 			| MouseEvent,
 		dragType: string
 	) => {
-		if (this.shortcutDisabled()) {
+		if (this.props.shortcutDisabled()) {
 			return false
 		}
 		this.setState({
@@ -117,7 +115,7 @@ class Rectangle extends Component<IProps, IState> {
 				})
 			}
 		}
-		if (!this.state.capturingDisplayId) {
+		if (!this.props.capturingDisplayId) {
 			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
 			setCapturingDisplay(this.props.currDisplayId)
 			setTimeout(() => {
@@ -202,33 +200,6 @@ class Rectangle extends Component<IProps, IState> {
 				break
 			default:
 				break
-		}
-	}
-
-	/**
-	 * 监听接收的操作截图的显示器id
-	 */
-	listenCapturingDisplayId = () => {
-		ipcRenderer.on(
-			events.receiveCapturingDisplayId,
-			(_, displayId: number) => {
-				if (!this.state.capturingDisplayId) {
-					this.setState({
-						capturingDisplayId: displayId
-					})
-				}
-			}
-		)
-	}
-
-	shortcutDisabled = () => {
-		const { currDisplayId } = this.props
-		const { capturingDisplayId } = this.state
-		// 判断capturingDisplayId是否等于currDisplayId，不是的话返回
-		if (!!capturingDisplayId && capturingDisplayId !== currDisplayId) {
-			return true
-		} else {
-			return false
 		}
 	}
 
@@ -325,7 +296,6 @@ class Rectangle extends Component<IProps, IState> {
 			// 当背景画好之后才允许各种画图操作
 			window.addEventListener('mousemove', this.mousemove)
 			window.addEventListener('mouseup', this.mouseup)
-			this.listenCapturingDisplayId()
 		}
 	}
 
@@ -342,7 +312,7 @@ class Rectangle extends Component<IProps, IState> {
 			cancelZoom
 		} = this.state
 		const { rect } = this.props
-		if (this.shortcutDisabled()) {
+		if (this.props.shortcutDisabled()) {
 			return null
 		}
 

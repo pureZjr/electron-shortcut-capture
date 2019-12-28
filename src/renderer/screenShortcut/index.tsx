@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react'
+import { ipcRenderer } from 'electron'
 
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
 import { close } from './events'
+import { events } from '../../constant'
 import { getSource, getCurrentDisplay } from './utils'
 
 const ScreenShot: React.FC = () => {
@@ -36,6 +38,8 @@ const ScreenShot: React.FC = () => {
 	)
 	const [currDisplayId, setCurrDisplayId] = React.useState(0)
 	const [bgHasDraw, setBgHasDraw] = React.useState(false)
+	// 正在截图的显示器的id
+	const [capturingDisplayId, setCapturingDisplayId] = React.useState(0)
 
 	React.useEffect(() => {
 		getSource(setSource)
@@ -46,6 +50,7 @@ const ScreenShot: React.FC = () => {
 		const currDisplay = getCurrentDisplay()
 		setCurrDisplayId(currDisplay.id)
 		setBounds(currDisplay.bounds)
+		listenCapturingDisplayId()
 	}, [])
 
 	const onResize = (rect: ElectronShortcutCapture.IRect) => {
@@ -104,6 +109,29 @@ const ScreenShot: React.FC = () => {
 		setRect(getRect(rect))
 	}
 
+	/**
+	 * 监听接收的操作截图的显示器id
+	 */
+	const listenCapturingDisplayId = () => {
+		ipcRenderer.on(
+			events.receiveCapturingDisplayId,
+			(_, displayId: number) => {
+				if (!capturingDisplayId) {
+					setCapturingDisplayId(displayId)
+				}
+			}
+		)
+	}
+
+	const shortcutDisabled = () => {
+		// 判断capturingDisplayId是否等于currDisplayId，不是的话返回
+		if (!!capturingDisplayId && capturingDisplayId !== currDisplayId) {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	return (
 		<Fragment>
 			<Background
@@ -122,8 +150,10 @@ const ScreenShot: React.FC = () => {
 				bounds={bounds}
 				currDisplayId={currDisplayId}
 				bgHasDraw={bgHasDraw}
+				capturingDisplayId={capturingDisplayId}
+				shortcutDisabled={shortcutDisabled}
 			/>
-			{!destoryLayer && bgHasDraw && (
+			{!destoryLayer && bgHasDraw && !shortcutDisabled() && (
 				<Layer
 					onDraw={onDraw}
 					setDestoryLayer={setDestoryLayer}

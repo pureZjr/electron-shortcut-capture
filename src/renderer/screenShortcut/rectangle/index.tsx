@@ -292,11 +292,11 @@ class Rectangle extends Component<IProps, IState> {
 				style
 			})
 		}
-		if (nextProps.bgHasDraw) {
-			// 当背景画好之后才允许各种画图操作
-			window.addEventListener('mousemove', this.mousemove)
-			window.addEventListener('mouseup', this.mouseup)
-		}
+	}
+
+	componentDidMount() {
+		window.addEventListener('mousemove', this.mousemove)
+		window.addEventListener('mouseup', this.mouseup)
 	}
 
 	componentWillUnmount() {

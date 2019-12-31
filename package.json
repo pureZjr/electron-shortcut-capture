@@ -1,6 +1,6 @@
 {
 	"name": "electron-shortcut-capture",
-	"version": "1.0.63",
+	"version": "1.0.64",
 	"description": "",
 	"main": "./dist/main/main.js",
 	"types": "typings/types.d.ts",

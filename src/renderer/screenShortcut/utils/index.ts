@@ -10,11 +10,26 @@ export const getSource = (
 ) => {
 	ipcRenderer.once(
 		events.screenSourcesToPng,
-		(_, { toPngSource, width, height }) => {
+		(
+			_,
+			{
+				toPngSource,
+				width,
+				height,
+				actuallyWidth,
+				actuallyHeight,
+				mouseX,
+				mouseY
+			}
+		) => {
 			cb({
 				width,
 				height,
-				toPngSource
+				toPngSource,
+				actuallyWidth,
+				actuallyHeight,
+				mouseX,
+				mouseY
 			})
 		}
 	)

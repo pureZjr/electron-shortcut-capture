@@ -59,12 +59,28 @@ const Background: React.FC<IProps> = ({
 	// 画背景
 	const drawBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
-		const { width, height, toPngSource } = source
+		const {
+			width,
+			height,
+			actuallyWidth,
+			actuallyHeight,
+			toPngSource
+		} = source
 		const $img = new Image()
 		const blob = new Blob([toPngSource], { type: 'image/png' })
 		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
-			currCtx.drawImage($img, 0, 0, width, height, 0, 0, width, height)
+			currCtx.drawImage(
+				$img,
+				0,
+				0,
+				actuallyWidth,
+				actuallyHeight,
+				0,
+				0,
+				width,
+				height
+			)
 			setBackgroundCtx(canvasRef.current.getContext('2d'))
 		})
 	}

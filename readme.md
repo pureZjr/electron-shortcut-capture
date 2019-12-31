@@ -18,8 +18,7 @@ _有什么问题欢迎[issue](https://github.com/pureZjr/electron-shortcut-captu
 
 **已知问题：**
 
-1. 相比起 QQ 等截图工具，打开截图工具没有那么流畅，毕竟人家不是用这种方式的。
-2. mac 下面在一个已经全屏的窗口下启动不会去覆盖当前的窗口，只会在一个非全屏的窗口下打开。
+1. mac 下面在一个已经全屏的窗口下启动不会去覆盖当前的窗口，只会在一个非全屏的窗口下打开。
 
 ## Install
 
@@ -47,13 +46,13 @@ new ShortcutCapture({
 })
 ```
 
-| 名称               | 类型                                 | 说明                         | 默认值  |
-| ------------------ | ------------------------------------ | ---------------------------- | ------- |
-| multiScreen        | boolean                              | 是否使用多屏幕截图，默认关闭 | `false` |
-| downloadFileprefix | string                               | 下载文件前缀                 |         |
-| key                | string                               | 快捷键                       |         |
-| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容       |         |
-| onHide             | () => void                           | 关闭截图回调                 |         |
+| 名称               | 类型                                 | 说明                           | 默认值  |
+| ------------------ | ------------------------------------ | ------------------------------ | ------- |
+| multiScreen        | boolean                              | 是否使用多显示器截图，默认关闭 | `false` |
+| downloadFileprefix | string                               | 下载文件前缀                   |         |
+| key                | string                               | 快捷键                         |         |
+| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容         |         |
+| onHide             | () => void                           | 关闭截图回调                   |         |
 
 ## Methods
 
@@ -71,7 +70,7 @@ new ShortcutCapture({
 
 -   [x] 截图剪贴板
 -   [x] 下载截图
--   [x] Mac 多显示，可能会卡顿
+-   [x] 多显示器
 -   [x] 画笔
 -   [x] 画圆
 -   [x] 画方框

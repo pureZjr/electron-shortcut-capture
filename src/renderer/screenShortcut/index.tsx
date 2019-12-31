@@ -159,6 +159,8 @@ const ScreenShot: React.FC = () => {
 					setDestoryLayer={setDestoryLayer}
 					backgroundCtx={backgroundCtx}
 					bounds={bounds}
+					mouseX={source.mouseX}
+					mouseY={source.mouseY}
 				/>
 			)}
 		</Fragment>

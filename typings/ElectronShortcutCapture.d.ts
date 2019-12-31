@@ -26,6 +26,10 @@ declare namespace ElectronShortcutCapture {
 		width: number
 		height: number
 		toPngSource: any
+		actuallyWidth?: number
+		actuallyHeight?: number
+		mouseX?: number
+		mouseY?: number
 	}
 
 	interface ISettingProps {

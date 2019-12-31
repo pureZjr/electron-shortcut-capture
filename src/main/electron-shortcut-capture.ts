@@ -12,6 +12,10 @@ import { EventEmitter } from 'events'
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
 
+interface IBrowserWindow extends BrowserWindow {
+	displayId: number
+}
+
 export default class electronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.multiScreen = !!props ? !!props.multiScreen : false
@@ -28,9 +32,9 @@ export default class electronShortcutCapture {
 	}
 
 	// 显示器数组
-	private captureWins: BrowserWindow[] = []
+	private captureWins: IBrowserWindow[] = []
 	// 当前需要操作显示器数组
-	private handleCaptureWins: BrowserWindow[] = []
+	private handleCaptureWins: IBrowserWindow[] = []
 	// 允许多屏幕
 	private multiScreen: boolean = false
 	// 快捷键
@@ -42,6 +46,8 @@ export default class electronShortcutCapture {
 	private downloadFileprefix: string = ''
 	private onClipboard: (data: Electron.NativeImage) => void = null
 	private onHide: () => void = null
+	// 屏幕大小以及获取屏幕资源的宽高
+	private screenInfo: any = {}
 
 	static URL =
 		process.env.NODE_ENV === 'development'
@@ -61,15 +67,37 @@ export default class electronShortcutCapture {
 	}
 
 	/**
+	 * 设置屏幕大小以及获取屏幕资源的宽高
+	 */
+	setScreenInfo = (display: Electron.Display) => {
+		this.screenInfo[display.id] = {
+			width: display.size.width,
+			height: display.size.height
+		}
+		this.screenInfo['cutWidth'] =
+			!!this.screenInfo['cutWidth'] &&
+			this.screenInfo['cutWidth'] > display.size.width
+				? this.screenInfo['cutWidth']
+				: display.size.width
+		this.screenInfo['cutHeight'] =
+			!!this.screenInfo['cutHeight'] &&
+			this.screenInfo['cutHeight'] > display.size.height
+				? this.screenInfo['cutHeight']
+				: display.size.height
+	}
+
+	/**
 	 * 初始化窗口,打开预备窗口供使用，不用每次重新创建
 	 */
 	private initWin() {
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
 		this.captureWins = this.displays.map(display => {
+			this.setScreenInfo(display)
 			const captureWin = new BrowserWindow(browserWindowProps(display))
+			captureWin['displayId'] = display.id
 			return captureWin
-		})
+		}) as IBrowserWindow[]
 		this.captureWins.forEach(v => {
 			v.loadURL(electronShortcutCapture.URL)
 		})
@@ -78,37 +106,87 @@ export default class electronShortcutCapture {
 	/**
 	 * 打开截图
 	 */
-	show() {
+	async show() {
 		if (this.shortcuting) {
 			return console.log('正在截图')
 		}
-		this.listenEsc()
 		this.shortcuting = true
 		this.handleCaptureWins = this.captureWins
-		let currentFocusDisplay = this.getCurrentFocusDisplay()
-		if (!this.multiScreen) {
-			this.handleCaptureWins = this.captureWins.filter((_, idx) => {
-				return this.displays[idx].id === currentFocusDisplay.id
-			})
-		}
-		this.handleCaptureWins.forEach((v, idx) => {
-			currentFocusDisplay = !this.multiScreen
-				? currentFocusDisplay
-				: this.displays[idx]
+		/**
+		 * 获取显示器信息
+		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
+		 */
+		const cutWidth = this.screenInfo.cutWidth
+		const cutHeight = this.screenInfo.cutHeight
+		const sources = await this.getScreenSources2(cutWidth, cutHeight)
 
-			this.getScreenSources({
-				win: v,
-				displayId: currentFocusDisplay.id,
-				width: currentFocusDisplay.size.width,
-				height: currentFocusDisplay.size.height
+		this.listenEsc()
+
+		// 当前鼠标位置
+		const mouseX = screen.getCursorScreenPoint().x
+		const mouseY = screen.getCursorScreenPoint().y
+
+		if (this.multiScreen) {
+			for (let i = 0; i < sources.length; i++) {
+				const win = this.captureWins[i]
+
+				const source = sources[i]
+				const sourcePng = source.thumbnail.toJPEG(100)
+
+				const width = this.screenInfo[source.display_id].width
+				const height = this.screenInfo[source.display_id].height
+				const actuallyWidth = source.thumbnail.getSize().width
+				const actuallyHeight = source.thumbnail.getSize().height
+
+				win.webContents.send(events.screenSourcesToPng, {
+					toPngSource: sourcePng,
+					width,
+					height,
+					actuallyWidth,
+					actuallyHeight,
+					mouseX,
+					mouseY
+				})
+
+				// 设置窗口可以在全屏窗口之上显示。
+				win.setVisibleOnAllWorkspaces(true)
+				win.setAlwaysOnTop(true, 'screen-saver')
+				win.setBackgroundColor('#00000000')
+				setTimeout(() => {
+					// 等资源传到渲染线程再打开截图
+					win.show()
+				}, 0)
+			}
+		} else {
+			const currentFocusDisplay = this.getCurrentFocusDisplay()
+			const source = sources.filter(
+				v => v.display_id === currentFocusDisplay.id.toString()
+			)[0]
+			const win = this.captureWins.filter(v => {
+				return v.displayId === currentFocusDisplay.id
+			})[0]
+
+			const width = this.screenInfo[source.display_id].width
+			const height = this.screenInfo[source.display_id].height
+			const actuallyHeight = source.thumbnail.getSize().height
+			const actuallyWidth = source.thumbnail.getSize().width
+
+			win.webContents.send(events.screenSourcesToPng, {
+				toPngSource: source.thumbnail.toJPEG(1),
+				width: width,
+				height: height,
+				actuallyWidth,
+				actuallyHeight,
+				mouseX,
+				mouseY
 			})
 
 			// 设置窗口可以在全屏窗口之上显示。
-			v.setVisibleOnAllWorkspaces(true)
-			v.setAlwaysOnTop(true, 'screen-saver')
-			v.setBackgroundColor('#00000000')
-			v.show()
-		})
+			win.setVisibleOnAllWorkspaces(true)
+			win.setAlwaysOnTop(true, 'screen-saver')
+			win.setBackgroundColor('#00000000')
+			win.show()
+		}
 	}
 
 	/**
@@ -201,53 +279,42 @@ export default class electronShortcutCapture {
 	}
 
 	/**
-	 * 主线程调用desktopCapturer获取显示器背景
+	 * 获取显示器资源
 	 */
-	private getScreenSources = (args: {
-		win: BrowserWindow
-		displayId: number
-		width: number
+	private getScreenSources2: (
+		width: number,
 		height: number
-	}) => {
-		let desktopCapture = (process as any)
-			.electronBinding('desktop_capturer')
-			.createDesktopCapturer()
+	) => Promise<Electron.DesktopCapturerSource[]> = (
+		width: number,
+		height: number
+	) => {
+		return new Promise((resolve, reject) => {
+			let desktopCapture = (process as any)
+				.electronBinding('desktop_capturer')
+				.createDesktopCapturer()
 
-		const stopRunning = () => {
-			if (desktopCapture) {
-				desktopCapture.emit = null
-				desktopCapture = null
-			}
-		}
-		const emitter = new EventEmitter()
-		emitter.once(
-			'finished',
-			(_, sources: Electron.DesktopCapturerSource[]) => {
-				stopRunning()
-				for (let i = 0; i < sources.length; i++) {
-					// 这里正常情况下是要判断display_id的,不知道win7的display为毛是空的，所以多做一个判断display_id为空的判断
-					if (
-						Number(sources[i].display_id) ===
-							Number(args.displayId) ||
-						sources[i].display_id === ''
-					) {
-						args.win.webContents.send(events.screenSourcesToPng, {
-							toPngSource: sources[i].thumbnail.toPNG(),
-							width: args.width,
-							height: args.height
-						})
-						break
-					}
+			const stopRunning = () => {
+				if (desktopCapture) {
+					desktopCapture.emit = null
+					desktopCapture = null
 				}
 			}
-		)
-		desktopCapture.emit = emitter.emit.bind(emitter)
-		desktopCapture.startHandling(
-			false,
-			true,
-			{ width: args.width, height: args.height },
-			true
-		)
+			const emitter = new EventEmitter()
+			emitter.once(
+				'finished',
+				(_, sources: Electron.DesktopCapturerSource[]) => {
+					stopRunning()
+					resolve(sources)
+				}
+			)
+			desktopCapture.emit = emitter.emit.bind(emitter)
+			desktopCapture.startHandling(
+				false,
+				true,
+				{ width: width, height: height },
+				true
+			)
+		})
 	}
 
 	/**

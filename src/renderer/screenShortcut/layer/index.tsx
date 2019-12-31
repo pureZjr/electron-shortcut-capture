@@ -6,6 +6,8 @@ import './index.scss'
 interface IProps {
 	backgroundCtx: CanvasRenderingContext2D
 	bounds: { x: number; y: number; width: number; height: number }
+	mouseX: number
+	mouseY: number
 	onDraw: (args: ElectronShortcutCapture.IRect) => void
 	setDestoryLayer: (destoryLayer: boolean) => void
 }
@@ -20,6 +22,8 @@ const Layer: React.FC<IProps> = ({
 	backgroundCtx,
 	bounds,
 	onDraw,
+	mouseX,
+	mouseY,
 	setDestoryLayer
 }) => {
 	// 是否开始框图
@@ -32,6 +36,10 @@ const Layer: React.FC<IProps> = ({
 	const [hasBingHover, setHasBingHover] = React.useState(false)
 	const refFocus = React.useRef<HTMLCanvasElement>(null)
 	const refFocusImg = React.useRef<HTMLImageElement>(null)
+
+	// 没移动鼠标时候，鼠标初始位置
+	let defMouseX = mouseX
+	let defMouseY = mouseY
 
 	React.useEffect(() => {
 		window.addEventListener('mouseup', mouseup)
@@ -47,10 +55,17 @@ const Layer: React.FC<IProps> = ({
 			'rgba(255, 255, 255, 0)'
 	}
 	const mousemove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		/**
+		 * 刚打开的时候有可能回触发，这里根据鼠标初始位置判断是否继续执行
+		 */
+		if (defMouseX === e.clientX || defMouseY === e.clientY) {
+			defMouseX = 0
+			defMouseY = 0
+			return
+		}
 		if (!hasBingHover) {
 			setHasBingHover(true)
-			layerRef.current.addEventListener('mouseover', onHover)
-			layerRef.current.style.background = 'rgba(255, 255, 255, 0)'
+			layerRef.current.addEventListener('mouseenter', onHover)
 		}
 
 		if (startShortCut) {
@@ -59,6 +74,8 @@ const Layer: React.FC<IProps> = ({
 			if (!backgroundCtx) {
 				return
 			}
+			;(e.target as HTMLDivElement).style.background =
+				'rgba(255, 255, 255, 0)'
 			setPixelBoxProps({
 				rgb: `(${backgroundCtx
 					.getImageData(e.clientX, e.clientY, 1, 1)

@@ -22,7 +22,6 @@ interface IState {
 	dragpoint: { x: number; y: number }
 	currRect: ElectronShortcutCapture.IRect
 	canvasRef: HTMLCanvasElement
-	rectangle: HTMLDivElement
 	style: React.CSSProperties
 	// 截取全屏
 	isShortcutFullScreen: boolean
@@ -38,7 +37,6 @@ class Rectangle extends Component<IProps, IState> {
 			dragpoint: null,
 			currRect: null,
 			canvasRef: null,
-			rectangle: null,
 			style: {},
 			isShortcutFullScreen: false,
 			cancelZoom: false
@@ -54,12 +52,6 @@ class Rectangle extends Component<IProps, IState> {
 			const height = y2 - y1
 			ref.getContext('2d').clearRect(0, 0, width, height)
 			ref.addEventListener('mousedown', this.mousedownToMove)
-		}
-	}
-
-	setRectangle = (ref: HTMLDivElement) => {
-		if (!!ref) {
-			this.setState({ rectangle: ref })
 		}
 	}
 
@@ -119,7 +111,7 @@ class Rectangle extends Component<IProps, IState> {
 			// 防止在多个屏幕同时操作截图，发送当前操作的displayid给主线程，主线程将这个id通知给其他屏幕
 			setCapturingDisplay(this.props.currDisplayId)
 			setTimeout(() => {
-				this.state.rectangle.addEventListener(
+				this.state.canvasRef.addEventListener(
 					'dblclick',
 					this.onHandleDoubleClick
 				)
@@ -266,7 +258,7 @@ class Rectangle extends Component<IProps, IState> {
 
 	onHandleDoubleClick = () => {
 		clipboard(this.state.canvasRef)
-		this.state.rectangle.removeEventListener(
+		this.state.canvasRef.removeEventListener(
 			'dblclick',
 			this.onHandleDoubleClick
 		)
@@ -337,7 +329,7 @@ class Rectangle extends Component<IProps, IState> {
 			toolbarRight = rect.x2 - 470
 		}
 		return (
-			<div className="rectangle" style={style} ref={this.setRectangle}>
+			<div className="rectangle" style={style}>
 				<div
 					className="size"
 					style={styles}

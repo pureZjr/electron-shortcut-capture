@@ -29,6 +29,7 @@ const Layer: React.FC<IProps> = ({
 	const [pixelBoxProps, setPixelBoxProps] = React.useState<IPixelBoxProps>(
 		null
 	)
+	const [hasBingHover, setHasBingHover] = React.useState(false)
 	const refFocus = React.useRef<HTMLCanvasElement>(null)
 	const refFocusImg = React.useRef<HTMLImageElement>(null)
 
@@ -36,13 +37,22 @@ const Layer: React.FC<IProps> = ({
 		window.addEventListener('mouseup', mouseup)
 	}, [])
 
+	const layerRef = React.useRef<HTMLDivElement>(null)
+
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		setPixelBoxProps(null)
 		setPoint({ x: e.clientX, y: e.clientY })
 		setStartShortCut(true)
-		;(e.target as HTMLDivElement).style.background = 'rgba(0, 0, 0, 0.3)'
+		;(e.target as HTMLDivElement).style.background =
+			'rgba(255, 255, 255, 0)'
 	}
 	const mousemove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		if (!hasBingHover) {
+			setHasBingHover(true)
+			layerRef.current.addEventListener('mouseover', onHover)
+			layerRef.current.style.background = 'rgba(255, 255, 255, 0)'
+		}
+
 		if (startShortCut) {
 			draw(e)
 		} else {
@@ -103,7 +113,7 @@ const Layer: React.FC<IProps> = ({
 		) {
 			return false
 		}
-		e.target.style.background = 'rgba(0, 0, 0, 0.3)'
+		e.target.style.background = 'rgba(0, 0, 0, 0.6)'
 	}
 	/**
 	 * 放大镜
@@ -160,10 +170,10 @@ const Layer: React.FC<IProps> = ({
 
 	return (
 		<div
+			ref={layerRef}
 			className={'layer'}
 			onMouseDown={mousedown}
 			onMouseMove={mousemove}
-			onMouseOver={onHover}
 			onMouseOut={onBlur}
 		>
 			{renderPixelBox()}

@@ -6,8 +6,6 @@ const fileRules = require('./fileRules')
 const plugins = require('./plugins')
 const { mode, resolveUnderRootDir } = require('../utils')
 
-console.log(path.join(__dirname, './tsconfig.json'))
-
 module.exports = {
 	mode,
 	entry: {

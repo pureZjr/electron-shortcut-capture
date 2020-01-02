@@ -1,9 +1,11 @@
 {
 	"extends": "./../../tsconfig.json",
 	"compilerOptions": {
-		"moduleResolution": "node",
+		"module": "ESNext",
 		"baseUrl": ".",
+		"jsx": "react",
 		"composite": true,
+		"lib": ["es7", "dom"],
 		"paths": {
 			"@utils": ["../../src/renderer/screenShortcut/utils"],
 			"@assets": ["../../src/renderer/screenShortcut/assets"],

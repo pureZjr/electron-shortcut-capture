@@ -29,6 +29,7 @@ export default class electronShortcutCapture {
 		this.bindDownload()
 		this.listenCapturingDisplayId()
 		this.bindKey()
+		this.listenDisplayNumChange()
 	}
 
 	// 显示器数组
@@ -118,7 +119,7 @@ export default class electronShortcutCapture {
 		 */
 		const cutWidth = this.screenInfo.cutWidth
 		const cutHeight = this.screenInfo.cutHeight
-		const sources = await this.getScreenSources2(cutWidth, cutHeight)
+		const sources = await this.getScreenSources(cutWidth, cutHeight)
 
 		this.listenEsc()
 
@@ -281,7 +282,7 @@ export default class electronShortcutCapture {
 	/**
 	 * 获取显示器资源
 	 */
-	private getScreenSources2: (
+	private getScreenSources: (
 		width: number,
 		height: number
 	) => Promise<Electron.DesktopCapturerSource[]> = (
@@ -367,5 +368,15 @@ export default class electronShortcutCapture {
 				this.key = ''
 			}
 		}
+	}
+
+	/**
+	 * 监听显示器数量变化
+	 */
+	listenDisplayNumChange = () => {
+		screen.on('display-metrics-changed', () => {
+			console.log('重新初始化')
+			this.initWin()
+		})
 	}
 }

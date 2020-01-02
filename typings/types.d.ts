@@ -10,6 +10,8 @@ interface IElectronShortcutCaptureProps {
 	key?: string
 	// 点击完成返回剪贴板内容
 	onClipboard?: (data: Electron.NativeImage) => void
+	// 结束截图触发
+	onHide?: () => void
 }
 
 declare class ElectronShortcutCapture {

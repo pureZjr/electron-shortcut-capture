@@ -4,9 +4,9 @@ import { ipcRenderer } from 'electron'
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
-import { close } from './events'
-import { events } from '../../constant'
-import { getSource, getCurrentDisplay } from './utils'
+import { close } from '@utils'
+import { events } from '@constant'
+import { getSource, getCurrentDisplay } from '@utils'
 
 const ScreenShot: React.FC = () => {
 	// 框图坐标参数

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { colorHex } from '../utils'
+import { colorHex } from '@utils'
 import './index.scss'
 
 interface IProps {

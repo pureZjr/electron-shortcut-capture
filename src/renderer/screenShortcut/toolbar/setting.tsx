@@ -1,7 +1,7 @@
 import React from 'react'
 import ToolTip from 'react-portal-tooltip'
 
-import IconDown from '../assets/svg/down.svg'
+import IconDown from '@assets/svg/down.svg'
 
 export enum LineWidth {
 	small = 4,

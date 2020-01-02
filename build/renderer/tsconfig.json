@@ -1,0 +1,13 @@
+{
+	"extends": "./../../tsconfig.json",
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"composite": true,
+		"paths": {
+			"@utils": ["../../src/renderer/screenShortcut/utils"],
+			"@assets": ["../../src/renderer/screenShortcut/assets"],
+			"@constant": ["../../src/constant"]
+		}
+	}
+}

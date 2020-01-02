@@ -1,20 +1,7 @@
 {
+	"extends": "./../../tsconfig.json",
 	"compilerOptions": {
-		"target": "es5",
 		"module": "commonjs",
-		"moduleResolution": "node",
-		"baseUrl": ".",
-		"allowSyntheticDefaultImports": true,
-		"removeComments": false,
-		"alwaysStrict": true,
-		"allowJs": true,
-		"noUnusedLocals": true,
-		"importHelpers": true,
-		"downlevelIteration": true,
-		"experimentalDecorators": true,
-		"lib": ["es7", "dom"],
-		"skipLibCheck": true,
-		"typeRoots": ["../../node_modules/@types"]
-	},
-	"exclude": ["../../node_modules"]
+		"composite": true
+	}
 }

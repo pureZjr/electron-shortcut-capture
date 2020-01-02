@@ -1,8 +1,12 @@
+const path = require('path')
+
 const jsRules = require('./jsRules')
 const styleRules = require('./styleRules')
 const fileRules = require('./fileRules')
 const plugins = require('./plugins')
 const { mode, resolveUnderRootDir } = require('../utils')
+
+console.log(path.join(__dirname, './tsconfig.json'))
 
 module.exports = {
 	mode,
@@ -20,7 +24,18 @@ module.exports = {
 	},
 	plugins: [...plugins],
 	resolve: {
-		extensions: ['.ts', '.tsx', '.js', 'jsx', 'png']
+		extensions: ['.ts', '.tsx', '.js', 'jsx', 'png'],
+		alias: {
+			'@assets': path.resolve(
+				__dirname,
+				'../../src/renderer/screenShortcut/assets'
+			),
+			'@utils': path.resolve(
+				__dirname,
+				'../../src/renderer/screenShortcut/utils'
+			),
+			'@constant': path.resolve(__dirname, '../../src/constant')
+		}
 	},
 	devtool: false,
 	node: {

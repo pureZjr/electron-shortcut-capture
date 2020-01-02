@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 
 import Toolbar from '../toolbar'
-import { setCapturingDisplay, clipboard } from '../events'
+import { setCapturingDisplay, clipboard } from '@utils'
 
 import './index.scss'
 

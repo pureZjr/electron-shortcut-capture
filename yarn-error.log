@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn add os
+  /usr/local/bin/node /usr/local/bin/yarn remove tsconfig-paths-webpack-plugin
 
 PATH: 
   /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/mongodb/bin:/flutter/bin:/flutter/bin
@@ -18,64 +18,68 @@ Trace:
 
 npm manifest: 
   {
-      "name": "electron-shortcut-capture",
-      "version": "1.0.20",
-      "description": "",
-      "main": "./dist/main/main.js",
-      "scripts": {
-          "dev": "cross-env NODE_ENV=development node build/webpack.config.js",
-          "lint-css": "stylelint 'src/**/*.scss' --fix",
-          "build:renderer": "cross-env NODE_ENV=production webpack --config build/renderer/webpack.config.js",
-          "build:main": "cross-env NODE_ENV=production webpack --config build/main/webpack.config.js",
-          "build": "npm run build:renderer && npm run build:main",
-          "release": "npm run build && npm publish"
-      },
-      "keywords": [
-          "electron-shortcut-capture",
-          "electron",
-          "shortcut-capture",
-          "截图"
-      ],
-      "files": [
-          "dist/**"
-      ],
-      "author": "",
-      "license": "ISC",
-      "dependencies": {},
-      "devDependencies": {
-          "@babel/core": "^7.7.2",
-          "@svgr/webpack": "^4.3.3",
-          "@types/react": "^16.9.11",
-          "babel-loader": "^8.0.6",
-          "cross-env": "^6.0.3",
-          "css-loader": "^3.2.0",
-          "electron-debug": "^3.0.1",
-          "electron-dev-webpack-plugin": "^1.0.4",
-          "electron-devtools-installer": "^2.2.4",
-          "eslint-config-prettier": "^6.7.0",
-          "eslint-plugin-prettier": "^3.1.1",
-          "file-loader": "^4.2.0",
-          "friendly-errors-webpack-plugin": "^1.7.0",
-          "html-webpack-plugin": "^3.2.0",
-          "node-sass": "^4.12.0",
-          "prettier": "^1.19.1",
-          "sass-loader": "^8.0.0",
-          "style-loader": "^1.0.0",
-          "stylelint": "^12.0.0",
-          "stylelint-config-prettier": "^6.0.0",
-          "stylelint-config-standard": "^19.0.0",
-          "stylelint-order": "^3.1.1",
-          "stylelint-prettier": "^1.1.1",
-          "ts-loader": "^6.2.1",
-          "typescript": "^3.7.2",
-          "url-loader": "^2.2.0",
-          "webpack": "4.41.0",
-          "webpack-cli": "^3.3.10",
-          "webpack-dev-server": "^3.9.0",
-          "electron": "6.0.10",
-          "react": "^16.11.0",
-          "react-dom": "^16.11.0"
-      }
+  	"name": "electron-shortcut-capture",
+  	"version": "1.0.64",
+  	"description": "",
+  	"main": "./dist/main/main.js",
+  	"types": "typings/types.d.ts",
+  	"scripts": {
+  		"dev": "cross-env NODE_ENV=development node build/webpack.config.js",
+  		"lint-css": "stylelint 'src/**/*.scss' --fix",
+  		"build:renderer": "cross-env NODE_ENV=production webpack --config build/renderer/webpack.config.js",
+  		"build:main": "cross-env NODE_ENV=production webpack --config build/main/webpack.config.js",
+  		"build": "npm run build:renderer && npm run build:main",
+  		"release": "npm run build && npm publish"
+  	},
+  	"keywords": [
+  		"electron-shortcut-capture",
+  		"electron",
+  		"shortcut-capture",
+  		"截图"
+  	],
+  	"files": [
+  		"dist/**"
+  	],
+  	"author": "",
+  	"license": "ISC",
+  	"dependencies": {
+  		"os": "^0.1.1"
+  	},
+  	"devDependencies": {
+  		"@babel/core": "^7.7.2",
+  		"@svgr/webpack": "^4.3.3",
+  		"@types/react": "^16.9.11",
+  		"babel-loader": "^8.0.6",
+  		"cross-env": "^6.0.3",
+  		"css-loader": "^3.2.0",
+  		"electron": "6.0.10",
+  		"electron-debug": "^3.0.1",
+  		"electron-dev-webpack-plugin": "^1.0.4",
+  		"electron-devtools-installer": "^2.2.4",
+  		"eslint-config-prettier": "^6.7.0",
+  		"eslint-plugin-prettier": "^3.1.1",
+  		"file-loader": "^4.2.0",
+  		"friendly-errors-webpack-plugin": "^1.7.0",
+  		"html-webpack-plugin": "^3.2.0",
+  		"node-sass": "^4.12.0",
+  		"prettier": "^1.19.1",
+  		"react": "^16.11.0",
+  		"react-dom": "^16.11.0",
+  		"react-portal-tooltip": "^2.4.7",
+  		"sass-loader": "^8.0.0",
+  		"style-loader": "^1.0.0",
+  		"stylelint": "^12.0.0",
+  		"stylelint-config-prettier": "^6.0.0",
+  		"stylelint-config-standard": "^19.0.0",
+  		"stylelint-order": "^3.1.1",
+  		"stylelint-prettier": "^1.1.1",
+  		"ts-loader": "^6.2.1",
+  		"typescript": "^3.7.2",
+  		"url-loader": "^2.2.0",
+  		"webpack": "4.41.0",
+  		"webpack-cli": "^3.3.10",
+  		"webpack-dev-server": "^3.9.0"
+  	}
   }
 
 yarn manifest: 
@@ -1046,6 +1050,11 @@ Lockfile:
       "@types/events" "*"
       "@types/minimatch" "*"
       "@types/node" "*"
+  
+  "@types/json5@^0.0.29":
+    version "0.0.29"
+    resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
+    integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
   
   "@types/minimatch@*":
     version "3.0.3"
@@ -5456,6 +5465,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
     integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
   
+  os@^0.1.1:
+    version "0.1.1"
+    resolved "https://registry.npmjs.org/os/-/os-0.1.1.tgz#208845e89e193ad4d971474b93947736a56d13f3"
+    integrity sha1-IIhF6J4ZOtTZcUdLk5R3NqVtE/M=
+  
   osenv@0, osenv@^0.1.4:
     version "0.1.5"
     resolved "https://registry.npmjs.org/osenv/-/osenv-0.1.5.tgz#85cdfafaeb28e8677f416e287592b5f3f49ea410"
@@ -6155,6 +6169,11 @@ Lockfile:
     version "16.11.0"
     resolved "https://registry.npmjs.org/react-is/-/react-is-16.11.0.tgz#b85dfecd48ad1ce469ff558a882ca8e8313928fa"
     integrity sha512-gbBVYR2p8mnriqAwWx9LbuUrShnAuSCNnuPGyc7GJrMVQtPDAh8iLpv7FRuMPFb56KkaVZIYSz1PrjI9q0QPCw==
+  
+  react-portal-tooltip@^2.4.7:
+    version "2.4.7"
+    resolved "https://registry.npmjs.org/react-portal-tooltip/-/react-portal-tooltip-2.4.7.tgz#77fd4a75760afecd116736c480485aa22cbbb740"
+    integrity sha512-ZOuCKpvu8rr6aS6nNjckd78qEgWyHZnKidZ9Yqrd0HR5K9NYJ7csb4duc0kEXeG8DiCWsLPU70o1EVP+MxlINg==
   
   react@^16.11.0:
     version "16.11.0"
@@ -7572,6 +7591,25 @@ Lockfile:
       loader-utils "^1.0.2"
       micromatch "^4.0.0"
       semver "^6.0.0"
+  
+  tsconfig-paths-webpack-plugin@^3.2.0:
+    version "3.2.0"
+    resolved "https://registry.npmjs.org/tsconfig-paths-webpack-plugin/-/tsconfig-paths-webpack-plugin-3.2.0.tgz#6e70bd42915ad0efb64d3385163f0c1270f3e04d"
+    integrity sha512-S/gOOPOkV8rIL4LurZ1vUdYCVgo15iX9ZMJ6wx6w2OgcpT/G4wMyHB6WM+xheSqGMrWKuxFul+aXpCju3wmj/g==
+    dependencies:
+      chalk "^2.3.0"
+      enhanced-resolve "^4.0.0"
+      tsconfig-paths "^3.4.0"
+  
+  tsconfig-paths@^3.4.0:
+    version "3.9.0"
+    resolved "https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-3.9.0.tgz#098547a6c4448807e8fcb8eae081064ee9a3c90b"
+    integrity sha512-dRcuzokWhajtZWkQsDVKbWyY+jgcLC5sqJhg2PSgf4ZkH2aHPvaOY8YWGhmjb68b5qqTfasSsDO9k7RUiEmZAw==
+    dependencies:
+      "@types/json5" "^0.0.29"
+      json5 "^1.0.1"
+      minimist "^1.2.0"
+      strip-bom "^3.0.0"
   
   tslib@^1.9.0:
     version "1.10.0"

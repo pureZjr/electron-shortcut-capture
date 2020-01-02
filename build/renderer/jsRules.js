@@ -9,7 +9,9 @@ module.exports = [
 				options: {
 					// disable type checker - we will use it in fork plugin
 					transpileOnly: true,
-					configFile: resolveUnderRootDir('tsconfig.json')
+					configFile: resolveUnderRootDir(
+						'build/renderer/tsconfig.json'
+					)
 				}
 			}
 		]

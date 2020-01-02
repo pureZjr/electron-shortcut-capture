@@ -2,8 +2,6 @@
 
 electron-shortcut-capture 是一个用在 electron 上使用的截图工具。
 
-_有什么问题欢迎[issue](https://github.com/pureZjr/electron-shortcut-capture/issues 'issue')_
-
 ## theory
 
 **工具原理：**

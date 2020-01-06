@@ -50,6 +50,11 @@ export default class electronShortcutCapture {
 	// 屏幕大小以及获取屏幕资源的宽高
 	private screenInfo: any = {}
 
+	private isWin7 =
+		require('os')
+			.release()
+			.slice(0, 3) === '6.1'
+
 	static URL =
 		process.env.NODE_ENV === 'development'
 			? 'http://localhost:8888'
@@ -91,6 +96,10 @@ export default class electronShortcutCapture {
 	 * 初始化窗口,打开预备窗口供使用，不用每次重新创建
 	 */
 	private initWin() {
+		if (this.isWin7) {
+			// win7拿到的source的display_id为空，这里不允许开启多屏幕
+			this.multiScreen = false
+		}
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
 		this.captureWins = this.displays.map(display => {

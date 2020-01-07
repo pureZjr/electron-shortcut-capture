@@ -169,20 +169,29 @@ export default class electronShortcutCapture {
 			}
 		} else {
 			const currentFocusDisplay = this.getCurrentFocusDisplay()
-			const source = sources.filter(
+			let source
+			/**
+			 * win7的sources的display_id为空，这里要根据
+			 * this.screenInfo对用的display_id所在的位置
+			 * 进行判断使用哪一个source
+			 */ 
+			source = sources.filter(
 				v => v.display_id === currentFocusDisplay.id.toString()
 			)[0]
+			if(!source){
+				const sourceIndex = Object.keys( this.screenInfo).findIndex(displayId => displayId === currentFocusDisplay.id.toString())
+				source = sources[sourceIndex]
+			}
+
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currentFocusDisplay.id
 			})[0]
-
-			const width = this.screenInfo[source.display_id].width
-			const height = this.screenInfo[source.display_id].height
+			const {width ,height} = this.screenInfo[this.isWin7 ? currentFocusDisplay.id : source.display_id]
 			const actuallyHeight = source.thumbnail.getSize().height
 			const actuallyWidth = source.thumbnail.getSize().width
 
 			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: source.thumbnail.toJPEG(1),
+				toPngSource: source.thumbnail.toJPEG(100),
 				width: width,
 				height: height,
 				actuallyWidth,

@@ -275,6 +275,7 @@ export default class electronShortcutCapture {
 				defaultPath: filename
 			})
 			if (!path) {
+				this.isDownloading = false
 				return console.log('取消下载')
 			}
 			try {

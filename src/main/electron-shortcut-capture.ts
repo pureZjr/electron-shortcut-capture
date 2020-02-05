@@ -49,6 +49,8 @@ export default class electronShortcutCapture {
 	private onHide: () => void = null
 	// 屏幕大小以及获取屏幕资源的宽高
 	private screenInfo: any = {}
+	// 正在下载
+	private isDownloading: boolean = false
 
 	private isWin7 =
 		require('os')
@@ -95,9 +97,15 @@ export default class electronShortcutCapture {
 	/**
 	 * 初始化窗口,打开预备窗口供使用，不用每次重新创建
 	 */
-	private initWin() {
+	private async initWin() {
 		if (this.isWin7) {
 			// win7拿到的source的display_id为空，这里不允许开启多屏幕
+			this.multiScreen = false
+		}
+		// 判断获取DisplayId是否为空，防止部分win机型可能检测出错
+		const screenSources = await this.getScreenSources(0, 0)
+		const displayIdEmpty = screenSources.some(v => !v.display_id)
+		if (displayIdEmpty) {
 			this.multiScreen = false
 		}
 		// 获取设备所有显示器
@@ -119,6 +127,9 @@ export default class electronShortcutCapture {
 	async show() {
 		if (this.shortcuting) {
 			return console.log('正在截图')
+		}
+		if (this.isDownloading) {
+			return console.log('正在执行下载操作')
 		}
 		this.shortcuting = true
 		this.handleCaptureWins = this.captureWins
@@ -174,19 +185,23 @@ export default class electronShortcutCapture {
 			 * win7的sources的display_id为空，这里要根据
 			 * this.screenInfo对用的display_id所在的位置
 			 * 进行判断使用哪一个source
-			 */ 
+			 */
 			source = sources.filter(
 				v => v.display_id === currentFocusDisplay.id.toString()
 			)[0]
-			if(!source){
-				const sourceIndex = Object.keys( this.screenInfo).findIndex(displayId => displayId === currentFocusDisplay.id.toString())
+			if (!source) {
+				const sourceIndex = Object.keys(this.screenInfo).findIndex(
+					displayId => displayId === currentFocusDisplay.id.toString()
+				)
 				source = sources[sourceIndex]
 			}
 
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currentFocusDisplay.id
 			})[0]
-			const {width ,height} = this.screenInfo[this.isWin7 ? currentFocusDisplay.id : source.display_id]
+			const { width, height } = this.screenInfo[
+				this.isWin7 ? currentFocusDisplay.id : source.display_id
+			]
 			const actuallyHeight = source.thumbnail.getSize().height
 			const actuallyWidth = source.thumbnail.getSize().width
 
@@ -218,13 +233,13 @@ export default class electronShortcutCapture {
 	}
 
 	hide(autoRunReopen?: boolean) {
+		this.shortcuting = false
 		this.handleCaptureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			v.webContents.send(events.close)
 			v.setBackgroundColor('#30000000')
 		})
-		this.shortcuting = false
 		this.unListenEsc()
 		if (autoRunReopen && require('os').platform() !== 'darwin') {
 			this.reopen()
@@ -250,6 +265,7 @@ export default class electronShortcutCapture {
 	 */
 	private bindDownload() {
 		ipcMain.on(events.download, (_, { dataURL }) => {
+			this.isDownloading = true
 			this.hide()
 			const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '')
 			const dataBuffer = Buffer.from(base64Data, 'base64')
@@ -269,6 +285,7 @@ export default class electronShortcutCapture {
 			if (require('os').platform() !== 'darwin') {
 				this.reopen()
 			}
+			this.isDownloading = false
 		})
 	}
 

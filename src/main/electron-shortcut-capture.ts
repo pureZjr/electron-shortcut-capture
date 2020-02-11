@@ -51,6 +51,8 @@ export default class electronShortcutCapture {
 	private screenInfo: any = {}
 	// 正在下载
 	private isDownloading: boolean = false
+	// 截图已经打开
+	private shortcutScreenHasActive: boolean = false
 
 	private isWin7 =
 		require('os')
@@ -141,8 +143,6 @@ export default class electronShortcutCapture {
 		const cutHeight = this.screenInfo.cutHeight
 		const sources = await this.getScreenSources(cutWidth, cutHeight)
 
-		this.listenEsc()
-
 		// 当前鼠标位置
 		const mouseX = screen.getCursorScreenPoint().x
 		const mouseY = screen.getCursorScreenPoint().y
@@ -221,6 +221,9 @@ export default class electronShortcutCapture {
 			win.setBackgroundColor('#00000000')
 			win.show()
 		}
+		// 等页面打开再绑定关闭截图事件
+		this.listenEsc()
+		this.shortcutScreenHasActive = true
 	}
 
 	/**
@@ -233,6 +236,10 @@ export default class electronShortcutCapture {
 	}
 
 	hide(autoRunReopen?: boolean) {
+		if (!this.shortcutScreenHasActive) {
+			return console.log('截图没完全打开')
+		}
+		this.shortcutScreenHasActive = false
 		this.shortcuting = false
 		this.handleCaptureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)

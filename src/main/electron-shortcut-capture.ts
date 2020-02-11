@@ -174,7 +174,6 @@ export default class electronShortcutCapture {
 					mouseX,
 					mouseY
 				})
-
 				// 设置窗口可以在全屏窗口之上显示。
 				win.setVisibleOnAllWorkspaces(true)
 				win.setAlwaysOnTop(true, 'screen-saver')
@@ -267,10 +266,10 @@ export default class electronShortcutCapture {
 	 * 重新打开，win上面用获取的截图有问题
 	 */
 	private reopen() {
-		this.captureWins = []
 		this.captureWins.forEach(v => {
 			v.close()
 		})
+		this.captureWins = []
 		this.initWin()
 	}
 
@@ -435,7 +434,7 @@ export default class electronShortcutCapture {
 	 * 获取加载完的显示器的id
 	 */
 	getLoadedPageDisplayId = () => {
-		ipcMain.on(events.loadedPageDisplayId, (_, displayId: number) => {
+		ipcMain.on(events.loadedPageDisplayId, (_, displayId) => {
 			if (this.loadedPageDisplayIds.includes(displayId)) {
 				return
 			}

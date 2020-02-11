@@ -49,6 +49,7 @@ const ScreenShot: React.FC = () => {
 		})
 		const currDisplay = getCurrentDisplay()
 		setCurrDisplayId(currDisplay.id)
+		setPageLoadedDisplayId(currDisplay.id)
 		setBounds(currDisplay.bounds)
 		listenCapturingDisplayId()
 	}, [])
@@ -103,6 +104,10 @@ const ScreenShot: React.FC = () => {
 			y1 = height - rectHeight
 		}
 		return { x1, y1, x2, y2 }
+	}
+
+	const setPageLoadedDisplayId = (currDisplayId: number) => {
+		ipcRenderer.send(events.loadedPageDisplayId, currDisplayId)
 	}
 
 	const drawRectangle = (rect: ElectronShortcutCapture.IRect) => {

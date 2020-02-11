@@ -30,12 +30,11 @@ export default class electronShortcutCapture {
 		this.listenCapturingDisplayId()
 		this.bindKey()
 		this.listenDisplayNumChange()
+		this.getLoadedPageDisplayId()
 	}
 
 	// 显示器数组
 	private captureWins: IBrowserWindow[] = []
-	// 当前需要操作显示器数组
-	private handleCaptureWins: IBrowserWindow[] = []
 	// 允许多屏幕
 	private multiScreen: boolean = false
 	// 快捷键
@@ -53,6 +52,8 @@ export default class electronShortcutCapture {
 	private isDownloading: boolean = false
 	// 截图已经打开
 	private shortcutScreenHasActive: boolean = false
+	// 已经加载完毕的页面的displayId
+	private loadedPageDisplayIds: number[] = []
 
 	private isWin7 =
 		require('os')
@@ -133,8 +134,13 @@ export default class electronShortcutCapture {
 		if (this.isDownloading) {
 			return console.log('正在执行下载操作')
 		}
+		if (!this.captureWins.length) {
+			return console.log('当前没有窗口')
+		}
+		if (this.loadedPageDisplayIds.length !== this.captureWins.length) {
+			return console.log('页面没完全加载')
+		}
 		this.shortcuting = true
-		this.handleCaptureWins = this.captureWins
 		/**
 		 * 获取显示器信息
 		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
@@ -239,9 +245,10 @@ export default class electronShortcutCapture {
 		if (!this.shortcutScreenHasActive) {
 			return console.log('截图没完全打开')
 		}
+		this.loadedPageDisplayIds = []
 		this.shortcutScreenHasActive = false
 		this.shortcuting = false
-		this.handleCaptureWins.forEach(v => {
+		this.captureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			v.webContents.send(events.close)
@@ -260,10 +267,10 @@ export default class electronShortcutCapture {
 	 * 重新打开，win上面用获取的截图有问题
 	 */
 	private reopen() {
-		this.handleCaptureWins.forEach(v => {
+		this.captureWins = []
+		this.captureWins.forEach(v => {
 			v.close()
 		})
-		this.captureWins = []
 		this.initWin()
 	}
 
@@ -316,7 +323,7 @@ export default class electronShortcutCapture {
 	 */
 	private listenCapturingDisplayId() {
 		ipcMain.on(events.setCapturingDisplayId, (_, displayId: number) => {
-			this.handleCaptureWins.forEach(v => {
+			this.captureWins.forEach(v => {
 				v.webContents.send(events.receiveCapturingDisplayId, displayId)
 			})
 		})
@@ -419,7 +426,20 @@ export default class electronShortcutCapture {
 	listenDisplayNumChange = () => {
 		screen.on('display-metrics-changed', () => {
 			console.log('重新初始化')
+			this.loadedPageDisplayIds = []
 			this.initWin()
+		})
+	}
+
+	/**
+	 * 获取加载完的显示器的id
+	 */
+	getLoadedPageDisplayId = () => {
+		ipcMain.on(events.loadedPageDisplayId, (_, displayId: number) => {
+			if (this.loadedPageDisplayIds.includes(displayId)) {
+				return
+			}
+			this.loadedPageDisplayIds.push(displayId)
 		})
 	}
 }

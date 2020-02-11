@@ -5,5 +5,6 @@ export const events = {
 	setCapturingDisplayId: 'ElectronShortcutCapture::SETCAPTURINGDISPLAYID',
 	receiveCapturingDisplayId:
 		'ElectronShortcutCapture::RECEIVECAPTURINGDISPLAYID',
-	screenSourcesToPng: 'SCREENSOURCESTOPNG'
+	screenSourcesToPng: 'SCREENSOURCESTOPNG',
+	loadedPageDisplayId: 'LOADEDPAGEDISPLAYID'
 }

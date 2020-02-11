@@ -199,6 +199,7 @@ export default class electronShortcutCapture {
 					displayId => displayId === currentFocusDisplay.id.toString()
 				)
 				source = sources[sourceIndex]
+				source.display_id = currentFocusDisplay.id.toString()
 			}
 
 			const win = this.captureWins.filter(v => {

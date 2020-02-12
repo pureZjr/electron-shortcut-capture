@@ -255,9 +255,9 @@ export default class electronShortcutCapture {
 			v.setBackgroundColor('#30000000')
 		})
 		this.unListenEsc()
-		if (autoRunReopen && require('os').platform() !== 'darwin') {
-			this.reopen()
-		}
+		// if (autoRunReopen && require('os').platform() !== 'darwin') {
+		// 	this.reopen()
+		// }
 		if (this.onHide) {
 			this.onHide()
 		}

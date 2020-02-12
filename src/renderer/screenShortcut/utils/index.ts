@@ -131,6 +131,6 @@ export const setCapturingDisplay = (displayId: number) => {
  */
 export const listenClose = () => {
 	ipcRenderer.on(events.close, () => {
-		window.location.reload()
+		// window.location.reload()
 	})
 }

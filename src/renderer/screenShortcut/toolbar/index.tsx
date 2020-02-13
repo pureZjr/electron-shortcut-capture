@@ -11,7 +11,15 @@ import IconBackout from '@assets/svg/backout.svg'
 import IconMosaic from '@assets/svg/mosaic.svg'
 import IconText from '@assets/svg/text.svg'
 import { close, download, clipboard } from '@utils'
-import { makecurve, frame, arrow, backout, mosaic, text } from './tools'
+import {
+	makecurve,
+	frame,
+	arrow,
+	backout,
+	mosaic,
+	text,
+	control
+} from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -60,6 +68,9 @@ const ToolBar: React.FC<IProps> = ({
 	}, [rect])
 
 	const reset = () => {
+		if (!!control) {
+			control.unbind()
+		}
 		setCurrToolId('')
 		setPen(null)
 		setDrawFrame(null)

@@ -336,6 +336,10 @@ class Rectangle extends Component<IProps, IState> {
 			console.log('Rectangle-打开截图')
 			window.addEventListener('mousemove', this.mousemove)
 			window.addEventListener('mouseup', this.mouseup)
+			this.state.canvasRef.addEventListener(
+				'mousedown',
+				this.mousedownToMove
+			)
 		}
 	}
 

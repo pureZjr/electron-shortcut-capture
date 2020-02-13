@@ -1,6 +1,6 @@
 import commonControl from './utils'
 
-let control = null
+export let control = null
 const canvasStore = []
 
 /**

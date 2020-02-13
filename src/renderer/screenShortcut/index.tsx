@@ -172,6 +172,7 @@ const ScreenShot: React.FC = () => {
 			x2: 0,
 			y2: 0
 		})
+		setDestoryLayer(true)
 	}
 	return (
 		<Fragment>

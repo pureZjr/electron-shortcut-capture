@@ -45,6 +45,13 @@ const Layer: React.FC<IProps> = ({
 		window.addEventListener('mouseup', mouseup)
 	}, [])
 
+	React.useEffect(() => {
+		return () => {
+			setStartShortCut(false)
+			window.removeEventListener('mouseup', mouseup)
+		}
+	}, [])
+
 	const layerRef = React.useRef<HTMLDivElement>(null)
 
 	const mousedown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -104,8 +111,6 @@ const Layer: React.FC<IProps> = ({
 	}
 	// 框完图就销毁事件，不准再重复框，只能调整大小或者移动位置
 	const mouseup = () => {
-		window.removeEventListener('mouseup', mouseup)
-		setStartShortCut(false)
 		setDestoryLayer(true)
 	}
 	const draw = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

@@ -55,11 +55,6 @@ export default class electronShortcutCapture {
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
 
-	private isWin7 =
-		require('os')
-			.release()
-			.slice(0, 3) === '6.1'
-
 	static URL =
 		process.env.NODE_ENV === 'development'
 			? 'http://localhost:8888'
@@ -101,16 +96,6 @@ export default class electronShortcutCapture {
 	 * 初始化窗口,打开预备窗口供使用，不用每次重新创建
 	 */
 	private async initWin() {
-		if (this.isWin7) {
-			// win7拿到的source的display_id为空，这里不允许开启多屏幕
-			this.multiScreen = false
-		}
-		// 判断获取DisplayId是否为空，防止部分win机型可能检测出错
-		const screenSources = await this.getScreenSources(0, 0)
-		const displayIdEmpty = screenSources.some(v => !v.display_id)
-		if (displayIdEmpty) {
-			this.multiScreen = false
-		}
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
 		this.captureWins = this.displays.map(display => {
@@ -148,6 +133,11 @@ export default class electronShortcutCapture {
 		const cutWidth = this.screenInfo.cutWidth
 		const cutHeight = this.screenInfo.cutHeight
 		const sources = await this.getScreenSources(cutWidth, cutHeight)
+		// 判断获取DisplayId是否为空
+		const displayIdEmpty = sources.some(v => !v.display_id)
+		if (displayIdEmpty) {
+			this.multiScreen = false
+		}
 
 		// 当前鼠标位置
 		const mouseX = screen.getCursorScreenPoint().x
@@ -172,42 +162,41 @@ export default class electronShortcutCapture {
 					actuallyWidth,
 					actuallyHeight,
 					mouseX,
-					mouseY
+					mouseY,
+					displayId: sources[i].display_id
 				})
 				// 设置窗口可以在全屏窗口之上显示。
 				win.setVisibleOnAllWorkspaces(true)
 				win.setAlwaysOnTop(true, 'screen-saver')
 				win.setBackgroundColor('#00000000')
+				// 等资源传到渲染线程再打开截图
+				win.setOpacity(0)
+				win.show()
 				setTimeout(() => {
-					// 等资源传到渲染线程再打开截图
-					win.show()
-				}, 0)
+					win.setOpacity(1)
+				}, 300)
 			}
 		} else {
 			const currentFocusDisplay = this.getCurrentFocusDisplay()
 			let source
 			/**
-			 * win7的sources的display_id为空，这里要根据
-			 * this.screenInfo对用的display_id所在的位置
-			 * 进行判断使用哪一个source
+			 * 根据鼠标位置选择source
 			 */
+			const currentFocusDisplayId = currentFocusDisplay.id.toString()
 			source = sources.filter(
-				v => v.display_id === currentFocusDisplay.id.toString()
+				v => v.display_id === currentFocusDisplayId
 			)[0]
 			if (!source) {
 				const sourceIndex = Object.keys(this.screenInfo).findIndex(
-					displayId => displayId === currentFocusDisplay.id.toString()
+					displayId => displayId === currentFocusDisplayId
 				)
 				source = sources[sourceIndex]
-				source.display_id = currentFocusDisplay.id.toString()
 			}
 
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currentFocusDisplay.id
 			})[0]
-			const { width, height } = this.screenInfo[
-				this.isWin7 ? currentFocusDisplay.id : source.display_id
-			]
+			const { width, height } = this.screenInfo[currentFocusDisplay.id]
 			const actuallyHeight = source.thumbnail.getSize().height
 			const actuallyWidth = source.thumbnail.getSize().width
 
@@ -218,14 +207,19 @@ export default class electronShortcutCapture {
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
-				mouseY
+				mouseY,
+				displayId: currentFocusDisplayId
 			})
 
 			// 设置窗口可以在全屏窗口之上显示。
 			win.setVisibleOnAllWorkspaces(true)
 			win.setAlwaysOnTop(true, 'screen-saver')
 			win.setBackgroundColor('#00000000')
+			win.setOpacity(0)
 			win.show()
+			setTimeout(() => {
+				win.setOpacity(1)
+			}, 300)
 		}
 		// 等页面打开再绑定关闭截图事件
 		this.listenEsc()
@@ -237,15 +231,14 @@ export default class electronShortcutCapture {
 	 */
 	private bindHide() {
 		ipcMain.on(events.close, () => {
-			this.hide(true)
+			this.hide()
 		})
 	}
 
-	hide(autoRunReopen?: boolean) {
+	hide() {
 		if (!this.shortcutScreenHasActive) {
 			return console.log('截图没完全打开')
 		}
-		this.loadedPageDisplayIds = []
 		this.shortcutScreenHasActive = false
 		this.shortcuting = false
 		this.captureWins.forEach(v => {
@@ -255,23 +248,9 @@ export default class electronShortcutCapture {
 			v.setBackgroundColor('#30000000')
 		})
 		this.unListenEsc()
-		// if (autoRunReopen && require('os').platform() !== 'darwin') {
-		// 	this.reopen()
-		// }
 		if (this.onHide) {
 			this.onHide()
 		}
-	}
-
-	/**
-	 * 重新打开，win上面用获取的截图有问题
-	 */
-	private reopen() {
-		this.captureWins.forEach(v => {
-			v.close()
-		})
-		this.captureWins = []
-		this.initWin()
 	}
 
 	/**
@@ -297,9 +276,6 @@ export default class electronShortcutCapture {
 			} catch (err) {
 				console.log('下载失败：' + err)
 			}
-			if (require('os').platform() !== 'darwin') {
-				this.reopen()
-			}
 			this.isDownloading = false
 		})
 	}
@@ -314,7 +290,7 @@ export default class electronShortcutCapture {
 			if (typeof this.onClipboard === 'function') {
 				this.onClipboard(dataURL)
 			}
-			this.hide(true)
+			this.hide()
 		})
 	}
 
@@ -373,7 +349,7 @@ export default class electronShortcutCapture {
 	 */
 	private listenEsc = () => {
 		globalShortcut.register('esc', () => {
-			this.hide(true)
+			this.hide()
 		})
 	}
 
@@ -427,6 +403,9 @@ export default class electronShortcutCapture {
 		screen.on('display-metrics-changed', () => {
 			console.log('重新初始化')
 			this.loadedPageDisplayIds = []
+			this.captureWins.forEach(v => {
+				v.close()
+			})
 			this.initWin()
 		})
 	}

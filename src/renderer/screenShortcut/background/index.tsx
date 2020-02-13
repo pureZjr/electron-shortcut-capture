@@ -28,9 +28,11 @@ const Background: React.FC<IProps> = ({
 	 * 一旦接收到屏幕截图就开始画canvas
 	 */
 	React.useEffect(() => {
-		if (!!source) {
+		if (!!source && !!source.toPngSource) {
 			setBgHasDraw(true)
 			drawBackground()
+		} else if (!!source && !source.toPngSource) {
+			clearBackground()
 		}
 	}, [source])
 
@@ -42,17 +44,19 @@ const Background: React.FC<IProps> = ({
 		const { x1, y1 } = rect
 		const { width, height } = bounds
 		if (!!rectangleCtx) {
-			rectangleCtx.drawImage(
-				canvasRef.current,
-				x1,
-				y1,
-				width,
-				height,
-				0,
-				0,
-				width,
-				height
-			)
+			try {
+				rectangleCtx.drawImage(
+					canvasRef.current,
+					x1,
+					y1,
+					width,
+					height,
+					0,
+					0,
+					width,
+					height
+				)
+			} catch {}
 		}
 	}, [rect])
 
@@ -83,6 +87,12 @@ const Background: React.FC<IProps> = ({
 			)
 			setBackgroundCtx(canvasRef.current.getContext('2d'))
 		})
+	}
+	// 清空背景
+	const clearBackground = () => {
+		const currCtx = canvasRef.current.getContext('2d')
+		const { actuallyWidth, actuallyHeight } = source
+		currCtx.clearRect(0, 0, actuallyWidth, actuallyHeight)
 	}
 
 	return (

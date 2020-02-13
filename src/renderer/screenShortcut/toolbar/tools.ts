@@ -1,6 +1,6 @@
 import commonControl from './utils'
 
-let control = null
+export let control = null
 const canvasStore = []
 
 /**
@@ -621,12 +621,10 @@ export const text = (args: {
 
 		const mouseout = () => {
 			window.addEventListener('mousemove', drag)
-			console.log('绑定window：mousemove')
 		}
 
 		const mouseenter = () => {
 			window.removeEventListener('mousemove', drag)
-			console.log('解绑window：mousemove')
 		}
 
 		// 拖动

@@ -11,7 +11,15 @@ import IconBackout from '@assets/svg/backout.svg'
 import IconMosaic from '@assets/svg/mosaic.svg'
 import IconText from '@assets/svg/text.svg'
 import { close, download, clipboard } from '@utils'
-import { makecurve, frame, arrow, backout, mosaic, text } from './tools'
+import {
+	makecurve,
+	frame,
+	arrow,
+	backout,
+	mosaic,
+	text,
+	control
+} from './tools'
 import Setting from './setting'
 import './index.scss'
 
@@ -49,6 +57,27 @@ const ToolBar: React.FC<IProps> = ({
 
 	const onHandleToolbar = () => {
 		controlToolbar()
+	}
+
+	React.useEffect(() => {
+		const { x1, x2, y1, y2 } = rect
+		if (!x1 && !x2 && !y1 && !y2) {
+			console.log('toolbar-reset')
+			reset()
+		}
+	}, [rect])
+
+	const reset = () => {
+		if (!!control) {
+			control.unbind()
+		}
+		setCurrToolId('')
+		setPen(null)
+		setDrawFrame(null)
+		setDrawArrow(null)
+		setDrawMosaic(null)
+		setDrawText(null)
+		setHasDraw(false)
 	}
 
 	const onHandleClick = (args: ElectronShortcutCapture.ISettingProps) => {

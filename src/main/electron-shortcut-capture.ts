@@ -403,6 +403,9 @@ export default class electronShortcutCapture {
 		screen.on('display-metrics-changed', () => {
 			console.log('重新初始化')
 			this.loadedPageDisplayIds = []
+			this.captureWins.forEach(v => {
+				v.close()
+			})
 			this.initWin()
 		})
 	}

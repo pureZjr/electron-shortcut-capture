@@ -7,7 +7,7 @@ app.on('ready', () => {
 	// undocked
 	debug({ devToolsMode: 'right', showDevTools: false })
 	const electronShortcutCapture = new ElectronShortcutCapture({
-		multiScreen: true,
+		multiScreen: false,
 		downloadFileprefix: '云聊_'
 	})
 

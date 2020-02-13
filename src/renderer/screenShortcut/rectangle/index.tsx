@@ -264,36 +264,73 @@ class Rectangle extends Component<IProps, IState> {
 		)
 	}
 
-	componentWillUpdate(nextProps) {
-		const { rect } = nextProps
-		const { x1, x2, y1, y2 } = rect
-		const x = x1 < x2 ? x1 : x2
-		const y = y1 < y2 ? y1 : y2
-		const width = Math.abs(x2 - x1)
-		const height = Math.abs(y2 - y1)
+	componentWillUpdate(nextProps: IProps) {
+		// 框图-更新样式
+		if (
+			JSON.stringify(this.props.rect) !== JSON.stringify(nextProps.rect)
+		) {
+			const { rect } = nextProps
+			const { x1, x2, y1, y2 } = rect
+			if (!x1 && !x2 && !y1 && !y2) {
+				return
+			}
+			const x = x1 < x2 ? x1 : x2
+			const y = y1 < y2 ? y1 : y2
+			const width = Math.abs(x2 - x1)
+			const height = Math.abs(y2 - y1)
 
-		const style: React.CSSProperties = {
-			width: `${width}px`,
-			height: `${height}px`,
-			left: `${x}px`,
-			top: `${y}px`,
-			visibility: width && height ? 'visible' : 'hidden'
-		}
-		if (JSON.stringify(this.state.style) !== JSON.stringify(style)) {
+			const style: React.CSSProperties = {
+				width: `${width}px`,
+				height: `${height}px`,
+				left: `${x}px`,
+				top: `${y}px`,
+				visibility: width && height ? 'visible' : 'hidden',
+				overflow: 'unset',
+				display: 'unset'
+			}
 			this.setState({
 				style
 			})
+			console.log('框图-更新样式')
 		}
-	}
-
-	componentDidMount() {
-		window.addEventListener('mousemove', this.mousemove)
-		window.addEventListener('mouseup', this.mouseup)
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('mousemove', this.mousemove)
-		window.removeEventListener('mouseup', this.mouseup)
+		// 重置
+		if (
+			nextProps.bgHasDraw !== this.props.bgHasDraw &&
+			!nextProps.bgHasDraw
+		) {
+			const style: React.CSSProperties = {
+				width: 0,
+				height: 0,
+				visibility: 'hidden',
+				overflow: 'hidden',
+				display: 'none'
+			}
+			this.setState({
+				style
+			})
+			console.log('重置')
+			window.removeEventListener('mousemove', this.mousemove)
+			window.removeEventListener('mouseup', this.mouseup)
+		}
+		// 打开截图
+		if (
+			nextProps.bgHasDraw !== this.props.bgHasDraw &&
+			nextProps.bgHasDraw
+		) {
+			const style: React.CSSProperties = {
+				width: 0,
+				height: 0,
+				visibility: 'hidden',
+				overflow: 'hidden',
+				display: 'none'
+			}
+			this.setState({
+				style
+			})
+			console.log('打开截图')
+			window.addEventListener('mousemove', this.mousemove)
+			window.addEventListener('mouseup', this.mouseup)
+		}
 	}
 
 	render() {

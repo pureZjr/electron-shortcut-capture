@@ -6,7 +6,7 @@ import Rectangle from './rectangle'
 import Layer from './layer'
 import { close } from '@utils'
 import { events } from '@constant'
-import { getSource, getCurrentDisplay } from '@utils'
+import { getSource, getCurrentDisplay, onShortcutScreenClose } from '@utils'
 
 const ScreenShot: React.FC = () => {
 	// 框图坐标参数
@@ -40,18 +40,28 @@ const ScreenShot: React.FC = () => {
 	const [bgHasDraw, setBgHasDraw] = React.useState(false)
 	// 正在截图的显示器的id
 	const [capturingDisplayId, setCapturingDisplayId] = React.useState(0)
+	const [resting, setResting] = React.useState(false)
 
 	React.useEffect(() => {
-		getSource(setSource)
+		getSource((source: ElectronShortcutCapture.ISource) => {
+			setSource(source)
+			const { actuallyHeight, actuallyWidth, displayId } = source
+			setBounds({
+				width: actuallyWidth,
+				height: actuallyHeight,
+				x: 0,
+				y: 0
+			})
+			setCurrDisplayId(displayId)
+		})
 		// 鼠标右键关闭截图
 		window.addEventListener('contextmenu', () => {
 			close()
 		})
 		const currDisplay = getCurrentDisplay()
-		setCurrDisplayId(currDisplay.id)
 		setPageLoadedDisplayId(currDisplay.id)
-		setBounds(currDisplay.bounds)
 		listenCapturingDisplayId()
+		onShortcutScreenClose(() => reset())
 	}, [])
 
 	const onResize = (rect: ElectronShortcutCapture.IRect) => {
@@ -135,6 +145,22 @@ const ScreenShot: React.FC = () => {
 		} else {
 			return false
 		}
+	}
+
+	const reset = () => {
+		setSource({
+			...source,
+			toPngSource: null
+		})
+		setBgHasDraw(false)
+		setRect({
+			x1: 0,
+			y1: 0,
+			x2: 0,
+			y2: 0
+		})
+		setDestoryLayer(false)
+		setCapturingDisplayId(0)
 	}
 
 	return (

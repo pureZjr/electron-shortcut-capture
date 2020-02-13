@@ -8,7 +8,7 @@ import { events } from '@constant'
 export const getSource = (
 	cb: (source: ElectronShortcutCapture.ISource) => void
 ) => {
-	ipcRenderer.once(
+	ipcRenderer.on(
 		events.screenSourcesToPng,
 		(
 			_,
@@ -19,7 +19,8 @@ export const getSource = (
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
-				mouseY
+				mouseY,
+				displayId
 			}
 		) => {
 			cb({
@@ -29,7 +30,8 @@ export const getSource = (
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
-				mouseY
+				mouseY,
+				displayId
 			})
 		}
 	)
@@ -129,8 +131,8 @@ export const setCapturingDisplay = (displayId: number) => {
 /**
  * 监听关闭截图
  */
-export const listenClose = () => {
+export const onShortcutScreenClose = cd => {
 	ipcRenderer.on(events.close, () => {
-		// window.location.reload()
+		cd()
 	})
 }

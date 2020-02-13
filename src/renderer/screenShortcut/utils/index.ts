@@ -103,8 +103,8 @@ function handleCanvas(canvas: HTMLCanvasElement) {
 /**
  * 关闭截图
  */
-export const close = () => {
-	ipcRenderer.send(events.close)
+export const close = (notification = true) => {
+	ipcRenderer.send(events.close, notification)
 }
 
 /**

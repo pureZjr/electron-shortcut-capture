@@ -4,9 +4,13 @@ import { ipcRenderer } from 'electron'
 import Background from './background'
 import Rectangle from './rectangle'
 import Layer from './layer'
-import { close } from '@utils'
 import { events } from '@constant'
-import { getSource, getCurrentDisplay, onShortcutScreenClose } from '@utils'
+import {
+	getSource,
+	getCurrentDisplay,
+	onShortcutScreenClose,
+	close
+} from '@utils'
 
 const ScreenShot: React.FC = () => {
 	// 框图坐标参数
@@ -56,7 +60,8 @@ const ScreenShot: React.FC = () => {
 		})
 		// 鼠标右键关闭截图
 		window.addEventListener('contextmenu', () => {
-			close()
+			reset()
+			close(false)
 		})
 		const currDisplay = getCurrentDisplay()
 		setPageLoadedDisplayId(currDisplay.id)

@@ -230,12 +230,16 @@ export default class electronShortcutCapture {
 	 * 绑定窗口隐藏事件
 	 */
 	private bindHide() {
-		ipcMain.on(events.close, () => {
-			this.hide()
+		ipcMain.on(events.close, (_, notification) => {
+			this.hide(notification)
 		})
 	}
 
-	hide() {
+	/**
+	 * @param notification 是否需要通知渲染线程
+	 * */
+
+	hide(notification = true) {
 		if (!this.shortcutScreenHasActive) {
 			return console.log('截图没完全打开')
 		}
@@ -244,7 +248,9 @@ export default class electronShortcutCapture {
 		this.captureWins.forEach(v => {
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
-			v.webContents.send(events.close)
+			if (notification) {
+				v.webContents.send(events.close)
+			}
 			v.setBackgroundColor('#30000000')
 		})
 		this.unListenEsc()

@@ -64,6 +64,14 @@ const ScreenShot: React.FC = () => {
 		onShortcutScreenClose(() => reset())
 	}, [])
 
+	// 打开截图
+	React.useEffect(() => {
+		if (bgHasDraw) {
+			setDestoryLayer(false)
+			setCapturingDisplayId(0)
+		}
+	}, [bgHasDraw])
+
 	const onResize = (rect: ElectronShortcutCapture.IRect) => {
 		drawRectangle(rect)
 	}
@@ -159,10 +167,7 @@ const ScreenShot: React.FC = () => {
 			x2: 0,
 			y2: 0
 		})
-		setDestoryLayer(false)
-		setCapturingDisplayId(0)
 	}
-
 	return (
 		<Fragment>
 			<Background
@@ -184,14 +189,14 @@ const ScreenShot: React.FC = () => {
 				capturingDisplayId={capturingDisplayId}
 				shortcutDisabled={shortcutDisabled}
 			/>
-			{!destoryLayer && bgHasDraw && !shortcutDisabled() && (
+			{!destoryLayer && !shortcutDisabled() && (
 				<Layer
 					onDraw={onDraw}
 					setDestoryLayer={setDestoryLayer}
 					backgroundCtx={backgroundCtx}
 					bounds={bounds}
-					mouseX={source.mouseX}
-					mouseY={source.mouseY}
+					mouseX={!!source ? source.mouseX : 0}
+					mouseY={!!source ? source.mouseY : 0}
 				/>
 			)}
 		</Fragment>

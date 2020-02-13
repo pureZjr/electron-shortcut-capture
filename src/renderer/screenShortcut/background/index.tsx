@@ -44,17 +44,19 @@ const Background: React.FC<IProps> = ({
 		const { x1, y1 } = rect
 		const { width, height } = bounds
 		if (!!rectangleCtx) {
-			rectangleCtx.drawImage(
-				canvasRef.current,
-				x1,
-				y1,
-				width,
-				height,
-				0,
-				0,
-				width,
-				height
-			)
+			try {
+				rectangleCtx.drawImage(
+					canvasRef.current,
+					x1,
+					y1,
+					width,
+					height,
+					0,
+					0,
+					width,
+					height
+				)
+			} catch {}
 		}
 	}, [rect])
 

@@ -308,6 +308,7 @@ class Rectangle extends Component<IProps, IState> {
 			this.setState({
 				style
 			})
+
 			console.log('重置')
 			window.removeEventListener('mousemove', this.mousemove)
 			window.removeEventListener('mouseup', this.mouseup)

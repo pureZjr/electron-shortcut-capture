@@ -51,6 +51,24 @@ const ToolBar: React.FC<IProps> = ({
 		controlToolbar()
 	}
 
+	React.useEffect(() => {
+		const { x1, x2, y1, y2 } = rect
+		if (!x1 && !x2 && !y1 && !y2) {
+			console.log('toolbar-reset')
+			reset()
+		}
+	}, [rect])
+
+	const reset = () => {
+		setCurrToolId('')
+		setPen(null)
+		setDrawFrame(null)
+		setDrawArrow(null)
+		setDrawMosaic(null)
+		setDrawText(null)
+		setHasDraw(false)
+	}
+
 	const onHandleClick = (args: ElectronShortcutCapture.ISettingProps) => {
 		switch (currToolId) {
 			case '#pen':

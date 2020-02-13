@@ -309,7 +309,7 @@ class Rectangle extends Component<IProps, IState> {
 				style
 			})
 
-			console.log('重置')
+			console.log('Rectangle-关闭截图')
 			window.removeEventListener('mousemove', this.mousemove)
 			window.removeEventListener('mouseup', this.mouseup)
 		}
@@ -326,9 +326,14 @@ class Rectangle extends Component<IProps, IState> {
 				display: 'none'
 			}
 			this.setState({
-				style
+				style,
+				dragType: null,
+				dragpoint: null,
+				currRect: null,
+				isShortcutFullScreen: false,
+				cancelZoom: false
 			})
-			console.log('打开截图')
+			console.log('Rectangle-打开截图')
 			window.addEventListener('mousemove', this.mousemove)
 			window.addEventListener('mouseup', this.mouseup)
 		}

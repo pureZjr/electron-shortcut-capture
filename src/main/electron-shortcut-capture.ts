@@ -23,7 +23,8 @@ export default class electronShortcutCapture {
 		this.onClipboard = !!props ? props.onClipboard : null
 		this.key = !!props ? props.key : ''
 		this.onHide = !!props ? props.onHide : null
-		this.onShow = !!props ? props.onShow : null
+		this.onShow = !!props ? props.onShow : null打开截图回调
+		this.onShowByKey = !!props ? props.onShowByKey : null
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -375,7 +376,10 @@ export default class electronShortcutCapture {
 	 */
 	private bindKey = () => {
 		if (this.key) {
-			globalShortcut.register(this.key, () => {
+			globalShortcut.register(this.key, async () => {
+				if (!!this.onShowByKey) {
+					await this.onShowByKey()
+				}
 				this.show()
 			})
 		}
@@ -390,7 +394,10 @@ export default class electronShortcutCapture {
 					globalShortcut.unregister(this.key)
 				}
 				this.key = key
-				globalShortcut.register(key, () => {
+				globalShortcut.register(key, async () => {
+					if (!!this.onShowByKey) {
+						await this.onShowByKey()
+					}
 					this.show()
 				})
 			} catch {

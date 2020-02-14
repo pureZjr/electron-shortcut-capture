@@ -22,6 +22,8 @@ declare namespace ElectronShortcutCapture {
 		onHide?: () => void
 		// 打开截图回调
 		onShow?: () => void
+		// 快捷键打开截图回调
+		onShowByKey?: () => Promise<void>
 	}
 
 	interface ISource {

@@ -52,6 +52,7 @@ new ShortcutCapture({
 | onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容         |         |
 | onHide             | () => void                           | 关闭截图回调                   |         |
 | onShow             | () => void                           | 打开截图回调                   |         |
+| onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调             |         |
 
 ## Methods
 

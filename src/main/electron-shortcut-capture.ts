@@ -23,6 +23,7 @@ export default class electronShortcutCapture {
 		this.onClipboard = !!props ? props.onClipboard : null
 		this.key = !!props ? props.key : ''
 		this.onHide = !!props ? props.onHide : null
+		this.onShow = !!props ? props.onShow : null
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -126,6 +127,9 @@ export default class electronShortcutCapture {
 			return console.log('页面没完全加载')
 		}
 		this.shortcuting = true
+		if (this.onShow) {
+			this.onShow()
+		}
 		/**
 		 * 获取显示器信息
 		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数

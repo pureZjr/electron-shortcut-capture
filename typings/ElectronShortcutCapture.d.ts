@@ -20,6 +20,8 @@ declare namespace ElectronShortcutCapture {
 		onClipboard?: (data: Electron.NativeImage) => void
 		// 关闭截图回调
 		onHide?: () => void
+		// 打开截图回调
+		onShow?: () => void
 	}
 
 	interface ISource {

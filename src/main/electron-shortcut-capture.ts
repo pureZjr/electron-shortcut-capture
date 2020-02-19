@@ -8,6 +8,7 @@ import {
 	globalShortcut
 } from 'electron'
 import { EventEmitter } from 'events'
+import { execFile } from 'child_process'
 
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
@@ -23,7 +24,7 @@ export default class electronShortcutCapture {
 		this.onClipboard = !!props ? props.onClipboard : null
 		this.key = !!props ? props.key : ''
 		this.onHide = !!props ? props.onHide : null
-		this.onShow = !!props ? props.onShow : null打开截图回调
+		this.onShow = !!props ? props.onShow : null
 		this.onShowByKey = !!props ? props.onShowByKey : null
 		this.initWin()
 		this.bindHide()
@@ -48,6 +49,8 @@ export default class electronShortcutCapture {
 	private downloadFileprefix: string = ''
 	private onClipboard: (data: Electron.NativeImage) => void = null
 	private onHide: () => void = null
+	private onShow: () => void = null
+	private onShowByKey: () => Promise<void> = null
 	// 屏幕大小以及获取屏幕资源的宽高
 	private screenInfo: any = {}
 	// 正在下载
@@ -127,6 +130,9 @@ export default class electronShortcutCapture {
 		if (this.loadedPageDisplayIds.length !== this.captureWins.length) {
 			return console.log('页面没完全加载')
 		}
+
+		await this.getPrintScreen()
+
 		this.shortcuting = true
 		if (this.onShow) {
 			this.onShow()
@@ -137,6 +143,7 @@ export default class electronShortcutCapture {
 		 */
 		const cutWidth = this.screenInfo.cutWidth
 		const cutHeight = this.screenInfo.cutHeight
+
 		const sources = await this.getScreenSources(cutWidth, cutHeight)
 		// 判断获取DisplayId是否为空
 		const displayIdEmpty = sources.some(v => !v.display_id)
@@ -204,9 +211,9 @@ export default class electronShortcutCapture {
 			const { width, height } = this.screenInfo[currentFocusDisplay.id]
 			const actuallyHeight = source.thumbnail.getSize().height
 			const actuallyWidth = source.thumbnail.getSize().width
-
 			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: source.thumbnail.toJPEG(100),
+				toPngSource: this.getBase64OnClipboard(),
+				// toPngSource: this.getSourcesOnClipboard().toPNG(),
 				width: width,
 				height: height,
 				actuallyWidth,
@@ -436,6 +443,40 @@ export default class electronShortcutCapture {
 				return
 			}
 			this.loadedPageDisplayIds.push(displayId)
+		})
+	}
+
+	/**
+	 * window 通过剪贴板获取截图
+	 */
+	getSourcesOnClipboard = () => {
+		const source = clipboard.readImage()
+		return source
+	}
+
+	/**
+	 * window 通过剪贴板获取base64
+	 */
+	getBase64OnClipboard = () => {
+		const base64 = clipboard.readText()
+		return `data:image/jpeg;base64,${base64}`
+	}
+
+	/**
+	 * 截图放到剪贴板
+	 */
+	getPrintScreen = () => {
+		return new Promise((resolve, reject) => {
+			try {
+				const getPrintScreen = execFile(
+					require('path').resolve(__dirname, './screen3.exe')
+				)
+				getPrintScreen.once('exit', () => {
+					resolve(true)
+				})
+			} catch {
+				reject(false)
+			}
 		})
 	}
 }

@@ -13,7 +13,7 @@ interface IProps {
 	capturingDisplayId: number
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
-	setRectangleCtx: (ctx: CanvasRenderingContext2D) => void
+	setRectangle: (canvas: HTMLCanvasElement) => void
 	shortcutDisabled: () => Boolean
 }
 
@@ -46,7 +46,7 @@ class Rectangle extends Component<IProps, IState> {
 	setCanvasRef = (ref: HTMLCanvasElement) => {
 		if (!!ref) {
 			this.setState({ canvasRef: ref })
-			this.props.setRectangleCtx(ref.getContext('2d'))
+			this.props.setRectangle(ref)
 			const { x1, y1, x2, y2 } = this.props.rect
 			const width = x2 - x1
 			const height = y2 - y1

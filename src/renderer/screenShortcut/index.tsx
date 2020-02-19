@@ -20,10 +20,8 @@ const ScreenShot: React.FC = () => {
 		x2: 0,
 		y2: 0
 	})
-	// 框图Context
-	const [rectangleCtx, setRectangleCtx] = React.useState<
-		CanvasRenderingContext2D
-	>(null)
+	// 框图Canvas
+	const [rectangle, setRectangle] = React.useState<HTMLCanvasElement>(null)
 	// 背景Context
 	const [backgroundCtx, setBackgroundCtx] = React.useState<
 		CanvasRenderingContext2D
@@ -44,7 +42,6 @@ const ScreenShot: React.FC = () => {
 	const [bgHasDraw, setBgHasDraw] = React.useState(false)
 	// 正在截图的显示器的id
 	const [capturingDisplayId, setCapturingDisplayId] = React.useState(0)
-	const [resting, setResting] = React.useState(false)
 
 	React.useEffect(() => {
 		getSource((source: ElectronShortcutCapture.ISource) => {
@@ -177,7 +174,7 @@ const ScreenShot: React.FC = () => {
 	return (
 		<Fragment>
 			<Background
-				rectangleCtx={rectangleCtx}
+				rectangle={rectangle}
 				rect={rect}
 				source={source}
 				setBackgroundCtx={setBackgroundCtx}
@@ -188,7 +185,7 @@ const ScreenShot: React.FC = () => {
 				onResize={onResize}
 				onShift={onShift}
 				rect={rect}
-				setRectangleCtx={setRectangleCtx}
+				setRectangle={setRectangle}
 				bounds={bounds}
 				currDisplayId={currDisplayId}
 				bgHasDraw={bgHasDraw}

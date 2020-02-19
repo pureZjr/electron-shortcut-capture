@@ -24,7 +24,10 @@ const Background: React.FC<IProps> = ({
 }) => {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null)
 	const [screenImg, setScreenImg] = React.useState<HTMLImageElement>(null)
-
+	const [ratio, setRatio] = React.useState({
+		widthR: 1,
+		heightR: 1
+	})
 	/**
 	 * 一旦接收到屏幕截图就开始画canvas
 	 */
@@ -43,25 +46,21 @@ const Background: React.FC<IProps> = ({
 	React.useEffect(() => {
 		// 画框中的图
 		const { x1, y1, x2, y2 } = rect
-		const { width, height } = bounds
 		if (!!rectangle && !!screenImg) {
 			try {
 				const rectangleCx = rectangle.getContext('2d')
-				// electron可用区域大小跟图片实际大小比率
-				const xR = width / screenImg.width
-				const yR = height / screenImg.height
-				rectangle.width = (x2 - x1) / xR
-				rectangle.height = (y2 - y1) / yR
+				rectangle.width = (x2 - x1) / ratio.widthR
+				rectangle.height = (y2 - y1) / ratio.heightR
 				rectangleCx.drawImage(
-					canvasRef.current,
-					x1,
-					y1,
-					width,
-					height,
+					screenImg,
+					x1 / ratio.widthR,
+					y1 / ratio.heightR,
+					rectangle.width,
+					rectangle.height,
 					0,
 					0,
-					width,
-					height
+					rectangle.width,
+					rectangle.height
 				)
 				rectangle.style.width = '100%'
 			} catch {}
@@ -71,13 +70,28 @@ const Background: React.FC<IProps> = ({
 	// 画背景
 	const drawBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
-		const { actuallyWidth, actuallyHeight, toPngSource } = source
+		const { toPngSource } = source
+		const { width, height } = bounds
 		const $img = new Image()
 		const blob = new Blob([toPngSource], { type: 'image/png' })
 		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
-			currCtx.drawImage($img, 0, 0, actuallyWidth, actuallyHeight)
+			canvasRef.current.width = $img.width
+			canvasRef.current.height = $img.height
+			currCtx.drawImage(
+				$img,
+				0,
+				0,
+				canvasRef.current.width,
+				canvasRef.current.height
+			)
 			canvasRef.current.style.width = '100%'
+
+			// electron可用区域大小跟图片实际大小比率
+			const xR = width / $img.width
+			const yR = height / $img.height
+			setRatio({ widthR: xR, heightR: yR })
+			Object.assign(window, { ratio: { widthR: xR, heightR: yR } })
 			setScreenImg($img)
 			setBackgroundCtx(canvasRef.current.getContext('2d'))
 		})

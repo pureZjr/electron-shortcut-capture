@@ -85,10 +85,15 @@ export const makecurve = (args: {
 
 	// window上面的鼠标移动
 	function winMouseup({ clientX, clientY }) {
+		const ratio = window['ratio'] as { widthR: number; heightR: number }
 		window.removeEventListener('mousemove', move)
 		setHasDraw(true)
 		hasMove = false
-		points.push({ x: clientX - rect.x1, y: clientY - rect.y1 })
+		canvasStore.pop()
+		points.push({
+			x: (clientX - rect.x1) / ratio.widthR,
+			y: (clientY - rect.y1) / ratio.heightR
+		})
 		if (points.length > 3) {
 			const lastTwoPoints = points.slice(-2)
 			const controlPoint = lastTwoPoints[0]
@@ -709,11 +714,12 @@ export const text = (args: {
 
 	// 创建输入框
 	function createInputArea(x, y) {
+		const ratio = window['ratio'] as { widthR: number; heightR: number }
 		const inputArea = document.createElement('div')
 		canvasRef.parentElement.appendChild(inputArea)
 		styles(inputArea)
-		inputArea.style.top = `${y}px`
-		inputArea.style.left = `${x}px`
+		inputArea.style.top = `${y * ratio.heightR}px`
+		inputArea.style.left = `${x * ratio.widthR}px`
 		inputArea.contentEditable = 'true'
 		inputArea.className = 'input-area'
 		inputArea.style.boxShadow = '0 0 1px red'

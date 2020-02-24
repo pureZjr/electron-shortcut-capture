@@ -251,6 +251,7 @@ export default class electronShortcutCapture {
 		this.shortcutScreenHasActive = false
 		this.shortcuting = false
 		this.captureWins.forEach(v => {
+			v.webContents.send(events.receiveCapturingDisplayId, 0)
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			if (notification) {

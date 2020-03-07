@@ -11,7 +11,7 @@ app.on('ready', () => {
 		downloadFileprefix: '云聊_'
 	})
 
-	globalShortcut.register('alt+shift+w', () => {
+	globalShortcut.register('ctrl+shift+w', () => {
 		electronShortcutCapture.show()
 	})
 })

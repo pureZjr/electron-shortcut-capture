@@ -212,8 +212,8 @@ export default class electronShortcutCapture {
 			const actuallyHeight = source.thumbnail.getSize().height
 			const actuallyWidth = source.thumbnail.getSize().width
 			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: this.getBase64OnClipboard(),
-				// toPngSource: this.getSourcesOnClipboard().toPNG(),
+				// toPngSource: this.getBase64OnClipboard(),
+				toPngSource: this.getSourcesOnClipboard().toPNG(),
 				width: width,
 				height: height,
 				actuallyWidth,
@@ -469,7 +469,7 @@ export default class electronShortcutCapture {
 		return new Promise((resolve, reject) => {
 			try {
 				const getPrintScreen = execFile(
-					require('path').resolve(__dirname, './screen3.exe')
+					require('path').resolve(__dirname, './printScreen.exe')
 				)
 				getPrintScreen.once('exit', () => {
 					resolve(true)

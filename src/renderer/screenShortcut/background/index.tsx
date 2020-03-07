@@ -73,9 +73,10 @@ const Background: React.FC<IProps> = ({
 		const { toPngSource } = source
 		const { width, height } = bounds
 		const $img = new Image()
-		// const blob = new Blob([toPngSource], { type: 'image/png' })
-		// console.log(toPngSource)
-		$img.src = toPngSource
+		const blob = new Blob([toPngSource], { type: 'image/png' })
+		$img.src = URL.createObjectURL(blob)
+		console.log(toPngSource)
+		// $img.src = toPngSource
 		$img.addEventListener('load', () => {
 			canvasRef.current.width = $img.width
 			canvasRef.current.height = $img.height

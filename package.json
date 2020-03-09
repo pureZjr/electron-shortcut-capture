@@ -1,66 +1,64 @@
 {
-  "name": "electron-shortcut-capture",
-  "version": "1.1.9",
-  "description": "",
-  "main": "./dist/main/main.js",
-  "types": "typings/types.d.ts",
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development node build/webpack.config.js",
-    "lint-css": "stylelint 'src/**/*.scss' --fix",
-    "build:renderer": "cross-env NODE_ENV=production webpack --config build/renderer/webpack.config.js",
-    "build:main": "cross-env NODE_ENV=production webpack --config build/main/webpack.config.js",
-    "build": "npm run build:renderer && npm run build:main",
-    "release": "npm run build && npm publish"
-  },
-  "keywords": [
-    "electron-shortcut-capture",
-    "electron",
-    "shortcut-capture",
-    "截图"
-  ],
-  "files": [
-    "dist/**"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "os": "^0.1.1",
-    "screenshot-desktop": "^1.11.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.2",
-    "@svgr/webpack": "^4.3.3",
-    "@types/react": "^16.9.11",
-    "babel-loader": "^8.0.6",
-    "cross-env": "^6.0.3",
-    "css-loader": "^3.2.0",
-    "electron": "6.0.10",
-    "electron-debug": "^3.0.1",
-    "electron-dev-webpack-plugin": "^1.0.4",
-    "electron-devtools-installer": "^2.2.4",
-    "eslint-config-prettier": "^6.7.0",
-    "eslint-plugin-prettier": "^3.1.1",
-    "file-loader": "^4.2.0",
-    "friendly-errors-webpack-plugin": "^1.7.0",
-    "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.12.0",
-    "prettier": "^1.19.1",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-portal-tooltip": "^2.4.7",
-    "sass-loader": "^8.0.0",
-    "screenshot-desktop": "^1.11.0",
-    "style-loader": "^1.0.0",
-    "stylelint": "^12.0.0",
-    "stylelint-config-prettier": "^6.0.0",
-    "stylelint-config-standard": "^19.0.0",
-    "stylelint-order": "^3.1.1",
-    "stylelint-prettier": "^1.1.1",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.2",
-    "url-loader": "^2.2.0",
-    "webpack": "4.41.0",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
-  }
+	"name": "electron-shortcut-capture",
+	"version": "1.1.11",
+	"description": "",
+	"main": "./dist/main/main.js",
+	"types": "typings/types.d.ts",
+	"scripts": {
+		"dev": "cross-env NODE_ENV=development node build/webpack.config.js",
+		"lint-css": "stylelint 'src/**/*.scss' --fix",
+		"build:renderer": "cross-env NODE_ENV=production webpack --config build/renderer/webpack.config.js",
+		"build:main": "cross-env NODE_ENV=production webpack --config build/main/webpack.config.js",
+		"build": "npm run build:renderer && npm run build:main",
+		"release": "npm run build && npm publish"
+	},
+	"keywords": [
+		"electron-shortcut-capture",
+		"electron",
+		"shortcut-capture",
+		"截图"
+	],
+	"files": [
+		"dist/**"
+	],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"os": "^0.1.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.7.2",
+		"@svgr/webpack": "^4.3.3",
+		"@types/react": "^16.9.11",
+		"babel-loader": "^8.0.6",
+		"cross-env": "^6.0.3",
+		"css-loader": "^3.2.0",
+		"electron": "7.1.13",
+		"electron-debug": "^3.0.1",
+		"electron-dev-webpack-plugin": "^1.0.4",
+		"electron-devtools-installer": "^2.2.4",
+		"eslint-config-prettier": "^6.7.0",
+		"eslint-plugin-prettier": "^3.1.1",
+		"file-loader": "^4.2.0",
+		"friendly-errors-webpack-plugin": "^1.7.0",
+		"html-webpack-plugin": "^3.2.0",
+		"node-sass": "^4.12.0",
+		"prettier": "^1.19.1",
+		"react": "^16.11.0",
+		"react-dom": "^16.11.0",
+		"react-portal-tooltip": "^2.4.7",
+		"sass-loader": "^8.0.0",
+		"style-loader": "^1.0.0",
+		"stylelint": "^12.0.0",
+		"stylelint-config-prettier": "^6.0.0",
+		"stylelint-config-standard": "^19.0.0",
+		"stylelint-order": "^3.1.1",
+		"stylelint-prettier": "^1.1.1",
+		"ts-loader": "^6.2.1",
+		"typescript": "^3.7.2",
+		"url-loader": "^2.2.0",
+		"webpack": "4.41.0",
+		"webpack-cli": "^3.3.10",
+		"webpack-dev-server": "^3.9.0"
+	}
 }

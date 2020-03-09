@@ -58,7 +58,7 @@ const ScreenShot: React.FC = () => {
 		// 鼠标右键关闭截图
 		window.addEventListener('contextmenu', () => {
 			reset()
-			close(false)
+			close()
 		})
 		const currDisplay = getCurrentDisplay()
 		setPageLoadedDisplayId(currDisplay.id)

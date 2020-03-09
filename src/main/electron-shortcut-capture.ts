@@ -164,9 +164,9 @@ export default class electronShortcutCapture {
 
 				const width = this.screenInfo[source.display_id].width
 				const height = this.screenInfo[source.display_id].height
-				const actuallyWidth = source.thumbnail.getSize().width
-				const actuallyHeight = source.thumbnail.getSize().height
-
+				// 显示器实际大小
+				const actuallyWidth = win.getBounds().width
+				const actuallyHeight = win.getBounds().height
 				win.webContents.send(events.screenSourcesToPng, {
 					toPngSource: sourcePng,
 					width,
@@ -209,8 +209,10 @@ export default class electronShortcutCapture {
 				return v.displayId === currentFocusDisplay.id
 			})[0]
 			const { width, height } = this.screenInfo[currentFocusDisplay.id]
-			const actuallyHeight = source.thumbnail.getSize().height
-			const actuallyWidth = source.thumbnail.getSize().width
+			// 显示器实际大小
+			const actuallyWidth = win.getBounds().width
+			const actuallyHeight = win.getBounds().height
+
 			win.webContents.send(events.screenSourcesToPng, {
 				// toPngSource: this.getBase64OnClipboard(),
 				toPngSource: this.getSourcesOnClipboard().toPNG(),
@@ -258,6 +260,7 @@ export default class electronShortcutCapture {
 		this.shortcutScreenHasActive = false
 		this.shortcuting = false
 		this.captureWins.forEach(v => {
+			v.webContents.send(events.receiveCapturingDisplayId, 0)
 			v.setVisibleOnAllWorkspaces(false)
 			v.hide()
 			if (notification) {

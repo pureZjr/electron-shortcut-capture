@@ -56,12 +56,10 @@ export default class electronShortcutCapture {
 	private screenInfo: any = {}
 	// 正在下载
 	private isDownloading: boolean = false
-	// 截图已经打开
-	private shortcutScreenHasActive: boolean = false
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
 
-	static isWin = require('os').platform() !== 'platform'
+	static isWin = require('os').platform() !== 'darwin'
 	static URL =
 		process.env.NODE_ENV === 'development'
 			? 'http://localhost:8888'
@@ -120,7 +118,7 @@ export default class electronShortcutCapture {
 	 * 打开截图
 	 */
 	async show() {
-		if (this.shortcuting) {
+		if (this.shortcuting && this.shortCutScreenIsOpened()) {
 			return console.log('正在截图')
 		}
 		if (this.isDownloading) {
@@ -133,6 +131,11 @@ export default class electronShortcutCapture {
 			return console.log('页面没完全加载')
 		}
 
+		// 只处理一个显示器
+		const handleSingleDisplay =
+			!this.multiScreen || this.captureWins.length === 1
+		const isGetWinHD =
+			electronShortcutCapture.isWin && handleSingleDisplay && this.winHD
 		try {
 			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案
 			if (this.isWin && ) {
@@ -169,13 +172,13 @@ export default class electronShortcutCapture {
 				const win = this.captureWins[i]
 
 				const source = sources[i]
-				const sourcePng = source.thumbnail.toJPEG(100)
+				const sourcePng = this.getSourcePng(source)
 
 				const width = this.screenInfo[source.display_id].width
 				const height = this.screenInfo[source.display_id].height
-				// 显示器实际大小
 				const actuallyWidth = win.getBounds().width
 				const actuallyHeight = win.getBounds().height
+
 				win.webContents.send(events.screenSourcesToPng, {
 					toPngSource: sourcePng,
 					width,
@@ -184,7 +187,8 @@ export default class electronShortcutCapture {
 					actuallyHeight,
 					mouseX,
 					mouseY,
-					displayId: sources[i].display_id
+					displayId: sources[i].display_id,
+					isWinHD: isGetWinHD
 				})
 				// 设置窗口可以在全屏窗口之上显示。
 				win.setVisibleOnAllWorkspaces(true)
@@ -217,21 +221,19 @@ export default class electronShortcutCapture {
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currentFocusDisplay.id
 			})[0]
-			const { width, height } = this.screenInfo[currentFocusDisplay.id]
-			// 显示器实际大小
+			const { width, height } = this.screenInfo[currDisplay.id]
 			const actuallyWidth = win.getBounds().width
 			const actuallyHeight = win.getBounds().height
-
 			win.webContents.send(events.screenSourcesToPng, {
-				// toPngSource: this.getBase64OnClipboard(),
-				toPngSource: this.getSourcesOnClipboard().toPNG(),
+				toPngSource: this.getSourcePng(isGetWinHD ? null : source),
 				width: width,
 				height: height,
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
 				mouseY,
-				displayId: currentFocusDisplayId
+				displayId: currentFocusDisplayId,
+				isWinHD: isGetWinHD
 			})
 
 			// 设置窗口可以在全屏窗口之上显示。
@@ -246,7 +248,6 @@ export default class electronShortcutCapture {
 		}
 		// 等页面打开再绑定关闭截图事件
 		this.listenEsc()
-		this.shortcutScreenHasActive = true
 	}
 
 	/**
@@ -263,10 +264,10 @@ export default class electronShortcutCapture {
 	 * */
 
 	hide(notification = true) {
-		if (!this.shortcutScreenHasActive) {
+		if (!this.shortCutScreenIsOpened()) {
 			return console.log('截图没完全打开')
 		}
-		this.shortcutScreenHasActive = false
+		this.loadedPageDisplayIds = []
 		this.shortcuting = false
 		this.captureWins.forEach(v => {
 			v.webContents.send(events.receiveCapturingDisplayId, 0)
@@ -490,5 +491,25 @@ export default class electronShortcutCapture {
 				reject(false)
 			}
 		})
+	}
+
+	/**
+	 * 截图窗口完全打开
+	 */
+	shortCutScreenIsOpened = () => {
+		return this.multiScreen
+			? this.captureWins.every(win => win.isVisible())
+			: this.captureWins.some(win => win.isVisible())
+	}
+
+	/**
+	 * 获取图片资源
+	 */
+	getSourcePng = (source?: Electron.DesktopCapturerSource) => {
+		if (!!source) {
+			return source.thumbnail.toJPEG(100)
+		} else {
+			return this.getBase64OnClipboard()
+		}
 	}
 }

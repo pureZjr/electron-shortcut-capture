@@ -170,7 +170,10 @@ const ScreenShot: React.FC = () => {
 			y2: 0
 		})
 		setDestoryLayer(true)
+		const currDisplay = getCurrentDisplay()
+		setPageLoadedDisplayId(currDisplay.id)
 	}
+
 	return (
 		<Fragment>
 			<Background

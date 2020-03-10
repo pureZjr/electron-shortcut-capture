@@ -37,6 +37,7 @@ declare namespace ElectronShortcutCapture {
 		mouseX?: number
 		mouseY?: number
 		displayId: number
+		isWinHD: boolean
 	}
 
 	interface ISettingProps {

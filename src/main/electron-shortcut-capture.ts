@@ -73,8 +73,8 @@ export default class electronShortcutCapture {
 	 */
 	private getCurrentFocusDisplay = () => {
 		const mousePoint = screen.getCursorScreenPoint()
-		const display = screen.getDisplayNearestPoint(mousePoint)
-		return display
+		const currDisplay = screen.getDisplayNearestPoint(mousePoint)
+		return { display: currDisplay, mousePoint }
 	}
 
 	/**
@@ -163,9 +163,10 @@ export default class electronShortcutCapture {
 			this.multiScreen = false
 		}
 
-		// 当前鼠标位置
-		const mouseX = screen.getCursorScreenPoint().x
-		const mouseY = screen.getCursorScreenPoint().y
+		// 当前显示器和鼠标位置
+		const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
+		const mouseX = mousePoint.x
+		const mouseY = mousePoint.y
 
 		if (this.multiScreen) {
 			for (let i = 0; i < sources.length; i++) {
@@ -202,12 +203,11 @@ export default class electronShortcutCapture {
 				}, 300)
 			}
 		} else {
-			const currentFocusDisplay = this.getCurrentFocusDisplay()
 			let source
 			/**
 			 * 根据鼠标位置选择source
 			 */
-			const currentFocusDisplayId = currentFocusDisplay.id.toString()
+			const currentFocusDisplayId = currDisplay.id.toString()
 			source = sources.filter(
 				v => v.display_id === currentFocusDisplayId
 			)[0]
@@ -219,7 +219,7 @@ export default class electronShortcutCapture {
 			}
 
 			const win = this.captureWins.filter(v => {
-				return v.displayId === currentFocusDisplay.id
+				return v.displayId === currDisplay.id
 			})[0]
 			const { width, height } = this.screenInfo[currDisplay.id]
 			const actuallyWidth = win.getBounds().width

@@ -138,7 +138,7 @@ export default class electronShortcutCapture {
 			electronShortcutCapture.isWin && handleSingleDisplay && this.winHD
 		try {
 			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案
-			if (this.isWin && ) {
+			if (isGetWinHD) {
 				await this.getPrintScreen()
 			}
 		} catch {

@@ -26,6 +26,7 @@ export default class electronShortcutCapture {
 		this.onHide = !!props ? props.onHide : null
 		this.onShow = !!props ? props.onShow : null
 		this.onShowByKey = !!props ? props.onShowByKey : null
+		this.winHD = !!props ? props.winHD : false
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -60,6 +61,7 @@ export default class electronShortcutCapture {
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
 
+	static isWin = require('os').platform() !== 'platform'
 	static URL =
 		process.env.NODE_ENV === 'development'
 			? 'http://localhost:8888'
@@ -131,7 +133,14 @@ export default class electronShortcutCapture {
 			return console.log('页面没完全加载')
 		}
 
-		await this.getPrintScreen()
+		try {
+			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案
+			if (this.isWin && ) {
+				await this.getPrintScreen()
+			}
+		} catch {
+			return false
+		}
 
 		this.shortcuting = true
 		if (this.onShow) {

@@ -8,7 +8,8 @@ app.on('ready', () => {
 	debug({ devToolsMode: 'right', showDevTools: false })
 	const electronShortcutCapture = new ElectronShortcutCapture({
 		multiScreen: false,
-		downloadFileprefix: '云聊_'
+		downloadFileprefix: '云聊_',
+		winHD: true
 	})
 
 	globalShortcut.register('ctrl+shift+w', () => {

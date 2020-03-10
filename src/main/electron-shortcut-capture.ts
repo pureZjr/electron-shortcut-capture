@@ -74,7 +74,7 @@ export default class electronShortcutCapture {
 	private getCurrentFocusDisplay = () => {
 		const mousePoint = screen.getCursorScreenPoint()
 		const currDisplay = screen.getDisplayNearestPoint(mousePoint)
-		return { display: currDisplay, mousePoint }
+		return { currDisplay, mousePoint }
 	}
 
 	/**
@@ -167,7 +167,7 @@ export default class electronShortcutCapture {
 		const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
 		const mouseX = mousePoint.x
 		const mouseY = mousePoint.y
-
+		console.log(currDisplay)
 		if (this.multiScreen) {
 			for (let i = 0; i < sources.length; i++) {
 				const win = this.captureWins[i]

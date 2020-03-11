@@ -12,6 +12,11 @@
 		"build": "npm run build:renderer && npm run build:main",
 		"release": "npm run build && npm publish"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pureZjr/electron-shortcut-capture.git"
+	},
+	"homepage": "https://github.com/pureZjr/electron-shortcut-capture/blob/master/readme.md",
 	"keywords": [
 		"electron-shortcut-capture",
 		"electron",

@@ -487,7 +487,7 @@ export default class electronShortcutCapture {
 		if (!!source) {
 			return source.thumbnail.toJPEG(100)
 		} else {
-			return this.getSourcesOnClipboard()
+			return this.getSourcesOnClipboard().toPNG()
 		}
 	}
 }

@@ -45,7 +45,6 @@ const ScreenShot: React.FC = () => {
 
 	React.useEffect(() => {
 		getSource((source: ElectronShortcutCapture.ISource) => {
-			setSource(source)
 			const { actuallyHeight, actuallyWidth, displayId } = source
 			setBounds({
 				width: actuallyWidth,
@@ -54,6 +53,7 @@ const ScreenShot: React.FC = () => {
 				y: 0
 			})
 			setCurrDisplayId(displayId)
+			setSource(source)
 		})
 		// 鼠标右键关闭截图
 		window.addEventListener('contextmenu', () => {
@@ -173,7 +173,6 @@ const ScreenShot: React.FC = () => {
 		const currDisplay = getCurrentDisplay()
 		setPageLoadedDisplayId(currDisplay.id)
 	}
-
 	return (
 		<Fragment>
 			<Background

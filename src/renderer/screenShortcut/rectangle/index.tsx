@@ -390,11 +390,7 @@ class Rectangle extends Component<IProps, IState> {
 					controlToolbar={this.controlToolbar}
 					rect={rect}
 				/>
-				<canvas
-					ref={this.setCanvasRef}
-					width={style.width}
-					height={style.height}
-				></canvas>
+				<canvas ref={this.setCanvasRef}></canvas>
 				<div className="rectangle-border rectangle-border-n"></div>
 				<div className="rectangle-border rectangle-border-e"></div>
 				<div className="rectangle-border rectangle-border-s"></div>

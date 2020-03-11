@@ -48,16 +48,22 @@ export default class electronShortcutCapture {
 	// 正在截图
 	private shortcuting: boolean = false
 	private downloadFileprefix: string = ''
-	private onClipboard: (data: Electron.NativeImage) => void = null
-	private onHide: () => void = null
-	private onShow: () => void = null
-	private onShowByKey: () => Promise<void> = null
 	// 屏幕大小以及获取屏幕资源的宽高
 	private screenInfo: any = {}
 	// 正在下载
 	private isDownloading: boolean = false
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
+	// 开启window高清截图
+	private winHD: boolean = false
+	// 点击完成返回剪贴板内容
+	private onClipboard: (data: Electron.NativeImage) => void = null
+	// 关闭截图回调
+	private onHide: () => void = null
+	// 打开截图回调
+	private onShow: () => void = null
+	// 快捷键打开截图回调
+	private onShowByKey: () => Promise<void> = null
 
 	static isWin = require('os').platform() !== 'darwin'
 	static URL =
@@ -69,22 +75,19 @@ export default class electronShortcutCapture {
 			  )}`
 
 	/**
-	 * 获取当前鼠标所在的屏幕
+	 * 获取当前鼠标位置呵呵所在的屏幕
 	 */
 	private getCurrentFocusDisplay = () => {
 		const mousePoint = screen.getCursorScreenPoint()
 		const currDisplay = screen.getDisplayNearestPoint(mousePoint)
-		return { currDisplay, mousePoint }
+		return { mousePoint, currDisplay }
 	}
 
 	/**
 	 * 设置屏幕大小以及获取屏幕资源的宽高
 	 */
 	setScreenInfo = (display: Electron.Display) => {
-		this.screenInfo[display.id] = {
-			width: display.size.width,
-			height: display.size.height
-		}
+		this.screenInfo[display.id] = {}
 		this.screenInfo['cutWidth'] =
 			!!this.screenInfo['cutWidth'] &&
 			this.screenInfo['cutWidth'] > display.size.width
@@ -134,19 +137,20 @@ export default class electronShortcutCapture {
 		// 只处理一个显示器
 		const handleSingleDisplay =
 			!this.multiScreen || this.captureWins.length === 1
-		const isGetWinHD =
+		let isGetWinHD =
 			electronShortcutCapture.isWin && handleSingleDisplay && this.winHD
 		try {
-			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案
+			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案,失败的话用回原来方案
 			if (isGetWinHD) {
 				await this.getPrintScreen()
 			}
 		} catch {
-			return false
+			isGetWinHD = false
 		}
 
 		this.shortcuting = true
-		if (this.onShow) {
+		// 打开截图回调
+		if (this.onShow === 'function') {
 			this.onShow()
 		}
 		/**
@@ -157,7 +161,10 @@ export default class electronShortcutCapture {
 		const cutHeight = this.screenInfo.cutHeight
 
 		const sources = await this.getScreenSources(cutWidth, cutHeight)
-		// 判断获取DisplayId是否为空
+		/**
+		 * 判断获取DisplayId是否为空,
+		 * 有些电脑获取到的id为空的，就将截图操作重置为单显示器方式
+		 */
 		const displayIdEmpty = sources.some(v => !v.display_id)
 		if (displayIdEmpty) {
 			this.multiScreen = false
@@ -167,40 +174,36 @@ export default class electronShortcutCapture {
 		const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
 		const mouseX = mousePoint.x
 		const mouseY = mousePoint.y
-		console.log(currDisplay)
+
+		const noticeToRenderer = ({
+			win,
+			source,
+			actuallyWidth,
+			displayId
+		}) => {
+			win.webContents.send(events.screenSourcesToPng, {
+				toPngSource: this.getSourcePng(isGetWinHD ? null : source),
+				actuallyWidth,
+				actuallyHeight,
+				mouseX,
+				mouseY,
+				displayId,
+				isWinHD: isGetWinHD
+			})
+			// 设置窗口可以在全屏窗口之上显示。
+			win.setVisibleOnAllWorkspaces(true)
+			win.setAlwaysOnTop(true, 'screen-saver')
+			win.setBackgroundColor('#00000000')
+			win.show()
+		}
+
 		if (this.multiScreen) {
 			for (let i = 0; i < sources.length; i++) {
 				const win = this.captureWins[i]
-
 				const source = sources[i]
-				const sourcePng = this.getSourcePng(source)
-
-				const width = this.screenInfo[source.display_id].width
-				const height = this.screenInfo[source.display_id].height
 				const actuallyWidth = win.getBounds().width
 				const actuallyHeight = win.getBounds().height
-
-				win.webContents.send(events.screenSourcesToPng, {
-					toPngSource: sourcePng,
-					width,
-					height,
-					actuallyWidth,
-					actuallyHeight,
-					mouseX,
-					mouseY,
-					displayId: sources[i].display_id,
-					isWinHD: isGetWinHD
-				})
-				// 设置窗口可以在全屏窗口之上显示。
-				win.setVisibleOnAllWorkspaces(true)
-				win.setAlwaysOnTop(true, 'screen-saver')
-				win.setBackgroundColor('#00000000')
-				// 等资源传到渲染线程再打开截图
-				win.setOpacity(0)
-				win.show()
-				setTimeout(() => {
-					win.setOpacity(1)
-				}, 300)
+				noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 			}
 		} else {
 			let source
@@ -211,42 +214,24 @@ export default class electronShortcutCapture {
 			source = sources.filter(
 				v => v.display_id === currentFocusDisplayId
 			)[0]
+			/**
+			 * 不能通过displayId获取屏幕资源的话
+			 * 就根据显示器的位置去找对应的屏幕资源
+			 */
 			if (!source) {
 				const sourceIndex = Object.keys(this.screenInfo).findIndex(
 					displayId => displayId === currentFocusDisplayId
 				)
 				source = sources[sourceIndex]
 			}
-
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currDisplay.id
 			})[0]
-			const { width, height } = this.screenInfo[currDisplay.id]
 			const actuallyWidth = win.getBounds().width
 			const actuallyHeight = win.getBounds().height
-			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: this.getSourcePng(isGetWinHD ? null : source),
-				width: width,
-				height: height,
-				actuallyWidth,
-				actuallyHeight,
-				mouseX,
-				mouseY,
-				displayId: currentFocusDisplayId,
-				isWinHD: isGetWinHD
-			})
-
-			// 设置窗口可以在全屏窗口之上显示。
-			win.setVisibleOnAllWorkspaces(true)
-			win.setAlwaysOnTop(true, 'screen-saver')
-			win.setBackgroundColor('#00000000')
-			win.setOpacity(0)
-			win.show()
-			setTimeout(() => {
-				win.setOpacity(1)
-			}, 300)
+			noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 		}
-		// 等页面打开再绑定关闭截图事件
+		// 绑定关闭截图事件
 		this.listenEsc()
 	}
 
@@ -260,8 +245,9 @@ export default class electronShortcutCapture {
 	}
 
 	/**
+	 * 关闭截图
 	 * @param notification 是否需要通知渲染线程
-	 * */
+	 */
 
 	hide(notification = true) {
 		if (!this.shortCutScreenIsOpened()) {
@@ -276,10 +262,9 @@ export default class electronShortcutCapture {
 			if (notification) {
 				v.webContents.send(events.close)
 			}
-			v.setBackgroundColor('#30000000')
 		})
 		this.unListenEsc()
-		if (this.onHide) {
+		if (this.onHide === 'function') {
 			this.onHide()
 		}
 	}
@@ -318,7 +303,7 @@ export default class electronShortcutCapture {
 		ipcMain.on(events.clipboard, (_, dataURL) => {
 			const data = nativeImage.createFromDataURL(dataURL)
 			clipboard.writeImage(data)
-			if (typeof this.onClipboard === 'function') {
+			if (this.onClipboard === 'function') {
 				this.onClipboard(dataURL)
 			}
 			this.hide()
@@ -397,7 +382,7 @@ export default class electronShortcutCapture {
 	private bindKey = () => {
 		if (this.key) {
 			globalShortcut.register(this.key, async () => {
-				if (!!this.onShowByKey) {
+				if (this.onShowByKey === 'function') {
 					await this.onShowByKey()
 				}
 				this.show()
@@ -415,7 +400,7 @@ export default class electronShortcutCapture {
 				}
 				this.key = key
 				globalShortcut.register(key, async () => {
-					if (!!this.onShowByKey) {
+					if (this.onShowByKey === 'function') {
 						await this.onShowByKey()
 					}
 					this.show()
@@ -439,6 +424,7 @@ export default class electronShortcutCapture {
 	listenDisplayNumChange = () => {
 		screen.on('display-metrics-changed', () => {
 			console.log('重新初始化')
+			this.screenInfo = {}
 			this.loadedPageDisplayIds = []
 			this.captureWins.forEach(v => {
 				v.close()
@@ -468,15 +454,7 @@ export default class electronShortcutCapture {
 	}
 
 	/**
-	 * window 通过剪贴板获取base64
-	 */
-	getBase64OnClipboard = () => {
-		const base64 = clipboard.readText()
-		return `data:image/jpeg;base64,${base64}`
-	}
-
-	/**
-	 * 截图放到剪贴板
+	 * window截图放到剪贴板
 	 */
 	getPrintScreen = () => {
 		return new Promise((resolve, reject) => {
@@ -509,7 +487,7 @@ export default class electronShortcutCapture {
 		if (!!source) {
 			return source.thumbnail.toJPEG(100)
 		} else {
-			return this.getBase64OnClipboard()
+			return this.getSourcesOnClipboard()
 		}
 	}
 }

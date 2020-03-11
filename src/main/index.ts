@@ -12,7 +12,7 @@ app.on('ready', () => {
 		winHD: true
 	})
 
-	globalShortcut.register('ctrl+shift+w', () => {
+	globalShortcut.register('alt+shift+w', () => {
 		electronShortcutCapture.show()
 	})
 })

@@ -14,8 +14,6 @@ export const getSource = (
 			_,
 			{
 				toPngSource,
-				width,
-				height,
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
@@ -24,8 +22,6 @@ export const getSource = (
 			}
 		) => {
 			cb({
-				width,
-				height,
 				toPngSource,
 				actuallyWidth,
 				actuallyHeight,

@@ -16,7 +16,7 @@
 2. 清晰度问题，electron 拿不到高清图片，即使是用 toPng 和 toDataURL 也没法百分百拿到高清截图。
 3. 没法做类似微信等 IM 软件的选择应用窗口等窗口的选择。
 
-#### 在 1.1.12-x 版本增加了一个 winHD 的选项，在 window 通过一个 printScreen.exe 拿到显示器截图代替用 electron 的截图。缺点是：
+#### 在 1.1.12 版本后增加了一个 winHD 的选项，在 window 通过一个 printScreen.exe 拿到显示器截图代替用 electron 的截图。将 lib/printScreen.exe 放到 dist/main 目录下，printScreen.exe 有 6+M 我就不上传了。缺点是：
 
      稍慢一点。
      只支持 Window、单个显示器的情况。

@@ -90,14 +90,16 @@ export default class electronShortcutCapture {
 		this.screenInfo[display.id] = {}
 		this.screenInfo['cutWidth'] =
 			!!this.screenInfo['cutWidth'] &&
-			this.screenInfo['cutWidth'] > display.size.width
+			this.screenInfo['cutWidth'] >
+				display.size.width * display.scaleFactor
 				? this.screenInfo['cutWidth']
-				: display.size.width
+				: display.size.width * display.scaleFactor
 		this.screenInfo['cutHeight'] =
 			!!this.screenInfo['cutHeight'] &&
-			this.screenInfo['cutHeight'] > display.size.height
+			this.screenInfo['cutHeight'] >
+				display.size.height * display.scaleFactor
 				? this.screenInfo['cutHeight']
-				: display.size.height
+				: display.size.height * display.scaleFactor
 	}
 
 	/**
@@ -201,9 +203,8 @@ export default class electronShortcutCapture {
 			for (let i = 0; i < sources.length; i++) {
 				const win = this.captureWins[i]
 				const source = sources[i]
-				const { scaleFactor } = this.displays[i]
-				const actuallyWidth = win.getBounds().width * scaleFactor
-				const actuallyHeight = win.getBounds().height * scaleFactor
+				const actuallyWidth = win.getBounds().width
+				const actuallyHeight = win.getBounds().height
 				noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 			}
 		} else {
@@ -228,9 +229,8 @@ export default class electronShortcutCapture {
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currDisplay.id
 			})[0]
-			const { scaleFactor } = currDisplay
-			const actuallyWidth = win.getBounds().width * scaleFactor
-			const actuallyHeight = win.getBounds().height * scaleFactor
+			const actuallyWidth = win.getBounds().width
+			const actuallyHeight = win.getBounds().height
 			noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 		}
 		// 绑定关闭截图事件

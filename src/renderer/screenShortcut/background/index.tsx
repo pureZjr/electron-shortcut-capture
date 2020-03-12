@@ -1,5 +1,8 @@
 import React from 'react'
+import { ipcRenderer } from 'electron'
 
+import { getCurrentDisplay } from '@utils'
+import { events } from '@constant'
 import './index.scss'
 
 interface IProps {
@@ -80,7 +83,6 @@ const Background: React.FC<IProps> = ({
 			const blob = new Blob([toPngSource], { type: 'image/png' })
 			$img.src = URL.createObjectURL(blob)
 		}
-
 		$img.addEventListener('load', () => {
 			canvasRef.current.width = $img.width
 			canvasRef.current.height = $img.height
@@ -109,16 +111,15 @@ const Background: React.FC<IProps> = ({
 		currCtx.clearRect(0, 0, width, height)
 		canvasRef.current.width = 0
 		canvasRef.current.height = 0
+		const currDisplay = getCurrentDisplay()
+		setPageLoadedDisplayId(currDisplay.id)
 	}
 
-	return (
-		<canvas
-			id="bg-container"
-			ref={canvasRef}
-			width={bounds.width}
-			height={bounds.height}
-		></canvas>
-	)
+	const setPageLoadedDisplayId = (currDisplayId: number) => {
+		ipcRenderer.send(events.loadedPageDisplayId, currDisplayId)
+	}
+
+	return <canvas ref={canvasRef}></canvas>
 }
 
 export default Background

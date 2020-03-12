@@ -75,7 +75,7 @@ export default class electronShortcutCapture {
 			  )}`
 
 	/**
-	 * 获取当前鼠标位置呵呵所在的屏幕
+	 * 获取当前鼠标位置和所在的屏幕
 	 */
 	private getCurrentFocusDisplay = () => {
 		const mousePoint = screen.getCursorScreenPoint()

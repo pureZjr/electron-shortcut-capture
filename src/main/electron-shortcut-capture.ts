@@ -201,8 +201,9 @@ export default class electronShortcutCapture {
 			for (let i = 0; i < sources.length; i++) {
 				const win = this.captureWins[i]
 				const source = sources[i]
-				const actuallyWidth = win.getBounds().width
-				const actuallyHeight = win.getBounds().height
+				const { scaleFactor } = this.displays[i]
+				const actuallyWidth = win.getBounds().width * scaleFactor
+				const actuallyHeight = win.getBounds().height * scaleFactor
 				noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 			}
 		} else {
@@ -227,8 +228,9 @@ export default class electronShortcutCapture {
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currDisplay.id
 			})[0]
-			const actuallyWidth = win.getBounds().width
-			const actuallyHeight = win.getBounds().height
+			const { scaleFactor } = currDisplay
+			const actuallyWidth = win.getBounds().width * scaleFactor
+			const actuallyHeight = win.getBounds().height * scaleFactor
 			noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
 		}
 		// 绑定关闭截图事件

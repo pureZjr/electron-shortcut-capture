@@ -107,6 +107,8 @@ const Background: React.FC<IProps> = ({
 		const currCtx = canvasRef.current.getContext('2d')
 		const { width, height } = canvasRef.current
 		currCtx.clearRect(0, 0, width, height)
+		canvasRef.current.width = 0
+		canvasRef.current.height = 0
 	}
 
 	return (

@@ -105,8 +105,8 @@ const Background: React.FC<IProps> = ({
 	// 清空背景
 	const clearBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
-		const { actuallyWidth, actuallyHeight } = source
-		currCtx.clearRect(0, 0, actuallyWidth, actuallyHeight)
+		const { width, height } = canvasRef.current
+		currCtx.clearRect(0, 0, width, height)
 	}
 
 	return (

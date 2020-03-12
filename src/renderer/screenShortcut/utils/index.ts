@@ -18,7 +18,8 @@ export const getSource = (
 				actuallyHeight,
 				mouseX,
 				mouseY,
-				displayId
+				displayId,
+				scaleFactor
 			}
 		) => {
 			cb({
@@ -27,7 +28,8 @@ export const getSource = (
 				actuallyHeight,
 				mouseX,
 				mouseY,
-				displayId
+				displayId,
+				scaleFactor
 			})
 		}
 	)

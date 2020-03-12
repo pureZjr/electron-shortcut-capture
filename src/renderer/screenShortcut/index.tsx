@@ -202,6 +202,7 @@ const ScreenShot: React.FC = () => {
 					bounds={bounds}
 					mouseX={!!source ? source.mouseX : 0}
 					mouseY={!!source ? source.mouseY : 0}
+					scaleFactor={!!source ? source.scaleFactor : 1}
 				/>
 			)}
 		</Fragment>

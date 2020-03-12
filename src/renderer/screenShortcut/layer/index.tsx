@@ -8,6 +8,7 @@ interface IProps {
 	bounds: { x: number; y: number; width: number; height: number }
 	mouseX: number
 	mouseY: number
+	scaleFactor: number
 	onDraw: (args: ElectronShortcutCapture.IRect) => void
 	setDestoryLayer: (destoryLayer: boolean) => void
 }
@@ -21,9 +22,10 @@ interface IPixelBoxProps {
 const Layer: React.FC<IProps> = ({
 	backgroundCtx,
 	bounds,
-	onDraw,
 	mouseX,
 	mouseY,
+	scaleFactor,
+	onDraw,
 	setDestoryLayer
 }) => {
 	// 是否开始框图
@@ -96,7 +98,12 @@ const Layer: React.FC<IProps> = ({
 				const x = e.clientX - 10 > 0 ? e.clientX - 10 : 0
 				const y = e.clientY - 10 > 0 ? e.clientY - 10 : 0
 				ctx.putImageData(
-					backgroundCtx.getImageData(x, y, 20, 20),
+					backgroundCtx.getImageData(
+						x * scaleFactor,
+						y * scaleFactor,
+						20,
+						20
+					),
 					0,
 					0,
 					0,
@@ -152,7 +159,6 @@ const Layer: React.FC<IProps> = ({
 			top = y - 160
 			left = x + 20
 		}
-
 		return (
 			<div
 				className="pixel-box"
@@ -178,11 +184,11 @@ const Layer: React.FC<IProps> = ({
 				</div>
 				<div className="footer">
 					<div className="position">
-						坐标:（
+						坐标:(
 						<div>
-							{x},{y}
+							{x * scaleFactor},{y * scaleFactor}
 						</div>
-						）
+						)
 					</div>
 					rgb:{colorHex(rgb.replace(',255)', ')'))}
 				</div>

@@ -33,6 +33,7 @@ declare namespace ElectronShortcutCapture {
 		mouseX?: number
 		mouseY?: number
 		displayId: number
+		scaleFactor: number
 	}
 
 	interface ISettingProps {

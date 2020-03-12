@@ -134,7 +134,7 @@ export default class electronShortcutCapture {
 
 		this.shortcuting = true
 		// 打开截图回调
-		if (this.onShow === 'function') {
+		if (typeof this.onShow === 'function') {
 			this.onShow()
 		}
 		/**
@@ -163,7 +163,9 @@ export default class electronShortcutCapture {
 			win,
 			source,
 			actuallyWidth,
-			displayId
+			actuallyHeight,
+			displayId,
+			scaleFactor
 		}) => {
 			win.webContents.send(events.screenSourcesToPng, {
 				toPngSource: this.getSourcePng(source),
@@ -171,7 +173,8 @@ export default class electronShortcutCapture {
 				actuallyHeight,
 				mouseX,
 				mouseY,
-				displayId
+				displayId,
+				scaleFactor
 			})
 			// 设置窗口可以在全屏窗口之上显示。
 			win.setVisibleOnAllWorkspaces(true)
@@ -183,10 +186,18 @@ export default class electronShortcutCapture {
 		if (this.multiScreen) {
 			for (let i = 0; i < sources.length; i++) {
 				const win = this.captureWins[i]
+				const display = this.displays[i]
 				const source = sources[i]
 				const actuallyWidth = win.getBounds().width
 				const actuallyHeight = win.getBounds().height
-				noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
+				noticeToRenderer({
+					win,
+					source,
+					actuallyWidth,
+					actuallyHeight,
+					displayId: display.id,
+					scaleFactor: display.scaleFactor
+				})
 			}
 		} else {
 			let source
@@ -212,7 +223,14 @@ export default class electronShortcutCapture {
 			})[0]
 			const actuallyWidth = win.getBounds().width
 			const actuallyHeight = win.getBounds().height
-			noticeToRenderer({ win, source, actuallyWidth, actuallyHeight })
+			noticeToRenderer({
+				win,
+				source,
+				actuallyWidth,
+				actuallyHeight,
+				displayId: currentFocusDisplayId,
+				scaleFactor: currDisplay.scaleFactor
+			})
 		}
 		// 绑定关闭截图事件
 		this.listenEsc()
@@ -247,7 +265,7 @@ export default class electronShortcutCapture {
 			}
 		})
 		this.unListenEsc()
-		if (this.onHide === 'function') {
+		if (typeof this.onHide === 'function') {
 			this.onHide()
 		}
 	}
@@ -286,7 +304,7 @@ export default class electronShortcutCapture {
 		ipcMain.on(events.clipboard, (_, dataURL) => {
 			const data = nativeImage.createFromDataURL(dataURL)
 			clipboard.writeImage(data)
-			if (this.onClipboard === 'function') {
+			if (typeof this.onClipboard === 'function') {
 				this.onClipboard(dataURL)
 			}
 			this.hide()
@@ -365,7 +383,7 @@ export default class electronShortcutCapture {
 	private bindKey = () => {
 		if (this.key) {
 			globalShortcut.register(this.key, async () => {
-				if (this.onShowByKey === 'function') {
+				if (typeof this.onShowByKey === 'function') {
 					await this.onShowByKey()
 				}
 				this.show()
@@ -383,7 +401,7 @@ export default class electronShortcutCapture {
 				}
 				this.key = key
 				globalShortcut.register(key, async () => {
-					if (this.onShowByKey === 'function') {
+					if (typeof this.onShowByKey === 'function') {
 						await this.onShowByKey()
 					}
 					this.show()

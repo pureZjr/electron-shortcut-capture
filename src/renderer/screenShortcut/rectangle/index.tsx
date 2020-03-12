@@ -11,6 +11,7 @@ interface IProps {
 	rect: ElectronShortcutCapture.IRect
 	bgHasDraw: boolean
 	capturingDisplayId: number
+	scaleFactor: number
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
 	setRectangle: (canvas: HTMLCanvasElement) => void
@@ -375,12 +376,14 @@ class Rectangle extends Component<IProps, IState> {
 		if (rect.x2 - rect.x1 < 470 && rect.x2 < 470) {
 			toolbarRight = rect.x2 - 470
 		}
+		console.log(style.width, this.props.scaleFactor)
 		return (
 			<div className="rectangle" style={style}>
-				<div
-					className="size"
-					style={styles}
-				>{`${style.width} * ${style.height}`}</div>
+				<div className="size" style={styles}>{`${parseInt(
+					style.width as string
+				) * this.props.scaleFactor}px * ${parseInt(
+					style.height as string
+				) * this.props.scaleFactor}px`}</div>
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{

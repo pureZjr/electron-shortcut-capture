@@ -193,6 +193,7 @@ const ScreenShot: React.FC = () => {
 				bgHasDraw={bgHasDraw}
 				capturingDisplayId={capturingDisplayId}
 				shortcutDisabled={shortcutDisabled}
+				scaleFactor={!!source ? source.scaleFactor : 1}
 			/>
 			{!destoryLayer && !shortcutDisabled() && (
 				<Layer

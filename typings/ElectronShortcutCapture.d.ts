@@ -16,8 +16,6 @@ declare namespace ElectronShortcutCapture {
 		downloadFileprefix?: string
 		// 快捷键
 		key?: string
-		// window单屏幕高清方案
-		winHD?: boolean
 		// 点击完成返回剪贴板内容
 		onClipboard?: (data: Electron.NativeImage) => void
 		// 关闭截图回调
@@ -35,7 +33,6 @@ declare namespace ElectronShortcutCapture {
 		mouseX?: number
 		mouseY?: number
 		displayId: number
-		isWinHD: boolean
 	}
 
 	interface ISettingProps {

@@ -13,13 +13,7 @@
 ###已知问题：
 
 1. mac 下面在一个已经全屏的窗口下启动不会去覆盖当前的窗口，只会在一个非全屏的窗口下打开。
-2. 清晰度问题，electron 拿不到高清图片，即使是用 toPng 和 toDataURL 也没法百分百拿到高清截图。
-3. 没法做类似微信等 IM 软件的选择应用窗口等窗口的选择。
-
-#### 在 1.1.12 版本后增加了一个 winHD 的选项，在 window 通过一个 printScreen.exe 拿到显示器截图代替用 electron 的截图。将 lib/printScreen.exe 放到 dist/main 目录下，printScreen.exe 有 6+M 我就不上传了。缺点是：
-
-     稍慢一点。
-     只支持 Window、单个显示器的情况。
+2. 没法做类似微信等 IM 软件的选择应用窗口等窗口的选择。
 
 ## 安装
 
@@ -47,16 +41,15 @@ new ShortcutCapture({
 })
 ```
 
-| 名称               | 类型                                 | 说明                              | 默认值  |
-| ------------------ | ------------------------------------ | --------------------------------- | ------- |
-| multiScreen        | boolean                              | 是否使用多显示器截图，默认关闭    | `false` |
-| downloadFileprefix | string                               | 下载文件前缀                      | ' '     |
-| key                | string                               | 快捷键                            | ' '     |
-| winHD              | boolean                              | window 高清截图方案（单屏幕适用） | `false` |
-| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容            |         |
-| onHide             | () => void                           | 关闭截图回调                      |         |
-| onShow             | () => void                           | 打开截图回调                      |         |
-| onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调                |         |  |
+| 名称               | 类型                                 | 说明                           | 默认值  |
+| ------------------ | ------------------------------------ | ------------------------------ | ------- |
+| multiScreen        | boolean                              | 是否使用多显示器截图，默认关闭 | `false` |
+| downloadFileprefix | string                               | 下载文件前缀                   | ' '     |
+| key                | string                               | 快捷键                         | ' '     |
+| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容         |         |
+| onHide             | () => void                           | 关闭截图回调                   |         |
+| onShow             | () => void                           | 打开截图回调                   |         |
+| onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调             |         |  |
 
 ## 方法
 

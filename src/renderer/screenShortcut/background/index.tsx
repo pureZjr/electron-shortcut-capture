@@ -73,16 +73,11 @@ const Background: React.FC<IProps> = ({
 	// 画背景
 	const drawBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
-		const { toPngSource, isWinHD } = source
+		const { toPngSource } = source
 		const { width, height } = bounds
 		const $img = new Image()
-
-		if (isWinHD) {
-			$img.src = toPngSource
-		} else {
-			const blob = new Blob([toPngSource], { type: 'image/png' })
-			$img.src = URL.createObjectURL(blob)
-		}
+		const blob = new Blob([toPngSource], { type: 'image/png' })
+		$img.src = URL.createObjectURL(blob)
 		$img.addEventListener('load', () => {
 			canvasRef.current.width = $img.width
 			canvasRef.current.height = $img.height

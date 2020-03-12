@@ -8,7 +8,6 @@ import {
 	globalShortcut
 } from 'electron'
 import { EventEmitter } from 'events'
-import { execFile } from 'child_process'
 
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
@@ -26,7 +25,6 @@ export default class electronShortcutCapture {
 		this.onHide = !!props ? props.onHide : null
 		this.onShow = !!props ? props.onShow : null
 		this.onShowByKey = !!props ? props.onShowByKey : null
-		this.winHD = !!props ? props.winHD : false
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -54,8 +52,6 @@ export default class electronShortcutCapture {
 	private isDownloading: boolean = false
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
-	// 开启window高清截图
-	private winHD: boolean = false
 	// 点击完成返回剪贴板内容
 	private onClipboard: (data: Electron.NativeImage) => void = null
 	// 关闭截图回调
@@ -136,20 +132,6 @@ export default class electronShortcutCapture {
 			return console.log('页面没完全加载')
 		}
 
-		// 只处理一个显示器
-		const handleSingleDisplay =
-			!this.multiScreen || this.captureWins.length === 1
-		let isGetWinHD =
-			electronShortcutCapture.isWin && handleSingleDisplay && this.winHD
-		try {
-			// window平台、单屏幕模式、只有一个屏幕使用高清截图方案,失败的话用回原来方案
-			if (isGetWinHD) {
-				await this.getPrintScreen()
-			}
-		} catch {
-			isGetWinHD = false
-		}
-
 		this.shortcuting = true
 		// 打开截图回调
 		if (this.onShow === 'function') {
@@ -184,13 +166,12 @@ export default class electronShortcutCapture {
 			displayId
 		}) => {
 			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: this.getSourcePng(isGetWinHD ? null : source),
+				toPngSource: this.getSourcePng(source),
 				actuallyWidth,
 				actuallyHeight,
 				mouseX,
 				mouseY,
-				displayId,
-				isWinHD: isGetWinHD
+				displayId
 			})
 			// 设置窗口可以在全屏窗口之上显示。
 			win.setVisibleOnAllWorkspaces(true)
@@ -448,32 +429,6 @@ export default class electronShortcutCapture {
 	}
 
 	/**
-	 * window 通过剪贴板获取截图
-	 */
-	getSourcesOnClipboard = () => {
-		const source = clipboard.readImage()
-		return source
-	}
-
-	/**
-	 * window截图放到剪贴板
-	 */
-	getPrintScreen = () => {
-		return new Promise((resolve, reject) => {
-			try {
-				const getPrintScreen = execFile(
-					require('path').resolve(__dirname, './printScreen.exe')
-				)
-				getPrintScreen.once('exit', () => {
-					resolve(true)
-				})
-			} catch {
-				reject(false)
-			}
-		})
-	}
-
-	/**
 	 * 截图窗口完全打开
 	 */
 	shortCutScreenIsOpened = () => {
@@ -486,10 +441,6 @@ export default class electronShortcutCapture {
 	 * 获取图片资源
 	 */
 	getSourcePng = (source?: Electron.DesktopCapturerSource) => {
-		if (!!source) {
-			return source.thumbnail.toJPEG(100)
-		} else {
-			return this.getSourcesOnClipboard().toPNG()
-		}
+		return source.thumbnail.toJPEG(100)
 	}
 }

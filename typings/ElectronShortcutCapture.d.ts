@@ -27,7 +27,7 @@ declare namespace ElectronShortcutCapture {
 	}
 
 	interface ISource {
-		toPngSource: any
+		toPngSource: Buffer
 		actuallyWidth?: number
 		actuallyHeight?: number
 		mouseX?: number

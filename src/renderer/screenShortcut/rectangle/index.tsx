@@ -15,7 +15,7 @@ interface IProps {
 	onShift: (args: ElectronShortcutCapture.IRect) => void
 	onResize: (args: ElectronShortcutCapture.IRect) => void
 	setRectangle: (canvas: HTMLCanvasElement) => void
-	shortcutDisabled: () => Boolean
+	shortcutDisabled: () => boolean
 }
 
 interface IState {
@@ -265,7 +265,7 @@ class Rectangle extends Component<IProps, IState> {
 		)
 	}
 
-	componentWillUpdate(nextProps: IProps) {
+	UNSAFE_componentWillUpdate(nextProps: IProps) {
 		// 框图-更新样式
 		if (
 			JSON.stringify(this.props.rect) !== JSON.stringify(nextProps.rect)
@@ -360,7 +360,7 @@ class Rectangle extends Component<IProps, IState> {
 			isShortcutFullScreen ||
 			this.props.bounds.height -
 				rect.y1 -
-				parseInt(style.height as any, 0) <=
+				parseInt(style.height as string, 0) <=
 				60
 				? '5px'
 				: '-55px'

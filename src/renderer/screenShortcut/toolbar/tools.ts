@@ -705,7 +705,7 @@ export const text = (args: {
 				inputTarget.contentEditable = 'true'
 				setTimeout(() => {
 					inputTarget.focus()
-					;(inputTarget as any).value = (inputTarget as any).value
+					inputTarget.value = inputTarget.value
 				}, 100)
 			}
 		})
@@ -786,10 +786,6 @@ export const text = (args: {
 			createInputArea(x, y)
 		}
 	}
-
-	function onMousemove() {}
-
-	function onMouseup() {}
 
 	return {
 		update: (args: { fontSize?: number; color?: string }) => {

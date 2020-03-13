@@ -16,7 +16,7 @@ interface IBrowserWindow extends BrowserWindow {
 	displayId: number
 }
 
-export default class electronShortcutCapture {
+export default class ElectronShortcutCapture {
 	constructor(props?: ElectronShortcutCapture.IElectronShortcutCaptureProps) {
 		this.multiScreen = !!props ? !!props.multiScreen : false
 		this.downloadFileprefix = !!props ? props.downloadFileprefix || '' : ''
@@ -38,18 +38,18 @@ export default class electronShortcutCapture {
 	// 显示器数组
 	private captureWins: IBrowserWindow[] = []
 	// 允许多屏幕
-	private multiScreen: boolean = false
+	private multiScreen = false
 	// 快捷键
-	private key: string = ''
+	private key = ''
 	// 屏幕信息
 	private displays: Electron.Display[] = []
 	// 正在截图
-	private shortcuting: boolean = false
-	private downloadFileprefix: string = ''
-	// 屏幕大小以及获取屏幕资源的宽高
-	private screenInfo: any = {}
+	private shortcuting = false
+	private downloadFileprefix = ''
+	// 屏幕索引
+	private screensIndex = {}
 	// 正在下载
-	private isDownloading: boolean = false
+	private isDownloading = false
 	// 已经加载完毕的页面的displayId
 	private loadedPageDisplayIds: number[] = []
 	// 点击完成返回剪贴板内容
@@ -80,22 +80,10 @@ export default class electronShortcutCapture {
 	}
 
 	/**
-	 * 设置屏幕大小以及获取屏幕资源的宽高
+	 * 设置显示器索引
 	 */
-	setScreenInfo = (display: Electron.Display) => {
-		this.screenInfo[display.id] = {}
-		this.screenInfo['cutWidth'] =
-			!!this.screenInfo['cutWidth'] &&
-			this.screenInfo['cutWidth'] >
-				display.size.width * display.scaleFactor
-				? this.screenInfo['cutWidth']
-				: display.size.width * display.scaleFactor
-		this.screenInfo['cutHeight'] =
-			!!this.screenInfo['cutHeight'] &&
-			this.screenInfo['cutHeight'] >
-				display.size.height * display.scaleFactor
-				? this.screenInfo['cutHeight']
-				: display.size.height * display.scaleFactor
+	setScreenIndex = (display: Electron.Display, idx: number) => {
+		this.screensIndex[display.id] = idx
 	}
 
 	/**
@@ -104,8 +92,8 @@ export default class electronShortcutCapture {
 	private async initWin() {
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
-		this.captureWins = this.displays.map(display => {
-			this.setScreenInfo(display)
+		this.captureWins = this.displays.map((display, idx) => {
+			this.setScreenIndex(display, idx)
 			const captureWin = new BrowserWindow(browserWindowProps(display))
 			captureWin['displayId'] = display.id
 			return captureWin
@@ -137,14 +125,7 @@ export default class electronShortcutCapture {
 		if (typeof this.onShow === 'function') {
 			this.onShow()
 		}
-		/**
-		 * 获取显示器信息
-		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
-		 */
-		const cutWidth = this.screenInfo.cutWidth
-		const cutHeight = this.screenInfo.cutHeight
 
-		const sources = await this.getScreenSources(cutWidth, cutHeight)
 		/**
 		 * 判断获取DisplayId是否为空,
 		 * 有些电脑获取到的id为空的，就将截图操作重置为单显示器方式
@@ -332,8 +313,8 @@ export default class electronShortcutCapture {
 		width: number,
 		height: number
 	) => {
-		return new Promise((resolve, reject) => {
-			let desktopCapture = (process as any)
+		return new Promise(resolve => {
+			let desktopCapture = process
 				.electronBinding('desktop_capturer')
 				.createDesktopCapturer()
 

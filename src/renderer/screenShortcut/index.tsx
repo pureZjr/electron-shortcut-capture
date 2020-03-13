@@ -180,7 +180,6 @@ const ScreenShot: React.FC = () => {
 				rect={rect}
 				source={source}
 				setBackgroundCtx={setBackgroundCtx}
-				bounds={bounds}
 				setBgHasDraw={setBgHasDraw}
 			/>
 			<Rectangle

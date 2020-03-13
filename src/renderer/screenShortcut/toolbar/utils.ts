@@ -23,7 +23,7 @@ const commonControl: (args: {
 	onMouseup?: (args: IPoint) => void
 }) => {
 	let isDown = false
-	const ratio = window['ratio'] as { widthR: number; heightR: number }
+	const scaleFactor = window['scaleFactor']
 	const canvasRef = args.canvasRef
 	const ctx = canvasRef.getContext('2d')
 	// 设置线条颜色
@@ -79,8 +79,8 @@ const commonControl: (args: {
 	function getPos(evt: MouseEvent): IPoint {
 		const { x1, y1 } = args.rect
 		return {
-			x: (evt.clientX - x1) / ratio.widthR,
-			y: (evt.clientY - y1) / ratio.heightR
+			x: (evt.clientX - x1) * scaleFactor,
+			y: (evt.clientY - y1) * scaleFactor
 		}
 	}
 

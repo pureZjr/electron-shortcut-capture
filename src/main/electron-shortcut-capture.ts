@@ -459,6 +459,6 @@ export default class electronShortcutCapture {
 	 * 获取图片资源
 	 */
 	getSourcePng = (source?: Electron.DesktopCapturerSource) => {
-		return source.thumbnail.toJPEG(100)
+		return source.thumbnail.toPNG()
 	}
 }

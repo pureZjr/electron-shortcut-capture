@@ -82,8 +82,8 @@ const Background: React.FC<IProps> = ({
 				canvasRef.current.height
 			)
 			canvasRef.current.style.width = '100%'
-			
-			Object.assign(window, { scaleFactor: source.scaleFactor)
+
+			Object.assign(window, { scaleFactor: source.scaleFactor })
 			setScreenImg($img)
 			setBackgroundCtx(canvasRef.current.getContext('2d'))
 		})

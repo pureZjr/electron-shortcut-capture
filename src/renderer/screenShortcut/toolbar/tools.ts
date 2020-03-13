@@ -13,7 +13,6 @@ function setCanvasImageData(ctx) {
 	} else {
 		canvasStore.push(ctx)
 	}
-	console.log(canvasStore, canvas)
 }
 
 /**
@@ -719,8 +718,8 @@ export const text = (args: {
 		const inputArea = document.createElement('div')
 		canvasRef.parentElement.appendChild(inputArea)
 		styles(inputArea)
-		inputArea.style.top = `${y * scaleFactor}px`
-		inputArea.style.left = `${x * scaleFactor}px`
+		inputArea.style.top = `${y / scaleFactor}px`
+		inputArea.style.left = `${x / scaleFactor}px`
 		inputArea.contentEditable = 'true'
 		inputArea.className = 'input-area'
 		inputArea.style.boxShadow = '0 0 1px red'

@@ -261,9 +261,11 @@ export default class ElectronShortcutCapture {
 		this.captureWins.forEach(v => {
 			v.webContents.send(events.receiveCapturingDisplayId, 0)
 			v.setVisibleOnAllWorkspaces(false)
-			v.hide()
 			if (notification) {
 				v.webContents.send(events.close)
+			}
+			if (this.isDownloading) {
+				v.hide()
 			}
 		})
 		this.unListenEsc()
@@ -445,6 +447,12 @@ export default class ElectronShortcutCapture {
 				return
 			}
 			this.loadedPageDisplayIds.push(displayId)
+			if (this.loadedPageDisplayIds.length === this.captureWins.length) {
+				this.captureWins.forEach(win => {
+					console.log('reset complete')
+					win.hide()
+				})
+			}
 		})
 	}
 

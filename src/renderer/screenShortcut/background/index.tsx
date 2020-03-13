@@ -92,7 +92,15 @@ const Background: React.FC<IProps> = ({
 	const clearBackground = () => {
 		const currCtx = canvasRef.current.getContext('2d')
 		const { width, height } = canvasRef.current
-		currCtx.clearRect(0, 0, width, height)
+		rectangle.getContext('2d').clearRect(0, 0, width, height)
+		rectangle.width = 0
+		rectangle.height = 0
+		currCtx.clearRect(
+			0,
+			0,
+			canvasRef.current.width,
+			canvasRef.current.height
+		)
 		canvasRef.current.width = 0
 		canvasRef.current.height = 0
 		const currDisplay = getCurrentDisplay()

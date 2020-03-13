@@ -68,22 +68,25 @@ export const colorHex = function(rgb: string) {
 
 // 处理canvas
 function handleCanvas(canvas: HTMLCanvasElement) {
+	const scaleFactor = window['scaleFactor']
 	const inputAreas = document.getElementsByClassName('input-area')
 	if (!!inputAreas.length) {
 		for (let i = 0; i < inputAreas.length; i++) {
 			const ctx = canvas.getContext('2d')
 			const inputArea = inputAreas[i] as HTMLDivElement
-			const x = inputArea.offsetLeft + 6
-			const y = inputArea.offsetTop + 10
-			const maxWidth = inputArea.clientWidth
-			const fontSize = inputArea.style.fontSize
+			const x = (inputArea.offsetLeft + 6) * scaleFactor
+			const y = (inputArea.offsetTop + 10) * scaleFactor
+			const maxWidth = inputArea.clientWidth * scaleFactor
+			const fontSize = parseInt(inputArea.style.fontSize) * scaleFactor
 			const color = inputArea.style.color
 			const itemHeight =
-				(inputArea.clientHeight - 12) / inputArea.childNodes.length
-			ctx.font = `${fontSize} Arial`
+				((inputArea.clientHeight - 12) / inputArea.childNodes.length) *
+				2
+			ctx.font = `${fontSize}px Arial`
 			ctx.fillStyle = color
 			let lastTextY = y
 			ctx.textBaseline = 'alphabetic'
+			console.log(ctx)
 			inputArea.childNodes.forEach((v, idx) => {
 				const text = v.textContent
 				const textY = lastTextY + (!!idx ? itemHeight : itemHeight / 2)

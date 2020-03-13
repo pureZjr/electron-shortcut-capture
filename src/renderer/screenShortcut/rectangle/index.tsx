@@ -96,8 +96,7 @@ class Rectangle extends Component<IProps, IState> {
 			}
 			this.setState({
 				isShortcutFullScreen: true,
-				style,
-				resizing: false
+				style
 			})
 			this.props.onResize({ x1: 0, y1: 0, x2: width, y2: height })
 			window.removeEventListener('mouseup', this.mouseup)
@@ -105,13 +104,9 @@ class Rectangle extends Component<IProps, IState> {
 		} else {
 			if (!this.state.dragType) {
 				this.props.onResize({ x1, y1, x2, y2 })
-				this.setState({
-					resizing: false
-				})
 			} else {
 				this.setState({
-					dragType: null,
-					resizing: false
+					dragType: null
 				})
 			}
 		}
@@ -125,6 +120,9 @@ class Rectangle extends Component<IProps, IState> {
 				)
 			}, 200)
 		}
+		this.setState({
+			resizing: false
+		})
 	}
 
 	shift = (e: MouseEvent) => {

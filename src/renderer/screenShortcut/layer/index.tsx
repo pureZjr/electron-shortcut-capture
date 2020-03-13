@@ -184,11 +184,10 @@ const Layer: React.FC<IProps> = ({
 				</div>
 				<div className="footer">
 					<div className="position">
-						坐标:(
+						坐标:
 						<div>
-							{x * scaleFactor},{y * scaleFactor}
+							({x * scaleFactor},{y * scaleFactor})
 						</div>
-						)
 					</div>
 					rgb:{colorHex(rgb.replace(',255)', ')'))}
 				</div>

@@ -186,7 +186,8 @@ const Layer: React.FC<IProps> = ({
 					<div className="position">
 						坐标:
 						<div>
-							({x * scaleFactor},{y * scaleFactor})
+							({Math.ceil(x * scaleFactor)},
+							{Math.ceil(y * scaleFactor)})
 						</div>
 					</div>
 					rgb:{colorHex(rgb.replace(',255)', ')'))}

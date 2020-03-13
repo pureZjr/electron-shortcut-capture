@@ -18,7 +18,8 @@ module.exports = {
 		'@typescript-eslint/no-use-before-define': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'react/prop-types': 'off',
-		'@typescript-eslint/no-var-requires': 'off'
+		'@typescript-eslint/no-var-requires': 'off',
+		'@typescript-eslint/no-empty-function': 'off'
 	},
 	settings: {
 		react: {

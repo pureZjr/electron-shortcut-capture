@@ -28,6 +28,7 @@ interface IState {
 	isShortcutFullScreen: boolean
 	// 取消缩放
 	cancelZoom: boolean
+	resizing: boolean
 }
 
 class Rectangle extends Component<IProps, IState> {
@@ -40,7 +41,8 @@ class Rectangle extends Component<IProps, IState> {
 			canvasRef: null,
 			style: {},
 			isShortcutFullScreen: false,
-			cancelZoom: false
+			cancelZoom: false,
+			resizing: false
 		}
 	}
 
@@ -94,7 +96,8 @@ class Rectangle extends Component<IProps, IState> {
 			}
 			this.setState({
 				isShortcutFullScreen: true,
-				style
+				style,
+				resizing: false
 			})
 			this.props.onResize({ x1: 0, y1: 0, x2: width, y2: height })
 			window.removeEventListener('mouseup', this.mouseup)
@@ -102,9 +105,13 @@ class Rectangle extends Component<IProps, IState> {
 		} else {
 			if (!this.state.dragType) {
 				this.props.onResize({ x1, y1, x2, y2 })
+				this.setState({
+					resizing: false
+				})
 			} else {
 				this.setState({
-					dragType: null
+					dragType: null,
+					resizing: false
 				})
 			}
 		}
@@ -290,7 +297,8 @@ class Rectangle extends Component<IProps, IState> {
 				display: 'unset'
 			}
 			this.setState({
-				style
+				style,
+				resizing: true
 			})
 			console.log('框图-更新样式')
 		}
@@ -332,7 +340,8 @@ class Rectangle extends Component<IProps, IState> {
 				dragpoint: null,
 				currRect: null,
 				isShortcutFullScreen: false,
-				cancelZoom: false
+				cancelZoom: false,
+				resizing: false
 			})
 			console.log('Rectangle-打开截图')
 			window.addEventListener('mousemove', this.mousemove)
@@ -349,7 +358,8 @@ class Rectangle extends Component<IProps, IState> {
 			style,
 			canvasRef,
 			isShortcutFullScreen,
-			cancelZoom
+			cancelZoom,
+			resizing
 		} = this.state
 		const { rect } = this.props
 		if (this.props.shortcutDisabled()) {
@@ -380,14 +390,15 @@ class Rectangle extends Component<IProps, IState> {
 			<div className="rectangle" style={style}>
 				<div className="size" style={styles}>{`${parseInt(
 					style.width as string
-				) * this.props.scaleFactor}px * ${parseInt(
+				) * this.props.scaleFactor} * ${parseInt(
 					style.height as string
-				) * this.props.scaleFactor}px`}</div>
+				) * this.props.scaleFactor}`}</div>
 				<Toolbar
 					canvasRef={canvasRef}
 					style={{
 						bottom,
-						right: toolbarRight
+						right: toolbarRight,
+						display: resizing ? 'none' : 'flex'
 					}}
 					controlToolbar={this.controlToolbar}
 					rect={rect}

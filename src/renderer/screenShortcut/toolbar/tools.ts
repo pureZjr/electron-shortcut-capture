@@ -13,6 +13,7 @@ function setCanvasImageData(ctx) {
 	} else {
 		canvasStore.push(ctx)
 	}
+	console.log(canvasStore, canvas)
 }
 
 /**
@@ -90,7 +91,6 @@ export const makecurve = (args: {
 		window.removeEventListener('mousemove', move)
 		setHasDraw(true)
 		hasMove = false
-		canvasStore.pop()
 		points.push({
 			x: (clientX - rect.x1) * scaleFactor,
 			y: (clientY - rect.y1) * scaleFactor
@@ -786,6 +786,9 @@ export const text = (args: {
 			createInputArea(x, y)
 		}
 	}
+
+	function onMousemove() {}
+	function onMouseup() {}
 
 	return {
 		update: (args: { fontSize?: number; color?: string }) => {

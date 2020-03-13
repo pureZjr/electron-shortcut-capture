@@ -376,7 +376,6 @@ class Rectangle extends Component<IProps, IState> {
 		if (rect.x2 - rect.x1 < 470 && rect.x2 < 470) {
 			toolbarRight = rect.x2 - 470
 		}
-		console.log(style.width, this.props.scaleFactor)
 		return (
 			<div className="rectangle" style={style}>
 				<div className="size" style={styles}>{`${parseInt(

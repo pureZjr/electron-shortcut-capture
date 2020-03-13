@@ -156,8 +156,8 @@ export default class ElectronShortcutCapture {
 
 		// 当前显示器和鼠标位置
 		const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
-		const mouseX = mousePoint.x
-		const mouseY = mousePoint.y
+		const mouseX = mousePoint.x - currDisplay.bounds.x
+		const mouseY = mousePoint.y - currDisplay.bounds.y
 
 		const noticeToRenderer = ({
 			win,

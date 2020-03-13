@@ -99,7 +99,7 @@ export default class ElectronShortcutCapture {
 			return captureWin
 		}) as IBrowserWindow[]
 		this.captureWins.forEach(v => {
-			v.loadURL(electronShortcutCapture.URL)
+			v.loadURL(ElectronShortcutCapture.URL)
 		})
 	}
 

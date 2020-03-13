@@ -46,8 +46,8 @@ export default class ElectronShortcutCapture {
 	// 正在截图
 	private shortcuting = false
 	private downloadFileprefix = ''
-	// 屏幕索引
-	private screensIndex = {}
+	// 屏幕大小以及获取屏幕资源的宽高
+	private screenInfo = {}
 	// 正在下载
 	private isDownloading = false
 	// 已经加载完毕的页面的displayId
@@ -80,10 +80,22 @@ export default class ElectronShortcutCapture {
 	}
 
 	/**
-	 * 设置显示器索引
+	 * 设置屏幕大小以及获取屏幕资源的宽高
 	 */
-	setScreenIndex = (display: Electron.Display, idx: number) => {
-		this.screensIndex[display.id] = idx
+	setScreenInfo = (display: Electron.Display) => {
+		this.screenInfo[display.id] = {}
+		this.screenInfo['cutWidth'] =
+			!!this.screenInfo['cutWidth'] &&
+			this.screenInfo['cutWidth'] >
+				display.size.width * display.scaleFactor
+				? this.screenInfo['cutWidth']
+				: display.size.width * display.scaleFactor
+		this.screenInfo['cutHeight'] =
+			!!this.screenInfo['cutHeight'] &&
+			this.screenInfo['cutHeight'] >
+				display.size.height * display.scaleFactor
+				? this.screenInfo['cutHeight']
+				: display.size.height * display.scaleFactor
 	}
 
 	/**
@@ -92,8 +104,8 @@ export default class ElectronShortcutCapture {
 	private async initWin() {
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
-		this.captureWins = this.displays.map((display, idx) => {
-			this.setScreenIndex(display, idx)
+		this.captureWins = this.displays.map(display => {
+			this.setScreenInfo(display)
 			const captureWin = new BrowserWindow(browserWindowProps(display))
 			captureWin['displayId'] = display.id
 			return captureWin
@@ -125,6 +137,13 @@ export default class ElectronShortcutCapture {
 		if (typeof this.onShow === 'function') {
 			this.onShow()
 		}
+		/**
+		 * 获取显示器信息
+		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
+		 */
+		const cutWidth = this.screenInfo.cutWidth
+		const cutHeight = this.screenInfo.cutHeight
+		const sources = await this.getScreenSources(cutWidth, cutHeight)
 
 		/**
 		 * 判断获取DisplayId是否为空,
@@ -143,15 +162,19 @@ export default class ElectronShortcutCapture {
 		const noticeToRenderer = ({
 			win,
 			source,
-			actuallyWidth,
-			actuallyHeight,
+			width,
+			height,
 			displayId,
 			scaleFactor
 		}) => {
 			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: this.getSourcePng(source),
-				actuallyWidth,
-				actuallyHeight,
+				toPngSource: this.getSourcePng(
+					source,
+					width * scaleFactor,
+					height * scaleFactor
+				),
+				width,
+				height,
 				mouseX,
 				mouseY,
 				displayId,
@@ -169,13 +192,12 @@ export default class ElectronShortcutCapture {
 				const win = this.captureWins[i]
 				const display = this.displays[i]
 				const source = sources[i]
-				const actuallyWidth = win.getBounds().width
-				const actuallyHeight = win.getBounds().height
+				const { width, height } = win.getBounds()
 				noticeToRenderer({
 					win,
 					source,
-					actuallyWidth,
-					actuallyHeight,
+					width,
+					height,
 					displayId: display.id,
 					scaleFactor: display.scaleFactor
 				})
@@ -202,13 +224,12 @@ export default class ElectronShortcutCapture {
 			const win = this.captureWins.filter(v => {
 				return v.displayId === currDisplay.id
 			})[0]
-			const actuallyWidth = win.getBounds().width
-			const actuallyHeight = win.getBounds().height
+			const { width, height } = win.getBounds()
 			noticeToRenderer({
 				win,
 				source,
-				actuallyWidth,
-				actuallyHeight,
+				width,
+				height,
 				displayId: currentFocusDisplayId,
 				scaleFactor: currDisplay.scaleFactor
 			})
@@ -439,7 +460,11 @@ export default class ElectronShortcutCapture {
 	/**
 	 * 获取图片资源
 	 */
-	getSourcePng = (source?: Electron.DesktopCapturerSource) => {
-		return source.thumbnail.toPNG()
+	getSourcePng = (
+		source?: Electron.DesktopCapturerSource,
+		width: number,
+		height: number
+	) => {
+		return source.thumbnail.resize({ width, height }).toJPEG(100)
 	}
 }

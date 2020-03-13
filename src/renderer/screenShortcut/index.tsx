@@ -45,10 +45,10 @@ const ScreenShot: React.FC = () => {
 
 	React.useEffect(() => {
 		getSource((source: ElectronShortcutCapture.ISource) => {
-			const { actuallyHeight, actuallyWidth, displayId } = source
+			const { width, height, displayId } = source
 			setBounds({
-				width: actuallyWidth,
-				height: actuallyHeight,
+				width,
+				height,
 				x: 0,
 				y: 0
 			})

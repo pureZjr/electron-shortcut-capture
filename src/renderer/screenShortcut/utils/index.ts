@@ -81,12 +81,11 @@ function handleCanvas(canvas: HTMLCanvasElement) {
 			const color = inputArea.style.color
 			const itemHeight =
 				((inputArea.clientHeight - 12) / inputArea.childNodes.length) *
-				2
+				scaleFactor
 			ctx.font = `${fontSize}px Arial`
 			ctx.fillStyle = color
 			let lastTextY = y
 			ctx.textBaseline = 'alphabetic'
-			console.log(ctx)
 			inputArea.childNodes.forEach((v, idx) => {
 				const text = v.textContent
 				const textY = lastTextY + (!!idx ? itemHeight : itemHeight / 2)

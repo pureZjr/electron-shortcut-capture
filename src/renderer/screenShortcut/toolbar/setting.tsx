@@ -61,6 +61,7 @@ const Setting: React.FC<IProps> = ({ toolId, onHandleClick }) => {
 			setSetVisible(true)
 		}, 0)
 		setColor(Color.red)
+		setFontSize(Fontsize.小)
 		setThicknessNum(LineWidth.small)
 	}, [toolId])
 

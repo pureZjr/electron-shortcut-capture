@@ -157,6 +157,14 @@ const ScreenShot: React.FC = () => {
 		}
 	}
 
+	// 清空绘制的文字
+	const removeDrawText = () => {
+		const inputAreas = document.getElementsByClassName('input-area')
+		for (let i = inputAreas.length - 1; i > -1; i--) {
+			inputAreas[i].remove()
+		}
+	}
+
 	const reset = () => {
 		setSource({
 			...source,
@@ -170,6 +178,7 @@ const ScreenShot: React.FC = () => {
 			y2: 0
 		})
 		setDestoryLayer(true)
+		removeDrawText()
 	}
 	return (
 		<Fragment>

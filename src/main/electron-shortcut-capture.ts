@@ -427,7 +427,7 @@ export default class ElectronShortcutCapture {
 	 * 监听显示器数量变化
 	 */
 	listenDisplayNumChange = () => {
-		screen.on('display-metrics-changed', () => {
+		const resetDisplay = () => {
 			console.log('重新初始化')
 			this.screenInfo = {}
 			this.loadedPageDisplayIds = []
@@ -435,6 +435,16 @@ export default class ElectronShortcutCapture {
 				v.close()
 			})
 			this.initWin()
+		}
+		screen.on('display-metrics-changed', () => {
+			resetDisplay()
+		})
+		screen.on('display-added', () => {
+			resetDisplay()
+		})
+
+		screen.on('display-removed', () => {
+			resetDisplay()
 		})
 	}
 
@@ -449,7 +459,6 @@ export default class ElectronShortcutCapture {
 			this.loadedPageDisplayIds.push(displayId)
 			if (this.loadedPageDisplayIds.length === this.captureWins.length) {
 				this.captureWins.forEach(win => {
-					console.log('reset complete')
 					win.hide()
 				})
 			}

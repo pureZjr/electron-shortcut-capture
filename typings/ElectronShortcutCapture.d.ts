@@ -25,7 +25,7 @@ declare namespace ElectronShortcutCapture {
 		// 快捷键打开截图回调
 		onShowByKey?: () => Promise<void>
 		// 截图logger
-		getLogger?: (logger?) => void
+		getLogger?: (logger: string) => void
 	}
 
 	interface ISource {

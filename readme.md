@@ -50,7 +50,7 @@ new ShortcutCapture({
 | onHide             | () => void                           | 关闭截图回调                       |         |
 | onShow             | () => void                           | 打开截图回调                       |         |
 | onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调                 |         |  |
-| getLogger          | (logger:string[]) => void            | 截图 logger 回调，可以用来排查问题 |         |  |
+| getLogger          | (logger:string) => void              | 截图 logger 回调，可以用来排查问题 |         |  |
 
 ## 方法
 

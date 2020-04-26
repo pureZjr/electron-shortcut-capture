@@ -29,8 +29,7 @@ export default class ElectronShortcutCapture {
 		this.getLogger =
 			!!props && !!props.getLogger
 				? (logger: string) => {
-						this.logger.push(logger)
-						props.getLogger(this.logger)
+						props.getLogger(logger)
 				  }
 				: (logger: string) => {
 						console.log(logger)
@@ -72,7 +71,6 @@ export default class ElectronShortcutCapture {
 	private onShowByKey: () => Promise<void> = null
 	// 截图logger
 	private getLogger: () => void = null
-	private logger = []
 
 	static isWin = require('os').platform() !== 'darwin'
 	static URL =
@@ -136,20 +134,16 @@ export default class ElectronShortcutCapture {
 	async show() {
 		try {
 			if (this.shortcuting && this.shortCutScreenIsOpened()) {
-				this.getLogger('正在截图')
-				return console.log('正在截图')
+				return this.getLogger('正在截图')
 			}
 			if (this.isDownloading) {
-				this.getLogger('正在执行下载操作')
-				return console.log('正在执行下载操作')
+				return this.getLogger('正在执行下载操作')
 			}
 			if (!this.captureWins.length) {
-				this.getLogger('当前没有窗口')
-				return console.log('当前没有窗口')
+				return this.getLogger('当前没有窗口')
 			}
 			if (this.loadedPageDisplayIds.length !== this.captureWins.length) {
-				this.getLogger('页面没完全加载')
-				return console.log('页面没完全加载')
+				return this.getLogger('页面没完全加载')
 			}
 
 			this.shortcuting = true
@@ -318,8 +312,7 @@ export default class ElectronShortcutCapture {
 
 	hide(notification = true) {
 		if (!this.shortCutScreenIsOpened()) {
-			this.getLogger('截图没完全打开')
-			return console.log('截图没完全打开')
+			return this.getLogger('截图没完全打开')
 		}
 		this.loadedPageDisplayIds = []
 		this.shortcuting = false
@@ -496,7 +489,7 @@ export default class ElectronShortcutCapture {
 	 */
 	listenDisplayNumChange = () => {
 		const resetDisplay = () => {
-			console.log('重新初始化')
+			this.getLogger(`重新初始化`)
 			this.screenInfo = {}
 			this.loadedPageDisplayIds = []
 			this.captureWins.forEach(v => {

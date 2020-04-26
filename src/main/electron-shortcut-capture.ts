@@ -8,6 +8,7 @@ import {
 	globalShortcut
 } from 'electron'
 import { EventEmitter } from 'events'
+const util = require('util')
 
 import browserWindowProps from './browserWindowProps'
 import { events } from '../constant'
@@ -25,6 +26,15 @@ export default class ElectronShortcutCapture {
 		this.onHide = !!props ? props.onHide : null
 		this.onShow = !!props ? props.onShow : null
 		this.onShowByKey = !!props ? props.onShowByKey : null
+		this.getLogger =
+			!!props && !!props.getLogger
+				? (logger: string) => {
+						this.logger.push(logger)
+						props.getLogger(this.logger)
+				  }
+				: (logger: string) => {
+						console.log(logger)
+				  }
 		this.initWin()
 		this.bindHide()
 		this.bindClipboard()
@@ -60,6 +70,9 @@ export default class ElectronShortcutCapture {
 	private onShow: () => void = null
 	// 快捷键打开截图回调
 	private onShowByKey: () => Promise<void> = null
+	// 截图logger
+	private getLogger: () => void = null
+	private logger = []
 
 	static isWin = require('os').platform() !== 'darwin'
 	static URL =
@@ -104,12 +117,14 @@ export default class ElectronShortcutCapture {
 	private async initWin() {
 		// 获取设备所有显示器
 		this.displays = screen.getAllDisplays()
+		this.getLogger('初始化截图')
 		this.captureWins = this.displays.map(display => {
 			this.setScreenInfo(display)
 			const captureWin = new BrowserWindow(browserWindowProps(display))
 			captureWin['displayId'] = display.id
 			return captureWin
 		}) as IBrowserWindow[]
+		this.getLogger(`设备数量：${this.captureWins.length}`)
 		this.captureWins.forEach(v => {
 			v.loadURL(ElectronShortcutCapture.URL)
 		})
@@ -119,123 +134,172 @@ export default class ElectronShortcutCapture {
 	 * 打开截图
 	 */
 	async show() {
-		if (this.shortcuting && this.shortCutScreenIsOpened()) {
-			return console.log('正在截图')
-		}
-		if (this.isDownloading) {
-			return console.log('正在执行下载操作')
-		}
-		if (!this.captureWins.length) {
-			return console.log('当前没有窗口')
-		}
-		if (this.loadedPageDisplayIds.length !== this.captureWins.length) {
-			return console.log('页面没完全加载')
-		}
-
-		this.shortcuting = true
-		// 打开截图回调
-		if (typeof this.onShow === 'function') {
-			this.onShow()
-		}
-		/**
-		 * 获取显示器信息
-		 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
-		 */
-		const cutWidth = this.screenInfo.cutWidth
-		const cutHeight = this.screenInfo.cutHeight
-		const sources = await this.getScreenSources(cutWidth, cutHeight)
-
-		/**
-		 * 判断获取DisplayId是否为空,
-		 * 有些电脑获取到的id为空的，就将截图操作重置为单显示器方式
-		 */
-		const displayIdEmpty = sources.some(v => !v.display_id)
-		if (displayIdEmpty) {
-			this.multiScreen = false
-		}
-
-		// 当前显示器和鼠标位置
-		const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
-		const mouseX = mousePoint.x - currDisplay.bounds.x
-		const mouseY = mousePoint.y - currDisplay.bounds.y
-
-		const noticeToRenderer = ({
-			win,
-			source,
-			width,
-			height,
-			displayId,
-			scaleFactor
-		}) => {
-			win.webContents.send(events.screenSourcesToPng, {
-				toPngSource: this.getSourcePng(
-					source,
-					width * scaleFactor,
-					height * scaleFactor
-				),
-				width,
-				height,
-				mouseX,
-				mouseY,
-				displayId,
-				scaleFactor
-			})
-			// 设置窗口可以在全屏窗口之上显示。
-			win.setVisibleOnAllWorkspaces(true)
-			win.setAlwaysOnTop(true, 'screen-saver')
-			win.setBackgroundColor('#00000000')
-			win.show()
-		}
-
-		if (this.multiScreen) {
-			for (let i = 0; i < sources.length; i++) {
-				const win = this.captureWins[i]
-				const display = this.displays[i]
-				const source = sources[i]
-				const { width, height } = win.getBounds()
-				noticeToRenderer({
-					win,
-					source,
-					width,
-					height,
-					displayId: display.id,
-					scaleFactor: display.scaleFactor
-				})
+		try {
+			if (this.shortcuting && this.shortCutScreenIsOpened()) {
+				this.getLogger('正在截图')
+				return console.log('正在截图')
 			}
-		} else {
-			let source
-			/**
-			 * 根据鼠标位置选择source
-			 */
-			const currentFocusDisplayId = currDisplay.id.toString()
-			source = sources.filter(
-				v => v.display_id === currentFocusDisplayId
-			)[0]
-			/**
-			 * 不能通过displayId获取屏幕资源的话
-			 * 就根据显示器的位置去找对应的屏幕资源
-			 */
-			if (!source) {
-				const sourceIndex = Object.keys(this.screenInfo).findIndex(
-					displayId => displayId === currentFocusDisplayId
-				)
-				source = sources[sourceIndex]
+			if (this.isDownloading) {
+				this.getLogger('正在执行下载操作')
+				return console.log('正在执行下载操作')
 			}
-			const win = this.captureWins.filter(v => {
-				return v.displayId === currDisplay.id
-			})[0]
-			const { width, height } = win.getBounds()
-			noticeToRenderer({
+			if (!this.captureWins.length) {
+				this.getLogger('当前没有窗口')
+				return console.log('当前没有窗口')
+			}
+			if (this.loadedPageDisplayIds.length !== this.captureWins.length) {
+				this.getLogger('页面没完全加载')
+				return console.log('页面没完全加载')
+			}
+
+			this.shortcuting = true
+			this.getLogger('开始截图')
+			// 打开截图回调
+			if (typeof this.onShow === 'function') {
+				this.onShow()
+			}
+			/**
+			 * 获取显示器信息
+			 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
+			 */
+			const cutWidth = this.screenInfo.cutWidth
+			const cutHeight = this.screenInfo.cutHeight
+			const sources = await this.getScreenSources(cutWidth, cutHeight)
+			this.getLogger(`截图宽高：${cutWidth} X ${cutHeight}`)
+			this.getLogger(
+				`截图sources：${util.inspect(sources, { depth: null })}`
+			)
+			/**
+			 * 判断获取DisplayId是否为空,
+			 * 有些电脑获取到的id为空的，就将截图操作重置为单显示器方式
+			 */
+			const displayIdEmpty = sources.some(v => !v.display_id)
+			this.getLogger(
+				`${
+					displayIdEmpty
+						? '存在DisplayId是否为空问题'
+						: '不存在DisplayId是否为空问题'
+				}`
+			)
+			if (displayIdEmpty) {
+				this.multiScreen = false
+			}
+
+			// 当前显示器和鼠标位置
+			const { currDisplay, mousePoint } = this.getCurrentFocusDisplay()
+			const mouseX = mousePoint.x - currDisplay.bounds.x
+			const mouseY = mousePoint.y - currDisplay.bounds.y
+
+			const noticeToRenderer = ({
 				win,
 				source,
 				width,
 				height,
-				displayId: currentFocusDisplayId,
-				scaleFactor: currDisplay.scaleFactor
-			})
+				displayId,
+				scaleFactor
+			}) => {
+				win.webContents.send(events.screenSourcesToPng, {
+					toPngSource: this.getSourcePng(
+						source,
+						width * scaleFactor,
+						height * scaleFactor
+					),
+					width,
+					height,
+					mouseX,
+					mouseY,
+					displayId,
+					scaleFactor
+				})
+				// 设置窗口可以在全屏窗口之上显示。
+				win.setVisibleOnAllWorkspaces(true)
+				win.setAlwaysOnTop(true, 'screen-saver')
+				win.setBackgroundColor('#00000000')
+				win.show()
+			}
+
+			if (this.multiScreen) {
+				for (let i = 0; i < sources.length; i++) {
+					const win = this.captureWins[i]
+					const display = this.displays[i]
+					const source = sources[i]
+					const { width, height } = win.getBounds()
+					this.getLogger(
+						`noticeToRenderer：${util.inspect(
+							{
+								win,
+								source,
+								width,
+								height,
+								displayId: display.id,
+								scaleFactor: display.scaleFactor
+							},
+							{ depth: null }
+						)}`
+					)
+					noticeToRenderer({
+						win,
+						source,
+						width,
+						height,
+						displayId: display.id,
+						scaleFactor: display.scaleFactor
+					})
+				}
+			} else {
+				let source
+				/**
+				 * 根据鼠标位置选择source
+				 */
+				const currentFocusDisplayId = currDisplay.id.toString()
+				source = sources.filter(
+					v => v.display_id === currentFocusDisplayId
+				)[0]
+				/**
+				 * 不能通过displayId获取屏幕资源的话
+				 * 就根据显示器的位置去找对应的屏幕资源
+				 */
+				if (!source) {
+					const sourceIndex = Object.keys(this.screenInfo).findIndex(
+						displayId => displayId === currentFocusDisplayId
+					)
+					source = sources[sourceIndex]
+				}
+				const win = this.captureWins.filter(v => {
+					return v.displayId === currDisplay.id
+				})[0]
+				const { width, height } = win.getBounds()
+				this.getLogger(
+					`noticeToRenderer：${util.inspect(
+						{
+							win,
+							source,
+							width,
+							height,
+							displayId: currentFocusDisplayId,
+							scaleFactor: currDisplay.scaleFactor
+						},
+						{ depth: null }
+					)}`
+				)
+				noticeToRenderer(
+					JSON.stringify({
+						win,
+						source,
+						width,
+						height,
+						displayId: currentFocusDisplayId,
+						scaleFactor: currDisplay.scaleFactor
+					})
+				)
+			}
+			// 绑定关闭截图事件
+			this.listenEsc()
+		} catch (err) {
+			this.getLogger(
+				`打开截图失败：${util.inspect(err, { depth: null })}`
+			)
 		}
-		// 绑定关闭截图事件
-		this.listenEsc()
 	}
 
 	/**
@@ -254,6 +318,7 @@ export default class ElectronShortcutCapture {
 
 	hide(notification = true) {
 		if (!this.shortCutScreenIsOpened()) {
+			this.getLogger('截图没完全打开')
 			return console.log('截图没完全打开')
 		}
 		this.loadedPageDisplayIds = []
@@ -272,6 +337,9 @@ export default class ElectronShortcutCapture {
 		if (typeof this.onHide === 'function') {
 			this.onHide()
 		}
+		this.getLogger(
+			'关闭截图————————————————————————————————————————————————————'
+		)
 	}
 
 	/**
@@ -457,6 +525,7 @@ export default class ElectronShortcutCapture {
 				return
 			}
 			this.loadedPageDisplayIds.push(displayId)
+			this.getLogger(`加载完的显示器id：${displayId}`)
 			if (this.loadedPageDisplayIds.length === this.captureWins.length) {
 				this.captureWins.forEach(win => {
 					win.hide()

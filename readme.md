@@ -41,15 +41,16 @@ new ShortcutCapture({
 })
 ```
 
-| 名称               | 类型                                 | 说明                           | 默认值  |
-| ------------------ | ------------------------------------ | ------------------------------ | ------- |
-| multiScreen        | boolean                              | 是否使用多显示器截图，默认关闭 | `false` |
-| downloadFileprefix | string                               | 下载文件前缀                   | ' '     |
-| key                | string                               | 快捷键                         | ' '     |
-| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容         |         |
-| onHide             | () => void                           | 关闭截图回调                   |         |
-| onShow             | () => void                           | 打开截图回调                   |         |
-| onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调             |         |  |
+| 名称               | 类型                                 | 说明                               | 默认值  |
+| ------------------ | ------------------------------------ | ---------------------------------- | ------- |
+| multiScreen        | boolean                              | 是否使用多显示器截图，默认关闭     | `false` |
+| downloadFileprefix | string                               | 下载文件前缀                       | ' '     |
+| key                | string                               | 快捷键                             | ' '     |
+| onClipboard        | (data: Electron.NativeImage) => void | 点击完成返回剪贴板内容             |         |
+| onHide             | () => void                           | 关闭截图回调                       |         |
+| onShow             | () => void                           | 打开截图回调                       |         |
+| onShowByKey        | () => Promise<void>                  | 快捷键打开截图回调                 |         |  |
+| getLogger          | (logger:string[]) => void            | 截图 logger 回调，可以用来排查问题 |         |  |
 
 ## 方法
 

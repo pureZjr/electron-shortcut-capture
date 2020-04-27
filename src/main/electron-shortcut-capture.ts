@@ -351,12 +351,12 @@ export default class ElectronShortcutCapture {
 			})
 			if (!path) {
 				this.isDownloading = false
-				return console.log('取消下载')
+				return this.getLogger('取消下载')
 			}
 			try {
 				require('fs').writeFileSync(path, dataBuffer)
 			} catch (err) {
-				console.log('下载失败：' + err)
+				this.getLogger('下载失败：' + err)
 			}
 			this.isDownloading = false
 		})

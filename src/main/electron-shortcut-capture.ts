@@ -276,16 +276,14 @@ export default class ElectronShortcutCapture {
 						{ depth: null }
 					)}`
 				)
-				noticeToRenderer(
-					JSON.stringify({
-						win,
-						source,
-						width,
-						height,
-						displayId: currentFocusDisplayId,
-						scaleFactor: currDisplay.scaleFactor
-					})
-				)
+				noticeToRenderer({
+					win,
+					source,
+					width,
+					height,
+					displayId: currentFocusDisplayId,
+					scaleFactor: currDisplay.scaleFactor
+				})
 			}
 			// 绑定关闭截图事件
 			this.listenEsc()

@@ -159,7 +159,7 @@ export default class ElectronShortcutCapture {
 			 */
 			const cutWidth = this.screenInfo.cutWidth
 			const cutHeight = this.screenInfo.cutHeight
-			this.getLogger(`screenInfo：${this.screenInfo}`)
+			this.getLogger(`screenInfo：${util.inspect(this.screenInfo)}`)
 			this.getLogger(`截图宽高：${cutWidth} X ${cutHeight}`)
 			const sources = await this.getScreenSources(cutWidth, cutHeight)
 			this.getLogger(
@@ -488,25 +488,29 @@ export default class ElectronShortcutCapture {
 	 * 监听显示器数量变化
 	 */
 	listenDisplayNumChange = () => {
-		const resetDisplay = () => {
-			this.getLogger(`重新初始化`)
-			this.screenInfo = {}
-			this.loadedPageDisplayIds = []
-			this.captureWins.forEach(v => {
-				v.close()
-			})
-			this.initWin()
-		}
 		screen.on('display-metrics-changed', () => {
-			resetDisplay()
+			this.reInit()
 		})
 		screen.on('display-added', () => {
-			resetDisplay()
+			this.reInit()
 		})
 
 		screen.on('display-removed', () => {
-			resetDisplay()
+			this.reInit()
 		})
+	}
+
+	/**
+	 * 重新初始化
+	 */
+	reInit = () => {
+		this.getLogger(`重新初始化`)
+		this.screenInfo = {}
+		this.loadedPageDisplayIds = []
+		this.captureWins.forEach(v => {
+			v.close()
+		})
+		this.initWin()
 	}
 
 	/**

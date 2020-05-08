@@ -94,6 +94,7 @@ export default class ElectronShortcutCapture {
 	 * 设置屏幕大小以及获取屏幕资源的宽高
 	 */
 	setScreenInfo = (display: Electron.Display) => {
+		this.getLogger(`setScreenInfo-display${util.inspect(display)}`)
 		this.screenInfo[display.id] = {}
 		this.screenInfo['cutWidth'] =
 			!!this.screenInfo['cutWidth'] &&

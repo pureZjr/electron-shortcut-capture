@@ -420,7 +420,7 @@ export default class ElectronShortcutCapture {
 			desktopCapture.startHandling(
 				false,
 				true,
-				{ width: width, height: height },
+				{ width: Math.ceil(width), height: Math.ceil(height) },
 				true
 			)
 		})

@@ -158,8 +158,9 @@ export default class ElectronShortcutCapture {
 			 */
 			const cutWidth = this.screenInfo.cutWidth
 			const cutHeight = this.screenInfo.cutHeight
-			const sources = await this.getScreenSources(cutWidth, cutHeight)
+			this.getLogger(`screenInfo：${this.screenInfo}`)
 			this.getLogger(`截图宽高：${cutWidth} X ${cutHeight}`)
+			const sources = await this.getScreenSources(cutWidth, cutHeight)
 			this.getLogger(
 				`截图sources：${util.inspect(sources, { depth: null })}`
 			)

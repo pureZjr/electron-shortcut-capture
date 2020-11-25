@@ -12,9 +12,16 @@
 		"downlevelIteration": true,
 		"experimentalDecorators": true,
 		"skipLibCheck": true,
-		"typeRoots": ["node_modules/@types", "typings"]
+		"typeRoots": ["node_modules/@types", "typings"],
+		"lib": ["es7", "dom"],
+		"jsx": "react",
+		"rootDir":".",
+		"paths": {
+			"@utils": ["src/renderer/screenShortcut/utils"],
+			"@assets": ["src/renderer/screenShortcut/assets"],
+			"@constant": ["src/constant"]
+		}
 	},
 	"exclude": ["node_modules"],
 	"include": ["typings/*", "src/**/*"],
-	"references": [{ "path": "./build/main" }, { "path": "./build/renderer" }]
 }

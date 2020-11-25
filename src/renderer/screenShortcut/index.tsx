@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import * as React from 'react'
 import { ipcRenderer } from 'electron'
 
 import Background from './background'
@@ -181,7 +181,7 @@ const ScreenShot: React.FC = () => {
 		removeDrawText()
 	}
 	return (
-		<Fragment>
+		<React.Fragment>
 			<Background
 				rectangle={rectangle}
 				rect={rect}
@@ -212,7 +212,7 @@ const ScreenShot: React.FC = () => {
 					scaleFactor={!!source ? source.scaleFactor : 1}
 				/>
 			)}
-		</Fragment>
+		</React.Fragment>
 	)
 }
 

@@ -704,7 +704,7 @@ export const text = (args: {
 				inputTarget.contentEditable = 'true'
 				setTimeout(() => {
 					inputTarget.focus()
-					inputTarget.value = inputTarget.value
+					inputTarget['value'] = inputTarget['value']
 				}, 100)
 			}
 		})

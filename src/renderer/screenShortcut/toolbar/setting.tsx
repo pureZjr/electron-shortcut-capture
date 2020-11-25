@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import ToolTip from 'react-portal-tooltip'
 
 import IconDown from '@assets/svg/down.svg'

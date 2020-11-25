@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 
 import IconComplete from '@assets/svg/sure.svg'
 import IconCancel from '@assets/svg/cancel.svg'

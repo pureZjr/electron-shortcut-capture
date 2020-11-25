@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 
 import { colorHex } from '@utils'
 import './index.scss'

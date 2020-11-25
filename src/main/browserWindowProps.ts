@@ -38,7 +38,9 @@ const browserWindowProps = (
 		hasShadow: false,
 		webPreferences: {
 			//集成Node
-			nodeIntegration: true
+			nodeIntegration: true,
+			// 允许渲染线程使用remote模块
+			enableRemoteModule: true
 		}
 	}
 }

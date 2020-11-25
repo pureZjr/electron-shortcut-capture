@@ -4,12 +4,7 @@
 		"module": "ESNext",
 		"baseUrl": ".",
 		"jsx": "react",
-		"composite": true,
 		"lib": ["es7", "dom"],
-		"paths": {
-			"@utils": ["../../src/renderer/screenShortcut/utils"],
-			"@assets": ["../../src/renderer/screenShortcut/assets"],
-			"@constant": ["../../src/constant"]
-		}
+		"composite": true,
 	}
 }

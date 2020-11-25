@@ -1,5 +1,5 @@
-import ReactDom from 'react-dom'
-import React from 'react'
+import * as ReactDom from 'react-dom'
+import * as React from 'react'
 
 import ScreenShot from './screenShortcut'
 import './index.scss'

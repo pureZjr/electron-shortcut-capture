@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import * as React from 'react'
 
 import Toolbar from '../toolbar'
 import { setCapturingDisplay, clipboard } from '@utils'
@@ -31,7 +31,7 @@ interface IState {
 	resizing: boolean
 }
 
-class Rectangle extends Component<IProps, IState> {
+class Rectangle extends React.Component<IProps, IState> {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -225,7 +225,7 @@ class Rectangle extends Component<IProps, IState> {
 	 */
 	renderDragPoint() {
 		return (
-			<Fragment>
+			<React.Fragment>
 				<div
 					className="rectangle-pointer rectangle-pointer-n"
 					onMouseDown={e => this.mousedown(e, 'n')}
@@ -258,7 +258,7 @@ class Rectangle extends Component<IProps, IState> {
 					className="rectangle-pointer rectangle-pointer-nw"
 					onMouseDown={e => this.mousedown(e, 'nw')}
 				></div>
-			</Fragment>
+			</React.Fragment>
 		)
 	}
 

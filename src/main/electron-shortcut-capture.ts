@@ -7,7 +7,11 @@ import {
 	nativeImage,
 	globalShortcut
 } from 'electron'
-import { EventEmitter } from 'events'
+
+interface Process extends NodeJS.Process {
+	_linkedBinding: (name: string) => any
+}
+
 const util = require('util')
 
 import browserWindowProps from './browserWindowProps'
@@ -70,7 +74,7 @@ export default class ElectronShortcutCapture {
 	// 快捷键打开截图回调
 	private onShowByKey: () => Promise<void> = null
 	// 截图logger
-	private getLogger: () => void = null
+	private getLogger: (log: string) => void = null
 
 	static isWin = require('os').platform() !== 'darwin'
 	static URL =
@@ -157,11 +161,12 @@ export default class ElectronShortcutCapture {
 			 * 获取显示器信息
 			 * 用不同显示器的最大宽高去获取资源，减少获取资源的次数
 			 */
-			const cutWidth = this.screenInfo.cutWidth
-			const cutHeight = this.screenInfo.cutHeight
+			const cutWidth = this.screenInfo['cutWidth']
+			const cutHeight = this.screenInfo['cutHeight']
 			this.getLogger(`screenInfo：${util.inspect(this.screenInfo)}`)
 			this.getLogger(`截图宽高：${cutWidth} X ${cutHeight}`)
 			const sources = await this.getScreenSources(cutWidth, cutHeight)
+			console.log(sources)
 			this.getLogger(
 				`截图sources：${util.inspect(sources, { depth: null })}`
 			)
@@ -390,17 +395,26 @@ export default class ElectronShortcutCapture {
 	/**
 	 * 获取显示器资源
 	 */
-	private getScreenSources: (
+	private getScreenSources = (
 		width: number,
 		height: number
-	) => Promise<Electron.DesktopCapturerSource[]> = (
-		width: number,
-		height: number
-	) => {
-		return new Promise(resolve => {
-			let desktopCapture = process
-				.electronBinding('desktop_capturer')
+	): Promise<Electron.DesktopCapturerSource[]> => {
+		return new Promise((resolve, reject) => {
+			let desktopCapture = (process as Process)
+				._linkedBinding('electron_browser_desktop_capturer')
 				.createDesktopCapturer()
+
+			desktopCapture._onerror = (error: string) => {
+				stopRunning()
+				reject(error)
+			}
+
+			desktopCapture._onfinished = (
+				sources: Electron.DesktopCapturerSource[]
+			) => {
+				stopRunning()
+				resolve(sources)
+			}
 
 			const stopRunning = () => {
 				if (desktopCapture) {
@@ -408,15 +422,6 @@ export default class ElectronShortcutCapture {
 					desktopCapture = null
 				}
 			}
-			const emitter = new EventEmitter()
-			emitter.once(
-				'finished',
-				(_, sources: Electron.DesktopCapturerSource[]) => {
-					stopRunning()
-					resolve(sources)
-				}
-			)
-			desktopCapture.emit = emitter.emit.bind(emitter)
 			desktopCapture.startHandling(
 				false,
 				true,
@@ -544,7 +549,7 @@ export default class ElectronShortcutCapture {
 	 * 获取图片资源
 	 */
 	getSourcePng = (
-		source?: Electron.DesktopCapturerSource,
+		source: Electron.DesktopCapturerSource,
 		width: number,
 		height: number
 	) => {
